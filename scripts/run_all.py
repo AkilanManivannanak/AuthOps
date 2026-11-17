@@ -79,7 +79,12 @@ def main():
     if db_path.exists():
         db_path.unlink()
     store = Store(db_path)
-    metrics: dict = {"generated": time.strftime("%Y-%m-%d %H:%M"), "llm": use_llm, "cases": args.cases}
+    import platform
+
+    import pytesseract
+    metrics: dict = {"generated": time.strftime("%Y-%m-%d %H:%M"), "llm": use_llm, "cases": args.cases,
+                     "env": {"tesseract": str(pytesseract.get_tesseract_version()),
+                             "python": platform.python_version(), "os": platform.system()}}
     meter = UsageMeter()
 
     # 1. data -----------------------------------------------------------------
@@ -275,7 +280,8 @@ def main():
 def write_report(m: dict, path: Path) -> None:
     L = ["# AuthOps evaluation report", "",
          f"Generated {m['generated']}. {m['cases']} synthetic cases, fictional payors, no real PHI. "
-         f"LLM arms: {'on' if m['llm'] else 'off (offline run)'}.", ""]
+         f"LLM arms: {'on' if m['llm'] else 'off (offline run)'}. "
+         f"Environment: Tesseract {m['env']['tesseract']}, Python {m['env']['python']}, {m['env']['os']}.", ""]
     ex = m["extraction"]
     L += ["## 1. Document extraction", "",
           f"Document type classification accuracy: {pct(ex['classification_accuracy'])}", "",

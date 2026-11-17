@@ -21,7 +21,10 @@ from authops.synth.generate import PAYOR_BY_ID, payor_decision
 PAGE_W, PAGE_H = 1700, 2200  # ~200 dpi letter
 MARGIN = 120
 
+FONT_DIR = Path(__file__).resolve().parent / "fonts"
+# Bundled fonts first: rendering must be identical across machines or OCR numbers drift.
 FONT_CANDIDATES = [
+    str(FONT_DIR / "DejaVuSans.ttf"),
     "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
     "/System/Library/Fonts/Supplemental/Arial.ttf",
     "/Library/Fonts/Arial.ttf",
@@ -29,6 +32,7 @@ FONT_CANDIDATES = [
     "C:/Windows/Fonts/arial.ttf",
 ]
 MONO_CANDIDATES = [
+    str(FONT_DIR / "DejaVuSansMono.ttf"),
     "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
     "/System/Library/Fonts/Supplemental/Courier New.ttf",
     "/System/Library/Fonts/Menlo.ttc",

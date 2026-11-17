@@ -1,6 +1,6 @@
 # AuthOps evaluation report
 
-Generated 2026-11-17 13:00. 80 synthetic cases, fictional payors, no real PHI. LLM arms: off (offline run).
+Generated 2026-11-17 13:36. 80 synthetic cases, fictional payors, no real PHI. LLM arms: off (offline run). Environment: Tesseract 5.5.4, Python 3.12.12, Darwin.
 
 ## 1. Document extraction
 
@@ -8,33 +8,33 @@ Document type classification accuracy: 96.3%
 
 | Extractor | Field accuracy | Precision when answered | Coverage | Silent error | Docs fully correct | p50 latency |
 |---|---|---|---|---|---|---|
-| rules | 91.6% | 98.5% | 93.0% | 1.4% | 66.2% | 715 ms |
+| rules | 91.8% | 98.6% | 93.2% | 1.3% | 68.8% | 769 ms |
 
 By image condition and template (first extractor):
 
 | Slice | n fields | Accuracy | Precision | Coverage | Silent error |
 |---|---|---|---|---|---|
-| cond:clean | 567 | 96.8% | 99.6% | 97.2% | 0.4% |
-| cond:fax | 546 | 83.9% | 96.2% | 87.2% | 3.3% |
-| cond:scan | 567 | 93.8% | 99.3% | 94.5% | 0.7% |
-| tmpl:a | 320 | 96.6% | 98.7% | 97.8% | 1.3% |
-| tmpl:b | 310 | 94.8% | 97.7% | 97.1% | 2.3% |
-| tmpl:c | 170 | 70.0% | 94.4% | 74.1% | 4.1% |
-| tmpl:tp | 880 | 92.8% | 99.3% | 93.5% | 0.7% |
-| type:approval_letter | 560 | 89.1% | 97.3% | 91.6% | 2.5% |
-| type:denial_letter | 240 | 92.9% | 98.2% | 94.6% | 1.7% |
-| type:treatment_plan | 880 | 92.8% | 99.3% | 93.5% | 0.7% |
+| cond:clean | 567 | 96.3% | 99.6% | 96.6% | 0.4% |
+| cond:fax | 546 | 84.8% | 96.5% | 87.9% | 3.1% |
+| cond:scan | 567 | 94.2% | 99.4% | 94.7% | 0.5% |
+| tmpl:a | 320 | 97.2% | 99.4% | 97.8% | 0.6% |
+| tmpl:b | 310 | 94.8% | 98.0% | 96.8% | 1.9% |
+| tmpl:c | 170 | 70.6% | 94.5% | 74.7% | 4.1% |
+| tmpl:tp | 880 | 93.0% | 99.2% | 93.8% | 0.8% |
+| type:approval_letter | 560 | 89.3% | 97.7% | 91.4% | 2.1% |
+| type:denial_letter | 240 | 93.8% | 98.7% | 95.0% | 1.3% |
+| type:treatment_plan | 880 | 93.0% | 99.2% | 93.8% | 0.8% |
 
 Weakest fields:
 
 | Field | Accuracy | Coverage | Silent error |
 |---|---|---|---|
-| auth_number | 77.5% | 83.8% | 6.2% |
 | provider_npi | 81.2% | 81.2% | 0.0% |
+| auth_number | 81.2% | 86.3% | 5.0% |
 | icd10_codes | 86.3% | 91.2% | 5.0% |
+| member_id | 86.9% | 86.9% | 0.0% |
 | signature_date | 87.5% | 87.5% | 0.0% |
-| member_id | 88.7% | 88.7% | 0.0% |
-| requested_units | 88.7% | 88.7% | 0.0% |
+| approved_units | 87.5% | 87.5% | 0.0% |
 
 ## 2. Pre-submission validation (denial prevention)
 
@@ -50,11 +50,11 @@ Routing of ready cases: {'portal': 34, 'fhir': 10, 'phone': 12}; held for docume
 
 | Slice | Runs | Verified submit rate | Mean smoothness | p50 duration | Mean steps | Runs with major QA issue |
 |---|---|---|---|---|---|---|
-| portal:keystone | 6 | 100.0% | 98.0 | 3.81s | 16.7 | 0 |
-| arm:playbook | 34 | 100.0% | 98.4 | 1.98s | 19.0 | 0 |
-| all | 34 | 100.0% | 98.4 | 1.98s | 19.0 | 0 |
-| portal:summit | 13 | 100.0% | 97.1 | 2.21s | 24.4 | 0 |
-| portal:northwind | 15 | 100.0% | 99.6 | 1.25s | 15.2 | 0 |
+| portal:keystone | 6 | 100.0% | 98.0 | 2.83s | 16.7 | 0 |
+| arm:playbook | 34 | 100.0% | 98.4 | 1.15s | 19.0 | 0 |
+| all | 34 | 100.0% | 98.4 | 1.15s | 19.0 | 0 |
+| portal:summit | 13 | 100.0% | 97.1 | 1.23s | 24.4 | 0 |
+| portal:northwind | 15 | 100.0% | 99.6 | 0.68s | 15.2 | 0 |
 
 Error classes: {}
 Silent errors (auto-submitted with a major issue): 0
@@ -83,7 +83,7 @@ Credentials disabled by the pool: [('sfb-ops-c', 'auth_invalid')]
 
 ## 4. Other channels
 
-- FHIR PA API (Da Vinci PAS shape): 10/10 submitted, p50 0.02s per request
+- FHIR PA API (Da Vinci PAS shape): 10/10 submitted, p50 0.006s per request
 - Phone agent (IVR, benefits + status): 24/24 calls completed, mean 5 turns, member-ID repeats after ASR noise: 0
 
 ## 5. LLM usage

@@ -1,7 +1,12 @@
 {
- "generated": "2026-11-17 13:00",
+ "generated": "2026-11-17 13:36",
  "llm": false,
  "cases": 80,
+ "env": {
+  "tesseract": "5.5.4",
+  "python": "3.12.12",
+  "os": "Darwin"
+ },
  "extraction": {
   "classification_accuracy": 0.963,
   "arms": {
@@ -9,42 +14,42 @@
     "summary": {
      "all": {
       "n": 1680,
-      "accuracy": 0.916,
-      "precision": 0.985,
-      "coverage": 0.93,
-      "silent_error": 0.014,
-      "doc_ok": 0.662,
+      "accuracy": 0.918,
+      "precision": 0.986,
+      "coverage": 0.932,
+      "silent_error": 0.013,
+      "doc_ok": 0.688,
       "docs": 160
      },
      "cond:clean": {
       "n": 567,
-      "accuracy": 0.968,
+      "accuracy": 0.963,
       "precision": 0.996,
-      "coverage": 0.972,
+      "coverage": 0.966,
       "silent_error": 0.004,
-      "doc_ok": 0.87,
+      "doc_ok": 0.833,
       "docs": 54
      },
      "tmpl:tp": {
       "n": 880,
-      "accuracy": 0.928,
-      "precision": 0.993,
-      "coverage": 0.935,
-      "silent_error": 0.007
+      "accuracy": 0.93,
+      "precision": 0.992,
+      "coverage": 0.938,
+      "silent_error": 0.008
      },
      "field:patient_name": {
       "n": 160,
-      "accuracy": 0.894,
-      "precision": 0.929,
-      "coverage": 0.963,
-      "silent_error": 0.069
+      "accuracy": 0.912,
+      "precision": 0.936,
+      "coverage": 0.975,
+      "silent_error": 0.062
      },
      "type:treatment_plan": {
       "n": 880,
-      "accuracy": 0.928,
-      "precision": 0.993,
-      "coverage": 0.935,
-      "silent_error": 0.007,
+      "accuracy": 0.93,
+      "precision": 0.992,
+      "coverage": 0.938,
+      "silent_error": 0.008,
       "doc_ok": 0.688,
       "docs": 80
      },
@@ -57,9 +62,9 @@
      },
      "field:member_id": {
       "n": 160,
-      "accuracy": 0.887,
+      "accuracy": 0.869,
       "precision": 1.0,
-      "coverage": 0.887,
+      "coverage": 0.869,
       "silent_error": 0.0
      },
      "field:icd10_codes": {
@@ -71,24 +76,24 @@
      },
      "field:cpt_codes": {
       "n": 160,
-      "accuracy": 0.969,
-      "precision": 0.994,
-      "coverage": 0.975,
-      "silent_error": 0.006
+      "accuracy": 0.981,
+      "precision": 1.0,
+      "coverage": 0.981,
+      "silent_error": 0.0
      },
      "field:requested_units": {
       "n": 80,
-      "accuracy": 0.887,
+      "accuracy": 0.9,
       "precision": 1.0,
-      "coverage": 0.887,
+      "coverage": 0.9,
       "silent_error": 0.0
      },
      "field:plan_start": {
       "n": 80,
       "accuracy": 0.975,
-      "precision": 1.0,
-      "coverage": 0.975,
-      "silent_error": 0.0
+      "precision": 0.987,
+      "coverage": 0.988,
+      "silent_error": 0.013
      },
      "field:plan_end": {
       "n": 80,
@@ -121,24 +126,24 @@
      "tmpl:b": {
       "n": 310,
       "accuracy": 0.948,
-      "precision": 0.977,
-      "coverage": 0.971,
-      "silent_error": 0.023
+      "precision": 0.98,
+      "coverage": 0.968,
+      "silent_error": 0.019
      },
      "field:auth_number": {
       "n": 80,
-      "accuracy": 0.775,
-      "precision": 0.925,
-      "coverage": 0.838,
-      "silent_error": 0.062
+      "accuracy": 0.812,
+      "precision": 0.942,
+      "coverage": 0.863,
+      "silent_error": 0.05
      },
      "type:denial_letter": {
       "n": 240,
-      "accuracy": 0.929,
-      "precision": 0.982,
-      "coverage": 0.946,
-      "silent_error": 0.017,
-      "doc_ok": 0.708,
+      "accuracy": 0.938,
+      "precision": 0.987,
+      "coverage": 0.95,
+      "silent_error": 0.013,
+      "doc_ok": 0.792,
       "docs": 24
      },
      "field:decision": {
@@ -150,9 +155,9 @@
      },
      "field:approved_units": {
       "n": 80,
-      "accuracy": 0.963,
+      "accuracy": 0.875,
       "precision": 1.0,
-      "coverage": 0.963,
+      "coverage": 0.875,
       "silent_error": 0.0
      },
      "field:start_date": {
@@ -164,54 +169,54 @@
      },
      "field:end_date": {
       "n": 80,
-      "accuracy": 0.887,
+      "accuracy": 0.95,
       "precision": 1.0,
-      "coverage": 0.887,
+      "coverage": 0.95,
       "silent_error": 0.0
      },
      "cond:scan": {
       "n": 567,
-      "accuracy": 0.938,
-      "precision": 0.993,
-      "coverage": 0.945,
-      "silent_error": 0.007,
-      "doc_ok": 0.778,
+      "accuracy": 0.942,
+      "precision": 0.994,
+      "coverage": 0.947,
+      "silent_error": 0.005,
+      "doc_ok": 0.815,
       "docs": 54
      },
      "type:approval_letter": {
       "n": 560,
-      "accuracy": 0.891,
-      "precision": 0.973,
-      "coverage": 0.916,
-      "silent_error": 0.025,
-      "doc_ok": 0.607,
+      "accuracy": 0.893,
+      "precision": 0.977,
+      "coverage": 0.914,
+      "silent_error": 0.021,
+      "doc_ok": 0.643,
       "docs": 56
      },
      "cond:fax": {
       "n": 546,
-      "accuracy": 0.839,
-      "precision": 0.962,
-      "coverage": 0.872,
-      "silent_error": 0.033,
-      "doc_ok": 0.327,
+      "accuracy": 0.848,
+      "precision": 0.965,
+      "coverage": 0.879,
+      "silent_error": 0.031,
+      "doc_ok": 0.404,
       "docs": 52
      },
      "tmpl:a": {
       "n": 320,
-      "accuracy": 0.966,
-      "precision": 0.987,
+      "accuracy": 0.972,
+      "precision": 0.994,
       "coverage": 0.978,
-      "silent_error": 0.013
+      "silent_error": 0.006
      },
      "tmpl:c": {
       "n": 170,
-      "accuracy": 0.7,
-      "precision": 0.944,
-      "coverage": 0.741,
+      "accuracy": 0.706,
+      "precision": 0.945,
+      "coverage": 0.747,
       "silent_error": 0.041
      }
     },
-    "p50_latency_ms": 715,
+    "p50_latency_ms": 769,
     "tokens_in": 0,
     "tokens_out": 0
    }
@@ -245,7 +250,7 @@
    "runs": 6,
    "verified_submit_rate": 1.0,
    "mean_smoothness": 98.0,
-   "p50_duration_s": 3.81,
+   "p50_duration_s": 2.83,
    "mean_steps": 16.7,
    "runs_with_major_qa_issue": 0
   },
@@ -253,7 +258,7 @@
    "runs": 34,
    "verified_submit_rate": 1.0,
    "mean_smoothness": 98.4,
-   "p50_duration_s": 1.98,
+   "p50_duration_s": 1.15,
    "mean_steps": 19.0,
    "runs_with_major_qa_issue": 0
   },
@@ -261,7 +266,7 @@
    "runs": 34,
    "verified_submit_rate": 1.0,
    "mean_smoothness": 98.4,
-   "p50_duration_s": 1.98,
+   "p50_duration_s": 1.15,
    "mean_steps": 19.0,
    "runs_with_major_qa_issue": 0
   },
@@ -269,7 +274,7 @@
    "runs": 13,
    "verified_submit_rate": 1.0,
    "mean_smoothness": 97.1,
-   "p50_duration_s": 2.21,
+   "p50_duration_s": 1.23,
    "mean_steps": 24.4,
    "runs_with_major_qa_issue": 0
   },
@@ -277,7 +282,7 @@
    "runs": 15,
    "verified_submit_rate": 1.0,
    "mean_smoothness": 99.6,
-   "p50_duration_s": 1.25,
+   "p50_duration_s": 0.68,
    "mean_steps": 15.2,
    "runs_with_major_qa_issue": 0
   },
@@ -365,7 +370,7 @@
  "fhir": {
   "submitted": 10,
   "n": 10,
-  "p50_s": 0.02
+  "p50_s": 0.006
  },
  "ablations": {
   "overlay_guard_on": {

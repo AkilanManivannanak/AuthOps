@@ -28,17 +28,22 @@ Design rationale and the research it is based on: [docs/DESIGN.md](docs/DESIGN.m
 
 ## Results (offline run, 80 cases)
 
+Measured on macOS, Python 3.12.12, Tesseract 5.5.4. A Linux run with Tesseract 5.3.4 lands within
+0.5 points on every extraction metric, because the document fonts are bundled in the repo
+(`authops/synth/fonts`). Before bundling them, a machine without DejaVu fonts scored 79.5% instead of 91.8%:
+rendering, not the extractor, was the variable.
+
 See [reports/REPORT.md](reports/REPORT.md) for every table. Headline numbers from the offline
 configuration (rules extractor, deterministic playbook policy):
 
 | Area | Metric | Result |
 |---|---|---|
-| Extraction, rules baseline (160 docs, 1,680 fields) | field accuracy / precision when answered / silent error | 91.6% / 98.5% / 1.4% |
-| Extraction by image condition | accuracy clean / scan / fax | 96.8% / 93.8% / 83.9% |
-| Extraction, hardest template (dot-leader, monospace) | accuracy / coverage | 70.0% / 74.1% (it abstains instead of guessing: 94.4% precision) |
+| Extraction, rules baseline (160 docs, 1,680 fields) | field accuracy / precision when answered / silent error | 91.8% / 98.6% / 1.3% |
+| Extraction by image condition | accuracy clean / scan / fax | 96.3% / 94.2% / 84.8% |
+| Extraction, hardest template (dot-leader, monospace) | accuracy / coverage | 70.6% / 74.7% (it abstains instead of guessing: 94.5% precision) |
 | Document type classification | accuracy | 96.3% |
 | Validation (80 cases, 24 simulated payor denials) | denials caught before submission / false blocks | 24 of 24 / 0 |
-| Browser agents, 3 sandbox portals (34 runs) | verified submit rate / mean smoothness / p50 duration | 34 of 34 / 98.4 / 1.98 s |
+| Browser agents, 3 sandbox portals (34 runs) | verified submit rate / mean smoothness / p50 duration | 34 of 34 / 98.4 / 1.15 s |
 | Chaos survived in those runs | session kicks / 5xx retries / stale credential | 32 kicks, 503s retried, stale credential disabled before lockout |
 | Ablation: overlay guard off (8 runs) | submitted | 2 of 8 (vs 8 of 8 with the guard) |
 | Ablation: no consecutive-failure threshold (9 runs) | portal lockouts | 1 (vs 0 with threshold 2) |
