@@ -116,6 +116,23 @@ def main():
             w.writeheader()
             w.writerows(r for r in s["rows"] if not r["ok"])
     metrics["extraction"] = extraction
+
+    # 2b. trained confidence calibration (rules arm) ---------------------------
+    from authops.docintel.calibrate import risk_coverage_curve, save_model, train_and_evaluate
+
+    rules_outs = [RuleExtractor().extract(d["doc_id"], ocr_cache[d["doc_id"]], DocType(d["doc_type"]))
+                  for d in manifest]
+    rows = score(rules_outs, manifest)["rows"]
+    doc_meta = {d["doc_id"]: {"template": d["template"], "ocr_mean_conf": o.ocr_mean_conf or 0.0}
+                for d, o in zip(manifest, rules_outs)}
+    model, cal, held = train_and_evaluate(rows, doc_meta)
+    save_model(model, reports / "calibrator.json")
+    (reports / "risk_coverage.json").write_text(json.dumps({
+        "heuristic": risk_coverage_curve(held["heuristic"], held["labels"]),
+        "learned": risk_coverage_curve(held["learned"], held["labels"])}, indent=1))
+    (reports / "extraction_rows.json").write_text(json.dumps(
+        [dict(r, template=doc_meta[r["doc_id"]]["template"]) for r in rows], default=str))
+    metrics["calibration"] = cal.as_dict()
     print(f"[2/6] OCR + extraction on {len(manifest)} docs in {time.time() - t:.0f}s")
 
     # 3. pre-submission validation ---------------------------------------------
@@ -302,6 +319,16 @@ def write_report(m: dict, path: Path) -> None:
     fields = sorted(((k, v) for k, v in first.items() if k.startswith("field:")), key=lambda kv: kv[1]["accuracy"])
     for k, s in fields[:6]:
         L.append(f"| {k[6:]} | {pct(s['accuracy'])} | {pct(s['coverage'])} | {pct(s['silent_error'])} |")
+    c = m.get("calibration")
+    if c:
+        L += ["", "### Trained confidence calibration (held-out cases)", "",
+              f"Logistic model on inference-time signals, trained on {c['n_train']} fields, tested on {c['n_test']} "
+              f"fields from unseen cases.", "",
+              "| Score | AUROC (correct vs wrong) | Silent error at same coverage | Precision at same coverage |",
+              "|---|---|---|---|",
+              f"| Heuristic (OCR conf x validators) | {c['auroc_heuristic']:.3f} | {pct(c['silent_error_heuristic'])} | {pct(c['precision_heuristic'])} |",
+              f"| Learned calibrator | {c['auroc_learned']:.3f} | {pct(c['silent_error_learned'])} | {pct(c['precision_learned'])} |",
+              "", f"Coverage held at {pct(c['coverage'])} (the heuristic's own answer rate)."]
     v = m["validation"]
     L += ["", "## 2. Pre-submission validation (denial prevention)", "",
           f"- Payor denials in the simulated set: {v['payor_denials']} of {v['cases']} cases",

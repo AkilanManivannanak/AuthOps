@@ -1,0 +1,91 @@
+{
+ "name": "keystone_guard_off_failure",
+ "portal": "keystone",
+ "case_id": "PA-0003",
+ "guard": false,
+ "status": "failed",
+ "error_class": "timeout",
+ "smoothness": 66.0,
+ "steps": [
+  {
+   "idx": 1,
+   "kind": "tool",
+   "tool": "goto",
+   "args": {
+    "path": "/keystone/login"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "opened http://127.0.0.1:35935/keystone/login",
+   "url": "http://127.0.0.1:35935/keystone/login",
+   "counts": {},
+   "image": "step_01.jpg"
+  },
+  {
+   "idx": 2,
+   "kind": "tool",
+   "tool": "type_credential",
+   "args": {
+    "user_target": "User ID",
+    "pass_target": "Password",
+    "button": "Log in"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "clicked 'Log in'",
+   "url": "http://127.0.0.1:35935/keystone/portal",
+   "counts": {},
+   "image": "step_02.jpg"
+  },
+  {
+   "idx": 3,
+   "kind": "tool",
+   "tool": "wait",
+   "args": {
+    "ms": 1200
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "waited 1200ms",
+   "url": "http://127.0.0.1:35935/keystone/portal",
+   "counts": {},
+   "image": "step_03.jpg"
+  },
+  {
+   "idx": 4,
+   "kind": "tool",
+   "tool": "fill",
+   "args": {
+    "target": "Medicaid ID",
+    "value": "HBL-34127884"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "filled 'Medicaid ID'",
+   "url": "http://127.0.0.1:35935/keystone/portal",
+   "counts": {},
+   "image": "step_04.jpg"
+  },
+  {
+   "idx": 5,
+   "kind": "tool",
+   "tool": "pick_date",
+   "args": {
+    "target": "Member Date of Birth",
+    "iso": "1992-08-12"
+   },
+   "ok": false,
+   "error_class": "timeout",
+   "detail": "Locator.click: Timeout 30000ms exceeded.",
+   "url": "http://127.0.0.1:35935/keystone/portal",
+   "counts": {
+    "retry": 1
+   },
+   "image": "step_05.jpg"
+  }
+ ],
+ "duration_s": 62.6,
+ "ref": null,
+ "verified": false,
+ "note": "wall clock exceeded"
+}

@@ -1,5 +1,7 @@
 # AuthOps
 
+**Live app:** _add your Streamlit URL here after deploying_ · start at **Join the study** to test it.
+
 **Prior-authorization agent operations, end to end:** scanned documents in, validated cases out,
 submitted through a FHIR API, a browser agent or a phone agent, with experiments, QA review and
 metrics around every run.
@@ -51,6 +53,8 @@ configuration (rules extractor, deterministic playbook policy):
 | FHIR PA API (Da Vinci PAS shape) | submitted | 10 of 10 |
 | Phone agent (IVR, benefits + status) | calls completed | 24 of 24 |
 
+| Trained confidence calibrator (held-out cases) | AUROC learned vs heuristic | 0.963 vs 0.977: it beat the first heuristic (0.954 vs 0.905), then a scoring fix overtook it; kept for retraining on human labels |
+
 ### Bugs the harness caught in my own agent
 
 Each of these was found by a failing run in the step table, then fixed and re-run:
@@ -70,6 +74,32 @@ Each of these was found by a failing run in the step table, then fixed and re-ru
   rules know about. One payor policy change is planted that the rules do not know (Keystone PT
   limited to 20 visits); it only shows up when a case lands in that window.
 - Rendered documents are cleaner than real faxes (no handwriting, stamps or multi-column layouts).
+
+## The app
+
+An interactive Streamlit app puts every part of the system in front of a person:
+
+| Page | What you do |
+|---|---|
+| Command center | Count-up KPIs and flip cards that show how each number was measured |
+| Document Lab | Generate a letter or treatment plan (choose payor layout, outcome, clean/scan/fax), watch the AI read it with highlighted evidence, move the abstain threshold, correct the fields, and see AI vs you against ground truth |
+| Denial Shield | Build a request, watch the payor rules check it live, send it to the simulated payor, and hunt for the hidden policy change |
+| Agent Theater | Run the browser agent live on a sandbox portal with chaos sliders and safety toggles, or scrub through recorded runs step by step; diagnose a failed run |
+| QA Console | Grade extracted fields against the document; your verdicts are scored against truth and other reviewers (Cohen's kappa) |
+| Autonomy Ramp | Plant a portal regression and watch the QA gate catch it versus a fixed QA share |
+| Playbook Studio | Edit a portal's executable plan and backtest it live |
+| Phone Agent | Watch an IVR call, or play the payor rep yourself |
+| FHIR and channels | CMS-0057-F timeline, routing decision, PAS bundle, live submit |
+| Study and evidence | Every usage number computed from real tester activity, plus a claim builder |
+
+Run locally: `streamlit run streamlit_app.py`.
+
+### Deploy to Streamlit Community Cloud
+1. share.streamlit.io, New app, pick this repo, branch `main`, main file `streamlit_app.py`.
+2. `packages.txt` installs Tesseract and Chromium; `requirements.txt` installs the rest.
+3. Settings, Secrets: add `DATABASE_URL` (free Neon or Supabase Postgres) so tester data survives redeploys,
+   `ADMIN_KEY` for the CSV export, and optionally `ANTHROPIC_API_KEY`. See `.streamlit/secrets.toml.example`.
+4. Follow [docs/USER_STUDY.md](docs/USER_STUDY.md) to invite testers. Only claim what the Study page computes.
 
 ## Run it
 

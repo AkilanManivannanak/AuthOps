@@ -1,0 +1,309 @@
+{
+ "name": "keystone_aba_iframe_calendar",
+ "portal": "keystone",
+ "case_id": "PA-0002",
+ "guard": true,
+ "status": "submitted",
+ "error_class": "",
+ "smoothness": 98.0,
+ "steps": [
+  {
+   "idx": 1,
+   "kind": "tool",
+   "tool": "goto",
+   "args": {
+    "path": "/keystone/login"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "opened http://127.0.0.1:56669/keystone/login",
+   "url": "http://127.0.0.1:56669/keystone/login",
+   "counts": {},
+   "image": "step_01.jpg"
+  },
+  {
+   "idx": 2,
+   "kind": "tool",
+   "tool": "type_credential",
+   "args": {
+    "user_target": "User ID",
+    "pass_target": "Password",
+    "button": "Log in"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "clicked 'Log in'",
+   "url": "http://127.0.0.1:56669/keystone/portal",
+   "counts": {},
+   "image": "step_02.jpg"
+  },
+  {
+   "idx": 3,
+   "kind": "tool",
+   "tool": "wait",
+   "args": {
+    "ms": 1200
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "waited 1200ms",
+   "url": "http://127.0.0.1:56669/keystone/portal",
+   "counts": {},
+   "image": "step_03.jpg"
+  },
+  {
+   "idx": 4,
+   "kind": "guard",
+   "tool": "dismiss_overlays",
+   "args": {},
+   "ok": true,
+   "error_class": "",
+   "detail": "dismissed 1 overlay(s)",
+   "url": "http://127.0.0.1:56669/keystone/portal",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_04.jpg"
+  },
+  {
+   "idx": 5,
+   "kind": "tool",
+   "tool": "fill",
+   "args": {
+    "target": "Medicaid ID",
+    "value": "KCM-66255890"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "filled 'Medicaid ID'",
+   "url": "http://127.0.0.1:56669/keystone/portal",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_05.jpg"
+  },
+  {
+   "idx": 6,
+   "kind": "tool",
+   "tool": "pick_date",
+   "args": {
+    "target": "Member Date of Birth",
+    "iso": "2008-09-28"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "picked 2008-09-28 on calendar",
+   "url": "http://127.0.0.1:56669/keystone/portal",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_06.jpg"
+  },
+  {
+   "idx": 7,
+   "kind": "tool",
+   "tool": "select",
+   "args": {
+    "target": "Service Category",
+    "value": "aba"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "selected 'aba' in 'Service Category'",
+   "url": "http://127.0.0.1:56669/keystone/portal",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_07.jpg"
+  },
+  {
+   "idx": 8,
+   "kind": "tool",
+   "tool": "fill",
+   "args": {
+    "target": "Procedure Codes",
+    "value": "97156"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "filled 'Procedure Codes'",
+   "url": "http://127.0.0.1:56669/keystone/portal",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_08.jpg"
+  },
+  {
+   "idx": 9,
+   "kind": "tool",
+   "tool": "fill",
+   "args": {
+    "target": "Primary and Secondary Diagnosis",
+    "value": "F84.0, F88"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "filled 'Primary and Secondary Diagnosis'",
+   "url": "http://127.0.0.1:56669/keystone/portal",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_09.jpg"
+  },
+  {
+   "idx": 10,
+   "kind": "tool",
+   "tool": "fill",
+   "args": {
+    "target": "Total Units",
+    "value": "185"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "filled 'Total Units'",
+   "url": "http://127.0.0.1:56669/keystone/portal",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_10.jpg"
+  },
+  {
+   "idx": 11,
+   "kind": "tool",
+   "tool": "pick_date",
+   "args": {
+    "target": "Service From",
+    "iso": "2026-11-24"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "picked 2026-11-24 on calendar",
+   "url": "http://127.0.0.1:56669/keystone/portal",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_11.jpg"
+  },
+  {
+   "idx": 12,
+   "kind": "tool",
+   "tool": "pick_date",
+   "args": {
+    "target": "Service Through",
+    "iso": "2027-05-23"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "picked 2027-05-23 on calendar",
+   "url": "http://127.0.0.1:56669/keystone/portal",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_12.jpg"
+  },
+  {
+   "idx": 13,
+   "kind": "tool",
+   "tool": "fill",
+   "args": {
+    "target": "Servicing Provider NPI",
+    "value": "1194821991"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "filled 'Servicing Provider NPI'",
+   "url": "http://127.0.0.1:56669/keystone/portal",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_13.jpg"
+  },
+  {
+   "idx": 14,
+   "kind": "tool",
+   "tool": "answer",
+   "args": {
+    "target": "Is a school schedule attached?",
+    "kind": "select"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "selected 'yes' in 'Is a school schedule attached?' (answer 'yes' from intake: school_schedule_attached)",
+   "url": "http://127.0.0.1:56669/keystone/portal",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_14.jpg"
+  },
+  {
+   "idx": 15,
+   "kind": "tool",
+   "tool": "answer",
+   "args": {
+    "target": "Requested hours on school days",
+    "kind": "fill"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "filled 'Requested hours on school days' (answer '25 hrs/week' from treatment plan: Frequency)",
+   "url": "http://127.0.0.1:56669/keystone/portal",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_15.jpg"
+  },
+  {
+   "idx": 16,
+   "kind": "tool",
+   "tool": "upload",
+   "args": {
+    "target": "Attachments",
+    "files": [
+     "/home/claude/gh_authops/data/docs/PA-0002_treatment_plan.pdf"
+    ]
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "attached 1 file(s) to 'Attachments'",
+   "url": "http://127.0.0.1:56669/keystone/portal",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_16.jpg"
+  },
+  {
+   "idx": 17,
+   "kind": "tool",
+   "tool": "click",
+   "args": {
+    "target": "Submit Authorization"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "clicked 'Submit Authorization'",
+   "url": "http://127.0.0.1:56669/keystone/portal",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_17.jpg"
+  },
+  {
+   "idx": 18,
+   "kind": "tool",
+   "tool": "read_confirmation",
+   "args": {},
+   "ok": true,
+   "error_class": "",
+   "detail": "confirmation KC-349523",
+   "url": "http://127.0.0.1:56669/keystone/portal",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_18.jpg"
+  }
+ ],
+ "duration_s": 4.6,
+ "ref": "KC-349523",
+ "verified": true,
+ "note": "ref KC-349523"
+}

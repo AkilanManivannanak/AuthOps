@@ -18,6 +18,7 @@ from __future__ import annotations
 import json
 import re
 import time
+from datetime import date as _date
 from concurrent.futures import ThreadPoolExecutor
 from typing import Protocol
 
@@ -120,7 +121,15 @@ class RuleExtractor:
             if value in (None, "", []):
                 f[name] = FieldValue(value=None, confidence=0.0, abstained=True)
                 return
-            conf = min(1.0, ocr.conf_for(" ".join(value) if isinstance(value, list) else value)) * validity
+            src = " ".join(value) if isinstance(value, list) else value
+            if isinstance(value, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+                # score a date by the tokens OCR actually read, in whichever format the page used
+                d = _date.fromisoformat(value)
+                for cand in (d.strftime("%m/%d/%Y"), value, f"{d.strftime('%B')} {d.day}, {d.year}"):
+                    if all(tok.strip(".,:;").upper() in ocr.word_conf for tok in cand.replace(",", " ").split()):
+                        src = cand
+                        break
+            conf = min(1.0, ocr.conf_for(src)) * validity
             f[name] = FieldValue(value=value, confidence=round(conf, 3), evidence=evidence,
                                  abstained=conf < ABSTAIN_BELOW)
 

@@ -59,8 +59,8 @@ class PlaybookPolicy:
     name = "playbook"
     model = None
 
-    def __init__(self, portal: str):
-        spec = yaml.safe_load((PLAYBOOK_DIR / f"{portal}.yaml").read_text())
+    def __init__(self, portal: str, spec: dict | None = None):
+        spec = spec or yaml.safe_load((PLAYBOOK_DIR / f"{portal}.yaml").read_text())
         self.portal = portal
         self.start = spec["start"]
         self.expected_steps = spec.get("expected_steps", 20)

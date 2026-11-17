@@ -1,0 +1,216 @@
+{
+ "heuristic": [
+  {
+   "coverage": 0.05,
+   "silent_error": 0.0,
+   "precision": 1.0
+  },
+  {
+   "coverage": 0.098,
+   "silent_error": 0.0,
+   "precision": 1.0
+  },
+  {
+   "coverage": 0.145,
+   "silent_error": 0.0,
+   "precision": 1.0
+  },
+  {
+   "coverage": 0.193,
+   "silent_error": 0.0,
+   "precision": 1.0
+  },
+  {
+   "coverage": 0.24,
+   "silent_error": 0.0,
+   "precision": 1.0
+  },
+  {
+   "coverage": 0.287,
+   "silent_error": 0.0,
+   "precision": 1.0
+  },
+  {
+   "coverage": 0.335,
+   "silent_error": 0.0,
+   "precision": 1.0
+  },
+  {
+   "coverage": 0.383,
+   "silent_error": 0.0,
+   "precision": 1.0
+  },
+  {
+   "coverage": 0.43,
+   "silent_error": 0.0,
+   "precision": 1.0
+  },
+  {
+   "coverage": 0.477,
+   "silent_error": 0.0,
+   "precision": 1.0
+  },
+  {
+   "coverage": 0.525,
+   "silent_error": 0.0,
+   "precision": 1.0
+  },
+  {
+   "coverage": 0.573,
+   "silent_error": 0.0,
+   "precision": 1.0
+  },
+  {
+   "coverage": 0.62,
+   "silent_error": 0.0,
+   "precision": 1.0
+  },
+  {
+   "coverage": 0.668,
+   "silent_error": 0.003,
+   "precision": 0.9954
+  },
+  {
+   "coverage": 0.715,
+   "silent_error": 0.0046,
+   "precision": 0.9936
+  },
+  {
+   "coverage": 0.763,
+   "silent_error": 0.0061,
+   "precision": 0.992
+  },
+  {
+   "coverage": 0.81,
+   "silent_error": 0.0061,
+   "precision": 0.9925
+  },
+  {
+   "coverage": 0.858,
+   "silent_error": 0.0076,
+   "precision": 0.9911
+  },
+  {
+   "coverage": 0.905,
+   "silent_error": 0.0137,
+   "precision": 0.9848
+  },
+  {
+   "coverage": 0.953,
+   "silent_error": 0.0427,
+   "precision": 0.9552
+  },
+  {
+   "coverage": 1.0,
+   "silent_error": 0.0899,
+   "precision": 0.9101
+  }
+ ],
+ "learned": [
+  {
+   "coverage": 0.05,
+   "silent_error": 0.0,
+   "precision": 1.0
+  },
+  {
+   "coverage": 0.098,
+   "silent_error": 0.0,
+   "precision": 1.0
+  },
+  {
+   "coverage": 0.145,
+   "silent_error": 0.0015,
+   "precision": 0.9895
+  },
+  {
+   "coverage": 0.193,
+   "silent_error": 0.0015,
+   "precision": 0.9921
+  },
+  {
+   "coverage": 0.24,
+   "silent_error": 0.0015,
+   "precision": 0.9936
+  },
+  {
+   "coverage": 0.287,
+   "silent_error": 0.0015,
+   "precision": 0.9947
+  },
+  {
+   "coverage": 0.335,
+   "silent_error": 0.0015,
+   "precision": 0.9955
+  },
+  {
+   "coverage": 0.383,
+   "silent_error": 0.0015,
+   "precision": 0.996
+  },
+  {
+   "coverage": 0.43,
+   "silent_error": 0.0015,
+   "precision": 0.9965
+  },
+  {
+   "coverage": 0.477,
+   "silent_error": 0.0015,
+   "precision": 0.9968
+  },
+  {
+   "coverage": 0.525,
+   "silent_error": 0.0015,
+   "precision": 0.9971
+  },
+  {
+   "coverage": 0.573,
+   "silent_error": 0.0015,
+   "precision": 0.9973
+  },
+  {
+   "coverage": 0.62,
+   "silent_error": 0.0015,
+   "precision": 0.9975
+  },
+  {
+   "coverage": 0.668,
+   "silent_error": 0.0015,
+   "precision": 0.9977
+  },
+  {
+   "coverage": 0.715,
+   "silent_error": 0.0046,
+   "precision": 0.9936
+  },
+  {
+   "coverage": 0.763,
+   "silent_error": 0.0076,
+   "precision": 0.99
+  },
+  {
+   "coverage": 0.81,
+   "silent_error": 0.0076,
+   "precision": 0.9906
+  },
+  {
+   "coverage": 0.858,
+   "silent_error": 0.0107,
+   "precision": 0.9876
+  },
+  {
+   "coverage": 0.905,
+   "silent_error": 0.0152,
+   "precision": 0.9832
+  },
+  {
+   "coverage": 0.953,
+   "silent_error": 0.0427,
+   "precision": 0.9552
+  },
+  {
+   "coverage": 1.0,
+   "silent_error": 0.0899,
+   "precision": 0.9101
+  }
+ ]
+}

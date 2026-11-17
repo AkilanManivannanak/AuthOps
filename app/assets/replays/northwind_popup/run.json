@@ -1,0 +1,277 @@
+{
+ "name": "northwind_popup",
+ "portal": "northwind",
+ "case_id": "PA-0001",
+ "guard": true,
+ "status": "submitted",
+ "error_class": "",
+ "smoothness": 98.0,
+ "steps": [
+  {
+   "idx": 1,
+   "kind": "tool",
+   "tool": "goto",
+   "args": {
+    "path": "/northwind/login"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "opened http://127.0.0.1:35565/northwind/login",
+   "url": "http://127.0.0.1:35565/northwind/login",
+   "counts": {},
+   "image": "step_01.jpg"
+  },
+  {
+   "idx": 2,
+   "kind": "tool",
+   "tool": "type_credential",
+   "args": {
+    "user_target": "Username",
+    "pass_target": "Password",
+    "button": "Sign in"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "clicked 'Sign in'",
+   "url": "http://127.0.0.1:35565/northwind/home",
+   "counts": {},
+   "image": "step_02.jpg"
+  },
+  {
+   "idx": 3,
+   "kind": "guard",
+   "tool": "dismiss_overlays",
+   "args": {},
+   "ok": true,
+   "error_class": "",
+   "detail": "dismissed 1 overlay(s)",
+   "url": "http://127.0.0.1:35565/northwind/home",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_03.jpg"
+  },
+  {
+   "idx": 4,
+   "kind": "tool",
+   "tool": "click",
+   "args": {
+    "target": "New Prior Authorization"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "clicked 'New Prior Authorization'",
+   "url": "http://127.0.0.1:35565/northwind/new",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_04.jpg"
+  },
+  {
+   "idx": 5,
+   "kind": "tool",
+   "tool": "fill",
+   "args": {
+    "target": "Member ID",
+    "value": "KCM59081935"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "filled 'Member ID'",
+   "url": "http://127.0.0.1:35565/northwind/new",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_05.jpg"
+  },
+  {
+   "idx": 6,
+   "kind": "tool",
+   "tool": "pick_date",
+   "args": {
+    "target": "Patient Date of Birth",
+    "iso": "1980-11-02"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "set date 1980-11-02",
+   "url": "http://127.0.0.1:35565/northwind/new",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_06.jpg"
+  },
+  {
+   "idx": 7,
+   "kind": "tool",
+   "tool": "select",
+   "args": {
+    "target": "Service Type",
+    "value": "physical_therapy"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "selected 'physical_therapy' in 'Service Type'",
+   "url": "http://127.0.0.1:35565/northwind/new",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_07.jpg"
+  },
+  {
+   "idx": 8,
+   "kind": "tool",
+   "tool": "fill",
+   "args": {
+    "target": "CPT Codes",
+    "value": "97530"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "filled 'CPT Codes'",
+   "url": "http://127.0.0.1:35565/northwind/new",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_08.jpg"
+  },
+  {
+   "idx": 9,
+   "kind": "tool",
+   "tool": "fill",
+   "args": {
+    "target": "Diagnosis Codes",
+    "value": "M54.50"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "filled 'Diagnosis Codes'",
+   "url": "http://127.0.0.1:35565/northwind/new",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_09.jpg"
+  },
+  {
+   "idx": 10,
+   "kind": "tool",
+   "tool": "fill",
+   "args": {
+    "target": "Units Requested",
+    "value": "28"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "filled 'Units Requested'",
+   "url": "http://127.0.0.1:35565/northwind/new",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_10.jpg"
+  },
+  {
+   "idx": 11,
+   "kind": "tool",
+   "tool": "pick_date",
+   "args": {
+    "target": "Start Date",
+    "iso": "2026-12-08"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "set date 2026-12-08",
+   "url": "http://127.0.0.1:35565/northwind/new",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_11.jpg"
+  },
+  {
+   "idx": 12,
+   "kind": "tool",
+   "tool": "pick_date",
+   "args": {
+    "target": "End Date",
+    "iso": "2027-03-08"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "set date 2027-03-08",
+   "url": "http://127.0.0.1:35565/northwind/new",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_12.jpg"
+  },
+  {
+   "idx": 13,
+   "kind": "tool",
+   "tool": "fill",
+   "args": {
+    "target": "Rendering Provider NPI",
+    "value": "1830166132"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "filled 'Rendering Provider NPI'",
+   "url": "http://127.0.0.1:35565/northwind/new",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_13.jpg"
+  },
+  {
+   "idx": 14,
+   "kind": "tool",
+   "tool": "upload",
+   "args": {
+    "target": "Clinical Documents",
+    "files": [
+     "/home/claude/gh_authops/data/docs/PA-0001_treatment_plan.pdf"
+    ]
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "attached 1 file(s) to 'Clinical Documents'",
+   "url": "http://127.0.0.1:35565/northwind/new",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_14.jpg"
+  },
+  {
+   "idx": 15,
+   "kind": "tool",
+   "tool": "click",
+   "args": {
+    "target": "Submit Request"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "clicked 'Submit Request'",
+   "url": "http://127.0.0.1:35565/northwind/new",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_15.jpg"
+  },
+  {
+   "idx": 16,
+   "kind": "tool",
+   "tool": "read_confirmation",
+   "args": {},
+   "ok": true,
+   "error_class": "",
+   "detail": "confirmation NW-670665",
+   "url": "http://127.0.0.1:35565/northwind/new",
+   "counts": {
+    "guard": 1
+   },
+   "image": "step_16.jpg"
+  }
+ ],
+ "duration_s": 1.97,
+ "ref": "NW-670665",
+ "verified": true,
+ "note": "ref NW-670665"
+}

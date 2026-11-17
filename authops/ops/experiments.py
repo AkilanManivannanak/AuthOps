@@ -53,9 +53,10 @@ class RampState:
 
 class QARamp:
     def __init__(self, window: int = 8, floor: float = 0.1, step: float = 0.3,
-                 min_success: float = 0.9, min_smooth: float = 80.0, seed: int = 5):
+                 min_success: float = 0.9, min_smooth: float = 80.0, seed: int = 5, max_silent: int = 0):
         self.window, self.floor, self.step = window, floor, step
         self.min_success, self.min_smooth = min_success, min_smooth
+        self.max_silent = max_silent  # silent errors tolerated per window before the share goes back up
         self.state: dict[str, RampState] = {}
         self.rng = random.Random(seed)
 
@@ -73,9 +74,9 @@ class QARamp:
         sm = sum(r["smooth"] for r in w) / len(w)
         se = sum(r["silent_error"] for r in w)
         before = st.qa_share
-        if sr >= self.min_success and sm >= self.min_smooth and se == 0:
+        if sr >= self.min_success and sm >= self.min_smooth and se <= self.max_silent:
             st.qa_share = max(self.floor, round(st.qa_share - self.step, 2))
-        elif sr < self.min_success - 0.15 or se > 0:
+        elif sr < self.min_success - 0.15 or se > self.max_silent:
             st.qa_share = min(1.0, round(st.qa_share + 2 * self.step, 2))
         st.log.append(f"after {len(st.history)} runs: success {sr:.2f}, smoothness {sm:.0f}, "
                       f"silent errors {se} -> QA share {before:.2f} -> {st.qa_share:.2f}")

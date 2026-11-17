@@ -1,0 +1,435 @@
+{
+ "name": "summit_mfa_503_retry",
+ "portal": "summit",
+ "case_id": "PA-0002",
+ "guard": true,
+ "status": "submitted",
+ "error_class": "",
+ "smoothness": 90.0,
+ "steps": [
+  {
+   "idx": 1,
+   "kind": "tool",
+   "tool": "goto",
+   "args": {
+    "path": "/summit/login"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "opened http://127.0.0.1:34655/summit/login",
+   "url": "http://127.0.0.1:34655/summit/login",
+   "counts": {},
+   "image": "step_01.jpg"
+  },
+  {
+   "idx": 2,
+   "kind": "tool",
+   "tool": "type_credential",
+   "args": {
+    "user_target": "Login ID",
+    "pass_target": "Password",
+    "button": "Continue"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "clicked 'Continue'",
+   "url": "http://127.0.0.1:34655/summit/mfa",
+   "counts": {},
+   "image": "step_02.jpg"
+  },
+  {
+   "idx": 3,
+   "kind": "tool",
+   "tool": "enter_totp",
+   "args": {
+    "target": "Verification code",
+    "button": "Verify"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "entered TOTP code and submitted",
+   "url": "http://127.0.0.1:34655/summit/dashboard",
+   "counts": {},
+   "image": "step_03.jpg"
+  },
+  {
+   "idx": 4,
+   "kind": "tool",
+   "tool": "click",
+   "args": {
+    "target": "Start a new request"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "clicked 'Start a new request'",
+   "url": "http://127.0.0.1:34655/summit/request/1",
+   "counts": {},
+   "image": "step_04.jpg"
+  },
+  {
+   "idx": 5,
+   "kind": "tool",
+   "tool": "fill",
+   "args": {
+    "target": "Member Number",
+    "value": "KCM66255890"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "filled 'Member Number'",
+   "url": "http://127.0.0.1:34655/summit/request/1",
+   "counts": {},
+   "image": "step_05.jpg"
+  },
+  {
+   "idx": 6,
+   "kind": "tool",
+   "tool": "fill",
+   "args": {
+    "target": "Member Last Name",
+    "value": "Abernathy"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "filled 'Member Last Name'",
+   "url": "http://127.0.0.1:34655/summit/request/1",
+   "counts": {},
+   "image": "step_06.jpg"
+  },
+  {
+   "idx": 7,
+   "kind": "tool",
+   "tool": "click",
+   "args": {
+    "target": "Find member"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "clicked 'Find member'",
+   "url": "http://127.0.0.1:34655/summit/request/2",
+   "counts": {},
+   "image": "step_07.jpg"
+  },
+  {
+   "idx": 8,
+   "kind": "tool",
+   "tool": "check",
+   "args": {
+    "target": "97156"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "checked '97156'",
+   "url": "http://127.0.0.1:34655/summit/request/2",
+   "counts": {},
+   "image": "step_08.jpg"
+  },
+  {
+   "idx": 9,
+   "kind": "tool",
+   "tool": "fill",
+   "args": {
+    "target": "Diagnosis codes",
+    "value": "F84.0, F88"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "filled 'Diagnosis codes'",
+   "url": "http://127.0.0.1:34655/summit/request/2",
+   "counts": {},
+   "image": "step_09.jpg"
+  },
+  {
+   "idx": 10,
+   "kind": "tool",
+   "tool": "fill",
+   "args": {
+    "target": "Quantity",
+    "value": "185"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "filled 'Quantity'",
+   "url": "http://127.0.0.1:34655/summit/request/2",
+   "counts": {},
+   "image": "step_10.jpg"
+  },
+  {
+   "idx": 11,
+   "kind": "tool",
+   "tool": "fill",
+   "args": {
+    "target": "From date",
+    "value": "11/24/2026"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "filled 'From date'",
+   "url": "http://127.0.0.1:34655/summit/request/2",
+   "counts": {},
+   "image": "step_11.jpg"
+  },
+  {
+   "idx": 12,
+   "kind": "tool",
+   "tool": "fill",
+   "args": {
+    "target": "To date",
+    "value": "05/23/2027"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "filled 'To date'",
+   "url": "http://127.0.0.1:34655/summit/request/2",
+   "counts": {},
+   "image": "step_12.jpg"
+  },
+  {
+   "idx": 13,
+   "kind": "tool",
+   "tool": "fill",
+   "args": {
+    "target": "Rendering NPI",
+    "value": "1194821991"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "filled 'Rendering NPI'",
+   "url": "http://127.0.0.1:34655/summit/request/2",
+   "counts": {},
+   "image": "step_13.jpg"
+  },
+  {
+   "idx": 14,
+   "kind": "tool",
+   "tool": "answer",
+   "args": {
+    "target": "Is this a continuation of an existing authorization?",
+    "kind": "select"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "selected 'no' in 'Is this a continuation of an existing authorization?' (answer 'no' from intake: no prior auth on file)",
+   "url": "http://127.0.0.1:34655/summit/request/2",
+   "counts": {},
+   "image": "step_14.jpg"
+  },
+  {
+   "idx": 15,
+   "kind": "tool",
+   "tool": "answer",
+   "args": {
+    "target": "Is the member currently admitted inpatient?",
+    "kind": "select"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "selected 'No' in 'Is the member currently admitted inpatient?' (answer 'No' from intake: outpatient services)",
+   "url": "http://127.0.0.1:34655/summit/request/2",
+   "counts": {},
+   "image": "step_15.jpg"
+  },
+  {
+   "idx": 16,
+   "kind": "tool",
+   "tool": "click",
+   "args": {
+    "target": "Next"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "clicked 'Next'",
+   "url": "http://127.0.0.1:34655/summit/request/3",
+   "counts": {},
+   "image": "step_16.jpg"
+  },
+  {
+   "idx": 17,
+   "kind": "tool",
+   "tool": "upload",
+   "args": {
+    "target": "Document 1",
+    "files": [
+     "/home/claude/gh_authops/data/docs/PA-0002_treatment_plan.pdf"
+    ]
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "attached 1 file(s) to 'Document 1'",
+   "url": "http://127.0.0.1:34655/summit/request/3",
+   "counts": {},
+   "image": "step_17.jpg"
+  },
+  {
+   "idx": 18,
+   "kind": "tool",
+   "tool": "select",
+   "args": {
+    "target": "Document 1 type",
+    "value": "treatment_plan"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "selected 'treatment_plan' in 'Document 1 type'",
+   "url": "http://127.0.0.1:34655/summit/request/3",
+   "counts": {},
+   "image": "step_18.jpg"
+  },
+  {
+   "idx": 19,
+   "kind": "tool",
+   "tool": "click",
+   "args": {
+    "target": "Next"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "clicked 'Next'",
+   "url": "http://127.0.0.1:34655/summit/request/4",
+   "counts": {},
+   "image": "step_19.jpg"
+  },
+  {
+   "idx": 20,
+   "kind": "tool",
+   "tool": "check",
+   "args": {
+    "target": "attest"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "checked 'attest'",
+   "url": "http://127.0.0.1:34655/summit/request/4",
+   "counts": {},
+   "image": "step_20.jpg"
+  },
+  {
+   "idx": 21,
+   "kind": "tool",
+   "tool": "click",
+   "args": {
+    "target": "Submit request"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "clicked 'Submit request'",
+   "url": "http://127.0.0.1:34655/summit/request/4",
+   "counts": {},
+   "image": "step_21.jpg"
+  },
+  {
+   "idx": 22,
+   "kind": "guard",
+   "tool": "backoff_resubmit",
+   "args": {
+    "attempt": 1
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "went back to resubmit",
+   "url": "http://127.0.0.1:34655/summit/request/4",
+   "counts": {
+    "retry": 1
+   },
+   "image": "step_22.jpg"
+  },
+  {
+   "idx": 23,
+   "kind": "tool",
+   "tool": "check",
+   "args": {
+    "target": "attest"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "checked 'attest'",
+   "url": "http://127.0.0.1:34655/summit/request/4",
+   "counts": {
+    "retry": 1
+   },
+   "image": "step_23.jpg"
+  },
+  {
+   "idx": 24,
+   "kind": "tool",
+   "tool": "click",
+   "args": {
+    "target": "Submit request"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "clicked 'Submit request'",
+   "url": "http://127.0.0.1:34655/summit/request/4",
+   "counts": {
+    "retry": 1
+   },
+   "image": "step_24.jpg"
+  },
+  {
+   "idx": 25,
+   "kind": "guard",
+   "tool": "backoff_resubmit",
+   "args": {
+    "attempt": 2
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "went back to resubmit",
+   "url": "http://127.0.0.1:34655/summit/request/4",
+   "counts": {
+    "retry": 2
+   },
+   "image": "step_25.jpg"
+  },
+  {
+   "idx": 26,
+   "kind": "tool",
+   "tool": "check",
+   "args": {
+    "target": "attest"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "checked 'attest'",
+   "url": "http://127.0.0.1:34655/summit/request/4",
+   "counts": {
+    "retry": 2
+   },
+   "image": "step_26.jpg"
+  },
+  {
+   "idx": 27,
+   "kind": "tool",
+   "tool": "click",
+   "args": {
+    "target": "Submit request"
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "clicked 'Submit request'",
+   "url": "http://127.0.0.1:34655/summit/request/4",
+   "counts": {
+    "retry": 2
+   },
+   "image": "step_27.jpg"
+  },
+  {
+   "idx": 28,
+   "kind": "tool",
+   "tool": "read_confirmation",
+   "args": {},
+   "ok": true,
+   "error_class": "",
+   "detail": "confirmation SFB-T-756115",
+   "url": "http://127.0.0.1:34655/summit/request/4",
+   "counts": {
+    "retry": 2
+   },
+   "image": "step_28.jpg"
+  }
+ ],
+ "duration_s": 6.38,
+ "ref": "SFB-T-756115",
+ "verified": true,
+ "note": "ref SFB-T-756115"
+}

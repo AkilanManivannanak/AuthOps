@@ -19,6 +19,7 @@ class OCRWord:
     text: str
     conf: float
     line_key: tuple
+    box: tuple = (0, 0, 0, 0)  # left, top, width, height in page pixels
 
 
 @dataclass
@@ -68,7 +69,7 @@ def ocr_image(img: Image.Image) -> OCRPage:
         if not tok or conf < 0:
             continue
         key = (data["block_num"][i], data["par_num"][i], data["line_num"][i])
-        words.append(OCRWord(tok, conf, key))
+        words.append(OCRWord(tok, conf, key, (data["left"][i], data["top"][i], data["width"][i], data["height"][i])))
         lines.setdefault(key, []).append(tok)
     text = "\n".join(" ".join(v) for v in lines.values())
     mean = sum(w.conf for w in words) / len(words) if words else 0.0

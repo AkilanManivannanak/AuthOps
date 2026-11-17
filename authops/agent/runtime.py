@@ -76,7 +76,8 @@ class AgentRuntime:
         self.overlay_guard = overlay_guard  # ablation switch
 
     def run(self, case: dict, portal: str, policy, files: list[str], arm: str = "default",
-            qa_routed: bool = False) -> RunResult:
+            qa_routed: bool = False, on_step=None) -> RunResult:
+        """`on_step(step_dict, jpeg_bytes)` is called after every persisted step (used by the UI)."""
         run_id = uuid.uuid4().hex[:10]
         res = RunResult(run_id, case["case_id"], portal, arm)
         c = res.counts
@@ -105,6 +106,14 @@ class AgentRuntime:
             self.store.step(run_id, step, kind, tool, args, r.ok, r.error_class, r.detail, page.url, dur)
             history.append({"tool": tool, "args": args, "ok": r.ok, "error_class": r.error_class,
                             "detail": r.detail})
+            if on_step is not None:
+                try:
+                    shot = page.screenshot(type="jpeg", quality=55)
+                except Exception:
+                    shot = None
+                on_step({"idx": step, "kind": kind, "tool": tool, "args": args, "ok": r.ok,
+                         "error_class": r.error_class, "detail": r.detail, "url": page.url,
+                         "counts": dict(c)}, shot)
 
         try:
             persist("tool", "goto", {"path": policy.start}, tools.goto(policy.start), 0)

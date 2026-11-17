@@ -1,0 +1,427 @@
+{
+ "generated": "2026-11-17 14:42",
+ "llm": false,
+ "cases": 80,
+ "env": {
+  "tesseract": "5.3.4",
+  "python": "3.13.18",
+  "os": "Linux"
+ },
+ "extraction": {
+  "classification_accuracy": 0.963,
+  "arms": {
+   "rules": {
+    "summary": {
+     "all": {
+      "n": 1680,
+      "accuracy": 0.916,
+      "precision": 0.985,
+      "coverage": 0.93,
+      "silent_error": 0.014,
+      "doc_ok": 0.662,
+      "docs": 160
+     },
+     "cond:clean": {
+      "n": 567,
+      "accuracy": 0.968,
+      "precision": 0.996,
+      "coverage": 0.972,
+      "silent_error": 0.004,
+      "doc_ok": 0.87,
+      "docs": 54
+     },
+     "tmpl:tp": {
+      "n": 880,
+      "accuracy": 0.928,
+      "precision": 0.993,
+      "coverage": 0.935,
+      "silent_error": 0.007
+     },
+     "field:patient_name": {
+      "n": 160,
+      "accuracy": 0.894,
+      "precision": 0.929,
+      "coverage": 0.963,
+      "silent_error": 0.069
+     },
+     "type:treatment_plan": {
+      "n": 880,
+      "accuracy": 0.928,
+      "precision": 0.993,
+      "coverage": 0.935,
+      "silent_error": 0.007,
+      "doc_ok": 0.688,
+      "docs": 80
+     },
+     "field:patient_dob": {
+      "n": 160,
+      "accuracy": 0.969,
+      "precision": 0.987,
+      "coverage": 0.981,
+      "silent_error": 0.013
+     },
+     "field:member_id": {
+      "n": 160,
+      "accuracy": 0.887,
+      "precision": 1.0,
+      "coverage": 0.887,
+      "silent_error": 0.0
+     },
+     "field:icd10_codes": {
+      "n": 80,
+      "accuracy": 0.863,
+      "precision": 0.945,
+      "coverage": 0.912,
+      "silent_error": 0.05
+     },
+     "field:cpt_codes": {
+      "n": 160,
+      "accuracy": 0.969,
+      "precision": 0.994,
+      "coverage": 0.975,
+      "silent_error": 0.006
+     },
+     "field:requested_units": {
+      "n": 80,
+      "accuracy": 0.887,
+      "precision": 1.0,
+      "coverage": 0.887,
+      "silent_error": 0.0
+     },
+     "field:plan_start": {
+      "n": 80,
+      "accuracy": 0.975,
+      "precision": 1.0,
+      "coverage": 0.975,
+      "silent_error": 0.0
+     },
+     "field:plan_end": {
+      "n": 80,
+      "accuracy": 0.975,
+      "precision": 1.0,
+      "coverage": 0.975,
+      "silent_error": 0.0
+     },
+     "field:provider_npi": {
+      "n": 160,
+      "accuracy": 0.812,
+      "precision": 1.0,
+      "coverage": 0.812,
+      "silent_error": 0.0
+     },
+     "field:signature_present": {
+      "n": 80,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "coverage": 1.0,
+      "silent_error": 0.0
+     },
+     "field:signature_date": {
+      "n": 80,
+      "accuracy": 0.875,
+      "precision": 1.0,
+      "coverage": 0.875,
+      "silent_error": 0.0
+     },
+     "tmpl:b": {
+      "n": 310,
+      "accuracy": 0.948,
+      "precision": 0.977,
+      "coverage": 0.971,
+      "silent_error": 0.023
+     },
+     "field:auth_number": {
+      "n": 80,
+      "accuracy": 0.775,
+      "precision": 0.925,
+      "coverage": 0.838,
+      "silent_error": 0.062
+     },
+     "type:denial_letter": {
+      "n": 240,
+      "accuracy": 0.929,
+      "precision": 0.982,
+      "coverage": 0.946,
+      "silent_error": 0.017,
+      "doc_ok": 0.708,
+      "docs": 24
+     },
+     "field:decision": {
+      "n": 80,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "coverage": 1.0,
+      "silent_error": 0.0
+     },
+     "field:approved_units": {
+      "n": 80,
+      "accuracy": 0.963,
+      "precision": 1.0,
+      "coverage": 0.963,
+      "silent_error": 0.0
+     },
+     "field:start_date": {
+      "n": 80,
+      "accuracy": 0.975,
+      "precision": 0.987,
+      "coverage": 0.988,
+      "silent_error": 0.013
+     },
+     "field:end_date": {
+      "n": 80,
+      "accuracy": 0.887,
+      "precision": 1.0,
+      "coverage": 0.887,
+      "silent_error": 0.0
+     },
+     "cond:scan": {
+      "n": 567,
+      "accuracy": 0.938,
+      "precision": 0.993,
+      "coverage": 0.945,
+      "silent_error": 0.007,
+      "doc_ok": 0.778,
+      "docs": 54
+     },
+     "type:approval_letter": {
+      "n": 560,
+      "accuracy": 0.891,
+      "precision": 0.973,
+      "coverage": 0.916,
+      "silent_error": 0.025,
+      "doc_ok": 0.607,
+      "docs": 56
+     },
+     "cond:fax": {
+      "n": 546,
+      "accuracy": 0.839,
+      "precision": 0.962,
+      "coverage": 0.872,
+      "silent_error": 0.033,
+      "doc_ok": 0.327,
+      "docs": 52
+     },
+     "tmpl:a": {
+      "n": 320,
+      "accuracy": 0.966,
+      "precision": 0.987,
+      "coverage": 0.978,
+      "silent_error": 0.013
+     },
+     "tmpl:c": {
+      "n": 170,
+      "accuracy": 0.7,
+      "precision": 0.944,
+      "coverage": 0.741,
+      "silent_error": 0.041
+     }
+    },
+    "p50_latency_ms": 760,
+    "tokens_in": 0,
+    "tokens_out": 0
+   }
+  }
+ },
+ "calibration": {
+  "n_train": 949,
+  "n_test": 656,
+  "auroc_heuristic": 0.9768,
+  "auroc_learned": 0.9627,
+  "coverage": 0.9329,
+  "silent_error_heuristic": 0.0229,
+  "silent_error_learned": 0.0229,
+  "precision_heuristic": 0.9755,
+  "precision_learned": 0.9755
+ },
+ "validation": {
+  "cases": 80,
+  "payor_denials": 24,
+  "caught_before_submission": 24,
+  "recall": 1.0,
+  "precision": 1.0,
+  "false_blocks": 0,
+  "missed": [],
+  "rule_hits": {
+   "units_within_payor_limit": 4,
+   "school_schedule_attached": 3,
+   "icd10_billable": 8,
+   "signature_present": 3,
+   "cpt_matches_specialty": 3,
+   "plan_not_expired": 3
+  }
+ },
+ "phone": {
+  "calls": 24,
+  "completed": 24,
+  "mean_turns": 5,
+  "member_id_repeats": 0
+ },
+ "agents": {
+  "portal:keystone": {
+   "runs": 6,
+   "verified_submit_rate": 1.0,
+   "mean_smoothness": 98.0,
+   "p50_duration_s": 3.55,
+   "mean_steps": 16.7,
+   "runs_with_major_qa_issue": 0
+  },
+  "arm:playbook": {
+   "runs": 34,
+   "verified_submit_rate": 1.0,
+   "mean_smoothness": 98.4,
+   "p50_duration_s": 1.81,
+   "mean_steps": 19.0,
+   "runs_with_major_qa_issue": 0
+  },
+  "all": {
+   "runs": 34,
+   "verified_submit_rate": 1.0,
+   "mean_smoothness": 98.4,
+   "p50_duration_s": 1.81,
+   "mean_steps": 19.0,
+   "runs_with_major_qa_issue": 0
+  },
+  "portal:summit": {
+   "runs": 13,
+   "verified_submit_rate": 1.0,
+   "mean_smoothness": 97.1,
+   "p50_duration_s": 1.97,
+   "mean_steps": 24.4,
+   "runs_with_major_qa_issue": 0
+  },
+  "portal:northwind": {
+   "runs": 15,
+   "verified_submit_rate": 1.0,
+   "mean_smoothness": 99.6,
+   "p50_duration_s": 1.1,
+   "mean_steps": 15.2,
+   "runs_with_major_qa_issue": 0
+  },
+  "error_classes": {},
+  "silent_errors": 0
+ },
+ "qa_ramp": {
+  "keystone": {
+   "final_qa_share": 0.7,
+   "log": [
+    "after 6 runs: success 1.00, smoothness 98, silent errors 0 -> QA share 1.00 -> 0.70"
+   ]
+  },
+  "summit": {
+   "final_qa_share": 0.4,
+   "log": [
+    "after 6 runs: success 1.00, smoothness 95, silent errors 0 -> QA share 1.00 -> 0.70",
+    "after 12 runs: success 1.00, smoothness 99, silent errors 0 -> QA share 0.70 -> 0.40"
+   ]
+  },
+  "northwind": {
+   "final_qa_share": 0.4,
+   "log": [
+    "after 6 runs: success 1.00, smoothness 100, silent errors 0 -> QA share 1.00 -> 0.70",
+    "after 12 runs: success 1.00, smoothness 100, silent errors 0 -> QA share 0.70 -> 0.40"
+   ]
+  }
+ },
+ "credentials": {
+  "disabled": [
+   [
+    "sfb-ops-c",
+    "auth_invalid"
+   ]
+  ],
+  "pool": [
+   {
+    "portal": "northwind",
+    "username": "nw_ops_1",
+    "disabled": false,
+    "failures": 0
+   },
+   {
+    "portal": "northwind",
+    "username": "nw_ops_2",
+    "disabled": false,
+    "failures": 0
+   },
+   {
+    "portal": "keystone",
+    "username": "ks.agent1",
+    "disabled": false,
+    "failures": 0
+   },
+   {
+    "portal": "keystone",
+    "username": "ks.agent2",
+    "disabled": false,
+    "failures": 0
+   },
+   {
+    "portal": "summit",
+    "username": "sfb-ops-a",
+    "disabled": false,
+    "failures": 0
+   },
+   {
+    "portal": "summit",
+    "username": "sfb-ops-b",
+    "disabled": false,
+    "failures": 0
+   },
+   {
+    "portal": "summit",
+    "username": "sfb-ops-c",
+    "disabled": true,
+    "failures": 2
+   }
+  ]
+ },
+ "portal_events": {
+  "session_kick": 32,
+  "lockout": 1
+ },
+ "fhir": {
+  "submitted": 10,
+  "n": 10,
+  "p50_s": 0.013
+ },
+ "ablations": {
+  "overlay_guard_on": {
+   "n": 8,
+   "submitted": 8,
+   "errors": {}
+  },
+  "overlay_guard_off": {
+   "n": 8,
+   "submitted": 2,
+   "errors": {
+    "timeout": 5,
+    "playbook_gap": 1
+   }
+  },
+  "credential_threshold_2": {
+   "n": 9,
+   "submitted": 9,
+   "lockouts": 0,
+   "errors": {}
+  },
+  "no_credential_threshold": {
+   "n": 9,
+   "submitted": 8,
+   "lockouts": 1,
+   "errors": {
+    "account_locked": 1
+   }
+  }
+ },
+ "llm_usage": {
+  "calls": 0,
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0.0
+ },
+ "routing": {
+  "portal": 34,
+  "fhir": 10,
+  "phone": 12
+ },
+ "held_for_fixes": 24
+}
