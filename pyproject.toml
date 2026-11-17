@@ -1,0 +1,19 @@
+[project]
+name = "authops"
+version = "0.1.0"
+description = "Prior-authorization agent operations: document intelligence, validation, browser/phone/FHIR agents, experiments and QA."
+requires-python = ">=3.10"
+dependencies = [
+  "pydantic>=2", "fastapi", "uvicorn", "python-multipart", "playwright", "pytesseract", "pillow",
+  "pyotp", "pyyaml", "httpx",
+]
+[project.optional-dependencies]
+llm = ["anthropic>=0.40"]
+dev = ["pytest", "ruff"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120

@@ -1,0 +1,28 @@
+portal: keystone
+start: /keystone/login
+expected_steps: 20
+pages:
+  - match: {url: "/keystone/login"}
+    actions:
+      - [type_credential, {user_target: User ID, pass_target: Password, button: Log in}]
+  - match: {text: "Request submitted"}
+    actions:
+      - [read_confirmation, {}]
+      - [finish, {status: submitted}]
+  - match: {url: "/keystone/portal"}
+    actions:
+      - [wait, {ms: 1200}]   # the session notice appears after a delay; the overlay guard closes it
+      - [fill, {target: Medicaid ID, value: "{member_id|mask3}"}]
+      - [pick_date, {target: Member Date of Birth, iso: "{dob}"}]
+      - [select, {target: Service Category, value: "{specialty}"}]
+      - [fill, {target: Procedure Codes, value: "{cpt_csv}"}]
+      - [fill, {target: Primary and Secondary Diagnosis, value: "{icd_csv}"}]
+      - [fill, {target: Total Units, value: "{units}"}]
+      - [pick_date, {target: Service From, iso: "{start}"}]
+      - [pick_date, {target: Service Through, iso: "{end}"}]
+      - [fill, {target: Servicing Provider NPI, value: "{npi}"}]
+      - [conditional, {if_specialty: aba, actions: [
+          [answer, {target: "Is a school schedule attached?", kind: select}],
+          [answer, {target: Requested hours on school days, kind: fill}]]}]
+      - [upload, {target: Attachments, files: "{files}"}]
+      - [click, {target: Submit Authorization, submit: true}]

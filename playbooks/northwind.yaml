@@ -1,0 +1,29 @@
+# Northwind Health Plan (commercial). Structured plan for the playbook policy.
+# Plain-English version for people and the LLM policy: northwind.md
+portal: northwind
+start: /northwind/login
+expected_steps: 16
+pages:
+  - match: {url: "/northwind/login"}
+    actions:
+      - [type_credential, {user_target: Username, pass_target: Password, button: Sign in}]
+  - match: {url: "/northwind/home"}
+    actions:
+      - [click, {target: New Prior Authorization}]
+  - match: {url: "/northwind/new"}
+    actions:
+      - [fill, {target: Member ID, value: "{member_id}"}]
+      - [pick_date, {target: Patient Date of Birth, iso: "{dob}"}]
+      - [select, {target: Service Type, value: "{specialty}"}]
+      - [fill, {target: CPT Codes, value: "{cpt_csv}"}]
+      - [fill, {target: Diagnosis Codes, value: "{icd_csv}"}]
+      - [fill, {target: Units Requested, value: "{units}"}]
+      - [pick_date, {target: Start Date, iso: "{start}"}]
+      - [pick_date, {target: End Date, iso: "{end}"}]
+      - [fill, {target: Rendering Provider NPI, value: "{npi}"}]
+      - [upload, {target: Clinical Documents, files: "{files}"}]
+      - [click, {target: Submit Request, submit: true}]
+  - match: {text: "Request submitted"}
+    actions:
+      - [read_confirmation, {}]
+      - [finish, {status: submitted}]

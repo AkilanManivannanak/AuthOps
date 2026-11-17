@@ -1,0 +1,42 @@
+portal: summit
+start: /summit/login
+expected_steps: 26
+pages:
+  - match: {url: "/summit/login"}
+    actions:
+      - [type_credential, {user_target: Login ID, pass_target: Password, button: Continue}]
+  - match: {url: "/summit/mfa"}
+    actions:
+      - [enter_totp, {target: Verification code, button: Verify}]
+  - match: {url: "/summit/dashboard"}
+    actions:
+      - [click, {target: Start a new request}]
+  - match: {url: "/summit/request/1"}
+    actions:
+      - [fill, {target: Member Number, value: "{member_id}"}]
+      - [fill, {target: Member Last Name, value: "{last_name}"}]
+      - [click, {target: Find member}]
+  - match: {url: "/summit/request/2"}
+    actions:
+      - [check_each, {values: "{cpt_list}"}]
+      - [fill, {target: Diagnosis codes, value: "{icd_csv}"}]
+      - [fill, {target: Quantity, value: "{units}"}]
+      - [fill, {target: From date, value: "{start|mdy}"}]
+      - [fill, {target: To date, value: "{end|mdy}"}]
+      - [fill, {target: Rendering NPI, value: "{npi}"}]
+      - [answer, {target: "Is this a continuation of an existing authorization?", kind: select}]
+      - [answer, {target: "Is the member currently admitted inpatient?", kind: select}]
+      - [click, {target: Next}]
+  - match: {url: "/summit/request/3"}
+    actions:
+      - [upload, {target: Document 1, files: "{files}"}]
+      - [select, {target: Document 1 type, value: treatment_plan}]
+      - [click, {target: Next}]
+  - match: {url: "/summit/request/4"}
+    actions:
+      - [check, {target: attest}]
+      - [click, {target: Submit request, submit: true}]
+  - match: {text: "Request submitted"}
+    actions:
+      - [read_confirmation, {}]
+      - [finish, {status: submitted}]

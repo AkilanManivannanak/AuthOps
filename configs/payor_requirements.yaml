@@ -1,0 +1,57 @@
+# Payor requirements database (fictional payors).
+# Silna's Payor Intelligence team keeps the real version of this, mined from payor
+# bulletins and weekly prior-auth volume. Here each payor x specialty pair lists the
+# rules a document set must pass before submission. Default rules are code; custom
+# rules are plain English and evaluated by an LLM that must answer yes or no.
+
+defaults: [signature_present, plan_not_expired, icd10_billable, cpt_matches_specialty,
+           npi_valid, member_id_matches_payor, dates_ordered]
+
+payors:
+  NWH:
+    name: Northwind Health Plan
+    channel: portal
+    specialties:
+      physical_therapy:
+        max_units_per_request: 36
+        custom_rules:
+          - "Does the treatment plan state measurable functional goals?"
+      aba:
+        max_units_per_request: 480
+      behavioral_health:
+        max_units_per_request: 24
+  KCM:
+    name: Keystone Community Medicaid
+    channel: portal
+    specialties:
+      aba:
+        max_units_per_request: 400
+        require_school_schedule: true
+        custom_rules:
+          - "Does the plan document a baseline for each treatment goal?"
+          - "Is caregiver involvement in treatment described?"
+      physical_therapy:
+        max_units_per_request: 24
+      behavioral_health:
+        max_units_per_request: 20
+  SFB:
+    name: Summit Federal Benefits
+    channel: portal
+    specialties:
+      aba: {max_units_per_request: 480}
+      physical_therapy: {max_units_per_request: 36}
+      behavioral_health: {max_units_per_request: 24}
+  HBL:
+    name: Harborline Health
+    channel: fhir   # CMS-0057-F Prior Authorization API (Da Vinci PAS shape)
+    specialties:
+      aba: {max_units_per_request: 480}
+      physical_therapy: {max_units_per_request: 36}
+      behavioral_health: {max_units_per_request: 24}
+  PRV:
+    name: Prairie Valley Health
+    channel: phone  # no portal, no API: status and benefits by phone
+    specialties:
+      aba: {max_units_per_request: 480}
+      physical_therapy: {max_units_per_request: 36}
+      behavioral_health: {max_units_per_request: 24}
