@@ -1,0 +1,70 @@
+doc_id,field,truth,pred,conf,abstained,ok,condition
+PA-0003_approval_letter,decision,partial,PARTIALLY_APPROVED,0.99,False,False,fax
+PA-0004_approval_letter,auth_number,58AMDN70KG,4458AMDN70KG,0.85,False,False,clean
+PA-0004_approval_letter,provider_npi,1147104974,,0.0,True,False,clean
+PA-0005_treatment_plan,signature_present,True,True,0.5,True,False,scan
+PA-0008_approval_letter,auth_number,17AW4JW27J,17AW4JW27,0.95,False,False,scan
+PA-0010_approval_letter,provider_npi,1651676128,,1.0,True,False,clean
+PA-0015_treatment_plan,member_id,HBL78754679,H8L78754679,0.85,False,False,fax
+PA-0015_treatment_plan,cpt_codes,"['97530', '97140']","['97530', '97149']",0.95,False,False,fax
+PA-0015_treatment_plan,signature_date,2026-11-15,,0.0,True,False,fax
+PA-0015_approval_letter,patient_name,Sofia Abernathy,Sofia Abemathy,0.95,False,False,fax
+PA-0017_approval_letter,auth_number,R6A6SQ6WWI,R6AGSQ6WWI,0.95,False,False,scan
+PA-0017_approval_letter,patient_dob,1988-04-10,1988-04-16,0.95,False,False,scan
+PA-0018_approval_letter,auth_number,R50023191,RS0023191,0.99,False,False,fax
+PA-0018_approval_letter,decision,partial,PARTIALLY_APPROVED,0.99,False,False,fax
+PA-0018_approval_letter,member_id,KCM56647663,KCMS6647663,0.99,False,False,fax
+PA-0018_approval_letter,provider_npi,1014620169,1014620269,0.4,True,False,fax
+PA-0019_approval_letter,provider_npi,1205617487,,0.0,True,False,clean
+PA-0021_treatment_plan,icd10_codes,['F88'],,0.1,True,False,fax
+PA-0024_approval_letter,decision,partial,PARTIALLY_APPROVED,0.99,False,False,fax
+PA-0027_approval_letter,auth_number,IJ6GGI8QNL,0008ITJ6GGI8QNL,0.85,False,False,fax
+PA-0027_approval_letter,provider_npi,1581535493,,0.0,True,False,fax
+PA-0028_denial_letter,auth_number,3OUMGYOVV3,4430UMGYOVV3,0.85,False,False,clean
+PA-0028_denial_letter,provider_npi,1667640209,,0.0,True,False,clean
+PA-0030_treatment_plan,patient_name,Amara Delgado,Amara Deigado,0.95,False,False,fax
+PA-0030_approval_letter,provider_npi,1838306409,1833306409,0.4,True,False,fax
+PA-0031_approval_letter,decision,partial,PARTIALLY_APPROVED,0.99,False,False,clean
+PA-0035_approval_letter,auth_number,OR06ZO3C9J,ORO6Z03C9,0.95,False,False,scan
+PA-0035_approval_letter,provider_npi,1293557595,,1.0,True,False,scan
+PA-0036_denial_letter,provider_npi,1167723265,,0.0,True,False,fax
+PA-0039_approval_letter,decision,approved,APPROVED,0.5,True,False,fax
+PA-0040_approval_letter,auth_number,0FZBYYJ13K,OFZBYYJ13K,0.95,False,False,clean
+PA-0040_approval_letter,provider_npi,1611695721,,0.0,True,False,clean
+PA-0041_treatment_plan,plan_start,2026-11-25,2026-11-25,0.5,True,False,scan
+PA-0041_treatment_plan,plan_end,2027-02-23,2027-02-23,0.5,True,False,scan
+PA-0041_treatment_plan,provider_npi,1167342074,1167342074,0.5,True,False,scan
+PA-0042_treatment_plan,patient_name,Liam Osei,Liam Ose,0.95,False,False,fax
+PA-0042_treatment_plan,member_id,HBL79510357,HBL7951035,0.85,False,False,fax
+PA-0042_treatment_plan,icd10_codes,['F84.5'],['FB4.5'],0.9,False,False,fax
+PA-0045_treatment_plan,cpt_codes,"['90837', '90834']","['90837', '90834']",0.5,True,False,fax
+PA-0045_treatment_plan,requested_units,9,9,0.5,True,False,fax
+PA-0045_approval_letter,auth_number,X8I7PWIANZ,XBI7PWIANZ,0.95,False,False,fax
+PA-0045_approval_letter,decision,partial,PARTIALLY_APPROVED,0.95,False,False,fax
+PA-0045_approval_letter,approved_units,4,,0.0,True,False,fax
+PA-0047_approval_letter,auth_number,SJIMKUFXTL,00S SJIMKUFXTL,0.95,False,False,scan
+PA-0048_denial_letter,decision,denied,DENIED,0.5,True,False,fax
+PA-0048_denial_letter,patient_dob,1981-10-10,1982-10-10,0.99,False,False,fax
+PA-0050_approval_letter,auth_number,U3S0JJN3OL,U3S0J IN3OL,0.85,False,False,scan
+PA-0050_approval_letter,member_id,SFB60352953,SFB6G352953,0.95,False,False,scan
+PA-0050_approval_letter,approved_units,216,,0.0,True,False,scan
+PA-0051_treatment_plan,icd10_codes,"['F43.10', 'F32.1']","['F43.19', 'F32.1']",0.95,False,False,fax
+PA-0053_treatment_plan,icd10_codes,['F8A.0'],['F8A.0'],0.5,True,False,scan
+PA-0054_denial_letter,decision,denied,DENIED,0.5,True,False,fax
+PA-0054_denial_letter,provider_npi,1815708932,1825708932,0.4,True,False,fax
+PA-0057_treatment_plan,requested_units,18,18,0.5,True,False,fax
+PA-0057_treatment_plan,plan_start,2026-11-27,2026-01-27,0.45,True,False,fax
+PA-0057_approval_letter,decision,partial,PARTIALLY_APPROVED,0.9,False,False,fax
+PA-0057_approval_letter,patient_dob,1987-04-09,,0.0,True,False,fax
+PA-0057_approval_letter,start_date,2026-11-27,2026-11-27,0.5,True,False,fax
+PA-0057_approval_letter,end_date,2027-05-26,2027-05-26,0.5,True,False,fax
+PA-0058_approval_letter,provider_npi,1700663846,,1.0,True,False,clean
+PA-0065_approval_letter,decision,partial,PARTIALLY_APPROVED,0.99,False,False,scan
+PA-0066_treatment_plan,icd10_codes,"['F84.5', 'F88']",['F84.5'],0.75,False,False,fax
+PA-0066_treatment_plan,provider_npi,1788346561,1788346562,0.4,True,False,fax
+PA-0066_approval_letter,decision,partial,PARTIALLY_APPROVED,0.99,False,False,fax
+PA-0068_approval_letter,decision,partial,PARTIALLY_APPROVED,0.99,False,False,scan
+PA-0072_denial_letter,auth_number,R80151182,R801$1182,0.95,False,False,fax
+PA-0075_approval_letter,auth_number,NWH-A-136200,NWH-A-236200,0.99,False,False,fax
+PA-0075_approval_letter,decision,partial,PARTIALLY_APPROVED,0.99,False,False,fax
+PA-0075_approval_letter,provider_npi,1446179925,1446279925,0.4,True,False,fax

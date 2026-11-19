@@ -186,7 +186,13 @@ class AgentRuntime:
                     return self._finish(res, "needs_human", "logic_loop", f"repeated {tool} on same page",
                                         step, policy, t0, c)
                 if tool == "finish":
-                    status = args.get("status", "needs_human")
+                    # persist the model's own stated reason: escalations are what QA reviews first
+                    persist("decision", "finish", dict(args, reason=act.get("reason", "")),
+                            ToolResult(True, str(act.get("reason", ""))[:200]), 0)
+                    status = str(args.get("status", "needs_human")).lower()
+                    if status in ("success", "completed", "complete", "done", "submitted_successfully") or (
+                            status != "needs_human" and ctx.get("confirmation")):
+                        status = "submitted"  # models paraphrase the status; the confirmation check still decides
                     if status == "submitted" and not submitted:
                         status, note = "needs_human", "finish(submitted) without a submit action"
                     else:
@@ -213,6 +219,7 @@ class AgentRuntime:
                     submitted = True
                 if tool == "read_confirmation" and r.ok:
                     ctx["confirmation"] = r.data
+                    submitted = True  # a payor reference on the page proves the submit happened, flag or not
             bump("loop")
             return self._finish(res, "failed", "turn_cap", f"hit {self.max_turns}-turn cap", step, policy, t0, c)
         except Exception as e:  # infrastructure failure: record, never hide

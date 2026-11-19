@@ -285,11 +285,11 @@ def main():
     (reports / "metrics.json").write_text(json.dumps(metrics, indent=1, default=str))
     with open(reports / "agent_runs.json", "w") as fh:
         json.dump(runs, fh, indent=1)
-    if qa_rows:
-        with open(reports / "error_dataset.csv", "w", newline="") as fh:
-            w = csv.DictWriter(fh, fieldnames=list(qa_rows[0].keys()))
-            w.writeheader()
-            w.writerows(qa_rows)
+    with open(reports / "error_dataset.csv", "w", newline="") as fh:  # always rewrite: no stale rows
+        w = csv.DictWriter(fh, fieldnames=["run_id", "case_id", "portal", "arm", "field", "submitted",
+                                           "expected", "severity", "comment"])
+        w.writeheader()
+        w.writerows(qa_rows)
     write_report(metrics, reports / "REPORT.md")
     print(f"[6/6] wrote {reports / 'REPORT.md'}")
 

@@ -141,8 +141,29 @@ class Tools:
         _loc(frame, el).check()
         return ToolResult(True, f"checked '{target}'")
 
+    FORWARD = re.compile(r"(?i)\b(submit|next|continue|send)\b")
+    REQUIRED = re.compile(r"(?i)(npi|diagnos|procedure|cpt|quantity|units|member|medicaid id|date of birth|"
+                          r"from|through|to date|start date|end date|service)")
+
+    def presubmit_gaps(self, obs) -> list[str]:
+        """Visible clinical fields still empty when a forward button is pressed."""
+        gaps = []
+        for fs in obs.frames:
+            for e in fs.elements:
+                if e["tag"] not in ("input", "textarea") or e["type"] in ("file", "checkbox", "hidden", "password"):
+                    continue
+                if "optional" in e["label"].lower() or not self.REQUIRED.search(e["label"] + " " + e["id"]):
+                    continue
+                if not str(e.get("value", "")).strip():
+                    gaps.append(e["label"] or e["id"])
+        return gaps
+
     def click(self, target: str) -> ToolResult:
         frame, el = self._interact(target, ("button", "a", "submit", "input"))
+        if self.FORWARD.search(el["label"] + " " + el["id"]):
+            gaps = self.presubmit_gaps(self.observe())
+            if gaps:  # a fluent wrong submission costs more than one more step
+                raise ToolError("presubmit_blocked", "required fields still empty: " + "; ".join(gaps[:5]))
         before = self.page.url
         _loc(frame, el).click(timeout=5000)
         try:  # the click may navigate the main page or only an iframe

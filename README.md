@@ -53,7 +53,32 @@ configuration (rules extractor, deterministic playbook policy):
 | FHIR PA API (Da Vinci PAS shape) | submitted | 10 of 10 |
 | Phone agent (IVR, benefits + status) | calls completed | 24 of 24 |
 
-| Trained confidence calibrator (held-out cases) | AUROC learned vs heuristic | 0.963 vs 0.977: it beat the first heuristic (0.954 vs 0.905), then a scoring fix overtook it; kept for retraining on human labels |
+| Trained confidence calibrator (held-out cases) | AUROC learned vs heuristic | 0.965 vs 0.968: it beat the first heuristic (0.954 vs 0.905), then a date-scoring fix caught up with it; kept for retraining on human labels |
+
+### Claude vs rules (same 80 cases, offline baseline vs Claude Haiku 4.5)
+
+| | Rules baseline | Claude Haiku 4.5 |
+|---|---|---|
+| Extraction field accuracy | 91.8% | 95.9% |
+| Docs with every critical field right | 68.8% | 78.7% |
+| Silent error (wrong value filled in) | 1.3% | 2.1% |
+| p50 latency per document | 0.8 s | 4.6 s |
+| Portal runs verified (50/50 experiment) | 19 of 19 (scripted playbook) | 15 of 15 |
+| p50 seconds per portal run | 1.1 s | 16.7 s |
+| Cost of the full run | $0 | $1.13 (501 calls) |
+
+Claude reads more of each document but fills in slightly more wrong values, so the deployment
+answer is a hybrid: Claude extracts, and fields where it disagrees with the rules go to human QA.
+
+### Three iterations of failure analysis on the Claude agent
+
+| Iteration | Verified | What failed | Root cause | Fix |
+|---|---|---|---|---|
+| 1 | 13 of 15 | Summit login; Keystone after a correct submit | Playbook told the model to give up on "Invalid credentials" even after the runtime swapped in a good credential; model paraphrased the finish status | Playbook wording; status normalisation gated by the confirmation check |
+| 2 | 13 of 15 | Two Keystone runs escalated after a verified submit; one Summit run submitted with a blank NPI | Escalation was non-deterministic (could not reproduce on rerun); NPI field not required by the portal and not on the confirmation page, caught only by QA review | Model's stated reason now logged on every finish; pre-submit guard blocks forward buttons while required clinical fields are empty |
+| 3 | 15 of 15 | none | | |
+
+Iteration 1 is kept in `reports/REPORT_llm_iteration1.md`.
 
 ### Bugs the harness caught in my own agent
 

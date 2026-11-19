@@ -5,7 +5,7 @@
  "guard": true,
  "status": "submitted",
  "error_class": "",
- "smoothness": 90.0,
+ "smoothness": 89.0,
  "steps": [
   {
    "idx": 1,
@@ -16,8 +16,8 @@
    },
    "ok": true,
    "error_class": "",
-   "detail": "opened http://127.0.0.1:34655/summit/login",
-   "url": "http://127.0.0.1:34655/summit/login",
+   "detail": "opened http://127.0.0.1:62563/summit/login",
+   "url": "http://127.0.0.1:62563/summit/login",
    "counts": {},
    "image": "step_01.jpg"
   },
@@ -33,7 +33,7 @@
    "ok": true,
    "error_class": "",
    "detail": "clicked 'Continue'",
-   "url": "http://127.0.0.1:34655/summit/mfa",
+   "url": "http://127.0.0.1:62563/summit/mfa",
    "counts": {},
    "image": "step_02.jpg"
   },
@@ -48,7 +48,7 @@
    "ok": true,
    "error_class": "",
    "detail": "entered TOTP code and submitted",
-   "url": "http://127.0.0.1:34655/summit/dashboard",
+   "url": "http://127.0.0.1:62563/summit/dashboard",
    "counts": {},
    "image": "step_03.jpg"
   },
@@ -62,7 +62,7 @@
    "ok": true,
    "error_class": "",
    "detail": "clicked 'Start a new request'",
-   "url": "http://127.0.0.1:34655/summit/request/1",
+   "url": "http://127.0.0.1:62563/summit/request/1",
    "counts": {},
    "image": "step_04.jpg"
   },
@@ -77,7 +77,7 @@
    "ok": true,
    "error_class": "",
    "detail": "filled 'Member Number'",
-   "url": "http://127.0.0.1:34655/summit/request/1",
+   "url": "http://127.0.0.1:62563/summit/request/1",
    "counts": {},
    "image": "step_05.jpg"
   },
@@ -92,7 +92,7 @@
    "ok": true,
    "error_class": "",
    "detail": "filled 'Member Last Name'",
-   "url": "http://127.0.0.1:34655/summit/request/1",
+   "url": "http://127.0.0.1:62563/summit/request/1",
    "counts": {},
    "image": "step_06.jpg"
   },
@@ -106,7 +106,7 @@
    "ok": true,
    "error_class": "",
    "detail": "clicked 'Find member'",
-   "url": "http://127.0.0.1:34655/summit/request/2",
+   "url": "http://127.0.0.1:62563/summit/request/2",
    "counts": {},
    "image": "step_07.jpg"
   },
@@ -120,7 +120,7 @@
    "ok": true,
    "error_class": "",
    "detail": "checked '97156'",
-   "url": "http://127.0.0.1:34655/summit/request/2",
+   "url": "http://127.0.0.1:62563/summit/request/2",
    "counts": {},
    "image": "step_08.jpg"
   },
@@ -135,7 +135,7 @@
    "ok": true,
    "error_class": "",
    "detail": "filled 'Diagnosis codes'",
-   "url": "http://127.0.0.1:34655/summit/request/2",
+   "url": "http://127.0.0.1:62563/summit/request/2",
    "counts": {},
    "image": "step_09.jpg"
   },
@@ -150,7 +150,7 @@
    "ok": true,
    "error_class": "",
    "detail": "filled 'Quantity'",
-   "url": "http://127.0.0.1:34655/summit/request/2",
+   "url": "http://127.0.0.1:62563/summit/request/2",
    "counts": {},
    "image": "step_10.jpg"
   },
@@ -165,7 +165,7 @@
    "ok": true,
    "error_class": "",
    "detail": "filled 'From date'",
-   "url": "http://127.0.0.1:34655/summit/request/2",
+   "url": "http://127.0.0.1:62563/summit/request/2",
    "counts": {},
    "image": "step_11.jpg"
   },
@@ -180,7 +180,7 @@
    "ok": true,
    "error_class": "",
    "detail": "filled 'To date'",
-   "url": "http://127.0.0.1:34655/summit/request/2",
+   "url": "http://127.0.0.1:62563/summit/request/2",
    "counts": {},
    "image": "step_12.jpg"
   },
@@ -195,7 +195,7 @@
    "ok": true,
    "error_class": "",
    "detail": "filled 'Rendering NPI'",
-   "url": "http://127.0.0.1:34655/summit/request/2",
+   "url": "http://127.0.0.1:62563/summit/request/2",
    "counts": {},
    "image": "step_13.jpg"
   },
@@ -210,7 +210,7 @@
    "ok": true,
    "error_class": "",
    "detail": "selected 'no' in 'Is this a continuation of an existing authorization?' (answer 'no' from intake: no prior auth on file)",
-   "url": "http://127.0.0.1:34655/summit/request/2",
+   "url": "http://127.0.0.1:62563/summit/request/2",
    "counts": {},
    "image": "step_14.jpg"
   },
@@ -225,7 +225,7 @@
    "ok": true,
    "error_class": "",
    "detail": "selected 'No' in 'Is the member currently admitted inpatient?' (answer 'No' from intake: outpatient services)",
-   "url": "http://127.0.0.1:34655/summit/request/2",
+   "url": "http://127.0.0.1:62563/summit/request/2",
    "counts": {},
    "image": "step_15.jpg"
   },
@@ -239,7 +239,7 @@
    "ok": true,
    "error_class": "",
    "detail": "clicked 'Next'",
-   "url": "http://127.0.0.1:34655/summit/request/3",
+   "url": "http://127.0.0.1:62563/summit/request/3",
    "counts": {},
    "image": "step_16.jpg"
   },
@@ -250,13 +250,13 @@
    "args": {
     "target": "Document 1",
     "files": [
-     "/home/claude/gh_authops/data/docs/PA-0002_treatment_plan.pdf"
+     "/Users/akilan/Projects/authops/data/docs/PA-0002_treatment_plan.pdf"
     ]
    },
    "ok": true,
    "error_class": "",
    "detail": "attached 1 file(s) to 'Document 1'",
-   "url": "http://127.0.0.1:34655/summit/request/3",
+   "url": "http://127.0.0.1:62563/summit/request/3",
    "counts": {},
    "image": "step_17.jpg"
   },
@@ -271,7 +271,7 @@
    "ok": true,
    "error_class": "",
    "detail": "selected 'treatment_plan' in 'Document 1 type'",
-   "url": "http://127.0.0.1:34655/summit/request/3",
+   "url": "http://127.0.0.1:62563/summit/request/3",
    "counts": {},
    "image": "step_18.jpg"
   },
@@ -285,7 +285,7 @@
    "ok": true,
    "error_class": "",
    "detail": "clicked 'Next'",
-   "url": "http://127.0.0.1:34655/summit/request/4",
+   "url": "http://127.0.0.1:62563/summit/request/4",
    "counts": {},
    "image": "step_19.jpg"
   },
@@ -299,7 +299,7 @@
    "ok": true,
    "error_class": "",
    "detail": "checked 'attest'",
-   "url": "http://127.0.0.1:34655/summit/request/4",
+   "url": "http://127.0.0.1:62563/summit/request/4",
    "counts": {},
    "image": "step_20.jpg"
   },
@@ -313,7 +313,7 @@
    "ok": true,
    "error_class": "",
    "detail": "clicked 'Submit request'",
-   "url": "http://127.0.0.1:34655/summit/request/4",
+   "url": "http://127.0.0.1:62563/summit/request/4",
    "counts": {},
    "image": "step_21.jpg"
   },
@@ -327,7 +327,7 @@
    "ok": true,
    "error_class": "",
    "detail": "went back to resubmit",
-   "url": "http://127.0.0.1:34655/summit/request/4",
+   "url": "http://127.0.0.1:62563/summit/request/4",
    "counts": {
     "retry": 1
    },
@@ -343,7 +343,7 @@
    "ok": true,
    "error_class": "",
    "detail": "checked 'attest'",
-   "url": "http://127.0.0.1:34655/summit/request/4",
+   "url": "http://127.0.0.1:62563/summit/request/4",
    "counts": {
     "retry": 1
    },
@@ -359,7 +359,7 @@
    "ok": true,
    "error_class": "",
    "detail": "clicked 'Submit request'",
-   "url": "http://127.0.0.1:34655/summit/request/4",
+   "url": "http://127.0.0.1:62563/summit/request/4",
    "counts": {
     "retry": 1
    },
@@ -375,7 +375,7 @@
    "ok": true,
    "error_class": "",
    "detail": "went back to resubmit",
-   "url": "http://127.0.0.1:34655/summit/request/4",
+   "url": "http://127.0.0.1:62563/summit/request/4",
    "counts": {
     "retry": 2
    },
@@ -391,7 +391,7 @@
    "ok": true,
    "error_class": "",
    "detail": "checked 'attest'",
-   "url": "http://127.0.0.1:34655/summit/request/4",
+   "url": "http://127.0.0.1:62563/summit/request/4",
    "counts": {
     "retry": 2
    },
@@ -407,7 +407,7 @@
    "ok": true,
    "error_class": "",
    "detail": "clicked 'Submit request'",
-   "url": "http://127.0.0.1:34655/summit/request/4",
+   "url": "http://127.0.0.1:62563/summit/request/4",
    "counts": {
     "retry": 2
    },
@@ -421,14 +421,31 @@
    "ok": true,
    "error_class": "",
    "detail": "confirmation SFB-T-756115",
-   "url": "http://127.0.0.1:34655/summit/request/4",
+   "url": "http://127.0.0.1:62563/summit/request/4",
    "counts": {
     "retry": 2
    },
    "image": "step_28.jpg"
+  },
+  {
+   "idx": 29,
+   "kind": "decision",
+   "tool": "finish",
+   "args": {
+    "status": "submitted",
+    "reason": ""
+   },
+   "ok": true,
+   "error_class": "",
+   "detail": "",
+   "url": "http://127.0.0.1:62563/summit/request/4",
+   "counts": {
+    "retry": 2
+   },
+   "image": "step_29.jpg"
   }
  ],
- "duration_s": 6.38,
+ "duration_s": 5.19,
  "ref": "SFB-T-756115",
  "verified": true,
  "note": "ref SFB-T-756115"

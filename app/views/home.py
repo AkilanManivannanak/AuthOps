@@ -62,8 +62,18 @@ if cal:
                   "right_label": "learned AUROC x1000", "right": int(cal["auroc_learned"] * 1000), "good": better,
                   "method": f"Logistic calibrator trained on {cal['n_train']} fields, tested on {cal['n_test']} fields from "
                             "unseen cases. It beat the first heuristic (0.905 to 0.954), but fixing how dates are scored "
-                            "lifted the heuristic to 0.977, so the model no longer helps. It is kept as the slot that "
-                            "human corrections from the study will retrain."})
+                            f"lifted the heuristic to {cal['auroc_heuristic']:.3f}, so the model no longer clearly helps. "
+                            "It is kept as the slot that human corrections from the study will retrain."})
+arms = {k[4:]: v for k, v in m.get("agents", {}).items() if k.startswith("arm:")}
+if "claude-haiku-4-5" in arms and "playbook" in arms:
+    cl, pb = arms["claude-haiku-4-5"], arms["playbook"]
+    cards.append({"title": "Claude agent vs scripted playbook", "kind": "versus",
+                  "headline": f"{cl['verified_submit_rate'] * 100:.0f}% vs {pb['verified_submit_rate'] * 100:.0f}% verified",
+                  "left_label": "playbook p50 seconds", "left": pb["p50_duration_s"],
+                  "right_label": "Claude p50 seconds", "right": cl["p50_duration_s"], "good": False,
+                  "method": f"50/50 experiment over 34 portal runs. Claude Haiku 4.5 reads the plain-English playbook and the page, "
+                            f"then picks tools ({cl['runs']} runs). It matched the scripted agent's outcome after two rounds of "
+                            "failure analysis, at about 15x the time per run. Iteration 1 was 13 of 15."})
 if val:
     cards.append({"title": "Denials prevented", "kind": "ring", "k": val.get("caught_before_submission", 0),
                   "n": val.get("payor_denials", 0) or 1, "note": f"{val.get('false_blocks', 0)} false blocks",

@@ -9,7 +9,7 @@
    {
     "field": "auth_number",
     "value": "R97767996",
-    "conf": 0.89,
+    "conf": 0.91,
     "auto_verdict": "correct"
    },
    {
@@ -27,13 +27,13 @@
    {
     "field": "patient_dob",
     "value": "1980-11-02",
-    "conf": 0.96,
+    "conf": 0.957,
     "auto_verdict": "correct"
    },
    {
     "field": "member_id",
     "value": "KCM59081935",
-    "conf": 0.89,
+    "conf": 0.9,
     "auto_verdict": "correct"
    },
    {
@@ -41,7 +41,7 @@
     "value": [
      "97530"
     ],
-    "conf": 0.95,
+    "conf": 0.96,
     "auto_verdict": "correct"
    },
    {
@@ -98,13 +98,13 @@
    {
     "field": "patient_dob",
     "value": "2008-09-28",
-    "conf": 0.96,
+    "conf": 0.957,
     "auto_verdict": "correct"
    },
    {
     "field": "member_id",
     "value": "KCM66255890",
-    "conf": 0.91,
+    "conf": 0.92,
     "auto_verdict": "correct"
    },
    {
@@ -130,7 +130,7 @@
    {
     "field": "end_date",
     "value": "2027-05-23",
-    "conf": 0.953,
+    "conf": 0.957,
     "auto_verdict": "correct"
    },
    {
@@ -174,16 +174,16 @@
    },
    {
     "field": "member_id",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": "HBL34127884",
+    "conf": 0.91,
+    "auto_verdict": "correct"
    },
    {
     "field": "cpt_codes",
     "value": [
      "97140"
     ],
-    "conf": 0.92,
+    "conf": 0.94,
     "auto_verdict": "correct"
    },
    {
@@ -195,13 +195,13 @@
    {
     "field": "start_date",
     "value": "2026-11-27",
-    "conf": 0.76,
+    "conf": 0.92,
     "auto_verdict": "correct"
    },
    {
     "field": "end_date",
     "value": "2027-02-25",
-    "conf": 0.94,
+    "conf": 0.95,
     "auto_verdict": "correct"
    },
    {
@@ -222,7 +222,7 @@
    {
     "field": "auth_number",
     "value": "58AMDN70KG",
-    "conf": 0.84,
+    "conf": 0.88,
     "auto_verdict": "correct"
    },
    {
@@ -234,7 +234,7 @@
    {
     "field": "patient_name",
     "value": "RAHMAN, KAI",
-    "conf": 0.93,
+    "conf": 0.935,
     "auto_verdict": "correct"
    },
    {
@@ -246,7 +246,7 @@
    {
     "field": "member_id",
     "value": "SFB87832216",
-    "conf": 0.87,
+    "conf": 0.7,
     "auto_verdict": "correct"
    },
    {
@@ -260,9 +260,9 @@
    },
    {
     "field": "approved_units",
-    "value": 21,
-    "conf": 0.94,
-    "auto_verdict": "correct"
+    "value": null,
+    "conf": 0.0,
+    "auto_verdict": "missing"
    },
    {
     "field": "start_date",
@@ -272,9 +272,9 @@
    },
    {
     "field": "end_date",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": "2027-03-04",
+    "conf": 0.95,
+    "auto_verdict": "correct"
    },
    {
     "field": "provider_npi",
@@ -294,7 +294,7 @@
    {
     "field": "auth_number",
     "value": "R30704398",
-    "conf": 0.91,
+    "conf": 0.9,
     "auto_verdict": "correct"
    },
    {
@@ -312,7 +312,7 @@
    {
     "field": "patient_dob",
     "value": "2014-07-28",
-    "conf": 0.953,
+    "conf": 0.96,
     "auto_verdict": "correct"
    },
    {
@@ -326,7 +326,7 @@
     "value": [
      "97153"
     ],
-    "conf": 0.96,
+    "conf": 0.95,
     "auto_verdict": "correct"
    },
    {
@@ -365,7 +365,7 @@
    {
     "field": "auth_number",
     "value": null,
-    "conf": 0.16,
+    "conf": 0.12,
     "auto_verdict": "missing"
    },
    {
@@ -376,20 +376,20 @@
    },
    {
     "field": "patient_name",
-    "value": "FUJIMOTO, CALEB",
-    "conf": 0.9,
-    "auto_verdict": "correct"
+    "value": "0.0.0... FUJIMOTO, CALEB",
+    "conf": 0.57,
+    "auto_verdict": "wrong"
    },
    {
     "field": "patient_dob",
     "value": "2012-01-05",
-    "conf": 0.89,
+    "conf": 0.88,
     "auto_verdict": "correct"
    },
    {
     "field": "member_id",
     "value": "SFB91847639",
-    "conf": 0.85,
+    "conf": 0.77,
     "auto_verdict": "correct"
    },
    {
@@ -506,7 +506,7 @@
    {
     "field": "auth_number",
     "value": null,
-    "conf": 0.33,
+    "conf": 0.25,
     "auto_verdict": "missing"
    },
    {
@@ -517,20 +517,20 @@
    },
    {
     "field": "patient_name",
-    "value": "000. OKAFOR, INES",
-    "conf": 0.627,
-    "auto_verdict": "wrong"
+    "value": "OKAFOR, INES",
+    "conf": 0.935,
+    "auto_verdict": "correct"
    },
    {
     "field": "patient_dob",
     "value": null,
-    "conf": 0.43,
+    "conf": 0.0,
     "auto_verdict": "missing"
    },
    {
     "field": "member_id",
     "value": "SFB37543491",
-    "conf": 0.82,
+    "conf": 0.73,
     "auto_verdict": "correct"
    },
    {
@@ -556,14 +556,14 @@
    {
     "field": "end_date",
     "value": "2027-04-05",
-    "conf": 0.94,
+    "conf": 0.95,
     "auto_verdict": "correct"
    },
    {
     "field": "provider_npi",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": "1280841481",
+    "conf": 0.96,
+    "auto_verdict": "correct"
    }
   ]
  },
@@ -589,13 +589,13 @@
    {
     "field": "patient_name",
     "value": "Maya Okafor",
-    "conf": 0.955,
+    "conf": 0.96,
     "auto_verdict": "correct"
    },
    {
     "field": "patient_dob",
     "value": "2016-08-12",
-    "conf": 0.953,
+    "conf": 0.96,
     "auto_verdict": "correct"
    },
    {
@@ -609,7 +609,7 @@
     "value": [
      "97155"
     ],
-    "conf": 0.93,
+    "conf": 0.94,
     "auto_verdict": "correct"
    },
    {
@@ -627,7 +627,7 @@
    {
     "field": "end_date",
     "value": "2027-04-04",
-    "conf": 0.883,
+    "conf": 0.897,
     "auto_verdict": "correct"
    },
    {
@@ -660,20 +660,20 @@
    {
     "field": "patient_name",
     "value": "OSEI, NOAH",
-    "conf": 0.93,
+    "conf": 0.935,
     "auto_verdict": "correct"
    },
    {
     "field": "patient_dob",
     "value": "1996-02-27",
-    "conf": 0.89,
+    "conf": 0.9,
     "auto_verdict": "correct"
    },
    {
     "field": "member_id",
-    "value": "SFB36752197",
-    "conf": 0.77,
-    "auto_verdict": "correct"
+    "value": null,
+    "conf": 0.27,
+    "auto_verdict": "missing"
    },
    {
     "field": "cpt_codes",
@@ -686,9 +686,9 @@
    },
    {
     "field": "approved_units",
-    "value": 21,
-    "conf": 0.94,
-    "auto_verdict": "correct"
+    "value": null,
+    "conf": 0.0,
+    "auto_verdict": "missing"
    },
    {
     "field": "start_date",
@@ -698,9 +698,9 @@
    },
    {
     "field": "end_date",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": "2027-03-05",
+    "conf": 0.7,
+    "auto_verdict": "correct"
    },
    {
     "field": "provider_npi",
@@ -720,7 +720,7 @@
    {
     "field": "auth_number",
     "value": "NWH-A-400307",
-    "conf": 0.89,
+    "conf": 0.91,
     "auto_verdict": "correct"
    },
    {
@@ -765,13 +765,13 @@
    {
     "field": "start_date",
     "value": "2026-11-26",
-    "conf": 0.95,
+    "conf": 0.94,
     "auto_verdict": "correct"
    },
    {
     "field": "end_date",
     "value": "2027-02-24",
-    "conf": 0.95,
+    "conf": 0.96,
     "auto_verdict": "correct"
    },
    {
@@ -792,7 +792,7 @@
    {
     "field": "auth_number",
     "value": "HBL-A-109966",
-    "conf": 0.9,
+    "conf": 0.91,
     "auto_verdict": "correct"
    },
    {
@@ -824,25 +824,25 @@
     "value": [
      "97155"
     ],
-    "conf": 0.95,
+    "conf": 0.96,
     "auto_verdict": "correct"
    },
    {
     "field": "approved_units",
     "value": 101,
-    "conf": 0.96,
+    "conf": 0.95,
     "auto_verdict": "correct"
    },
    {
     "field": "start_date",
     "value": "2026-11-24",
-    "conf": 0.95,
+    "conf": 0.96,
     "auto_verdict": "correct"
    },
    {
     "field": "end_date",
     "value": "2027-03-24",
-    "conf": 0.7,
+    "conf": 0.86,
     "auto_verdict": "correct"
    },
    {
@@ -863,7 +863,7 @@
    {
     "field": "auth_number",
     "value": "NWH-A-940411",
-    "conf": 0.9,
+    "conf": 0.88,
     "auto_verdict": "correct"
    },
    {
@@ -935,7 +935,7 @@
    {
     "field": "auth_number",
     "value": "R97935641",
-    "conf": 0.9,
+    "conf": 0.89,
     "auto_verdict": "correct"
    },
    {
@@ -953,7 +953,7 @@
    {
     "field": "patient_dob",
     "value": "2019-11-22",
-    "conf": 0.953,
+    "conf": 0.957,
     "auto_verdict": "correct"
    },
    {
@@ -968,7 +968,7 @@
      "97153",
      "97155"
     ],
-    "conf": 0.925,
+    "conf": 0.935,
     "auto_verdict": "correct"
    },
    {
@@ -1007,7 +1007,7 @@
    {
     "field": "auth_number",
     "value": "HBL-A-643630",
-    "conf": 0.9,
+    "conf": 0.91,
     "auto_verdict": "correct"
    },
    {
@@ -1031,7 +1031,7 @@
    {
     "field": "member_id",
     "value": "HBL78754679",
-    "conf": 0.88,
+    "conf": 0.9,
     "auto_verdict": "correct"
    },
    {
@@ -1040,7 +1040,7 @@
      "97140",
      "97530"
     ],
-    "conf": 0.925,
+    "conf": 0.875,
     "auto_verdict": "correct"
    },
    {
@@ -1150,7 +1150,7 @@
    {
     "field": "auth_number",
     "value": null,
-    "conf": 0.0,
+    "conf": 0.05,
     "auto_verdict": "missing"
    },
    {
@@ -1168,7 +1168,7 @@
    {
     "field": "patient_dob",
     "value": "1988-04-16",
-    "conf": 0.8,
+    "conf": 0.65,
     "auto_verdict": "wrong"
    },
    {
@@ -1183,7 +1183,7 @@
      "90834",
      "90847"
     ],
-    "conf": 0.945,
+    "conf": 0.95,
     "auto_verdict": "correct"
    },
    {
@@ -1195,14 +1195,14 @@
    {
     "field": "start_date",
     "value": "2026-12-01",
-    "conf": 0.94,
+    "conf": 0.93,
     "auto_verdict": "correct"
    },
    {
     "field": "end_date",
-    "value": "2027-03-01",
-    "conf": 0.73,
-    "auto_verdict": "correct"
+    "value": null,
+    "conf": 0.0,
+    "auto_verdict": "missing"
    },
    {
     "field": "provider_npi",
@@ -1234,7 +1234,7 @@
    {
     "field": "patient_name",
     "value": "Zara Ose1",
-    "conf": 0.81,
+    "conf": 0.82,
     "auto_verdict": "wrong"
    },
    {
@@ -1266,7 +1266,7 @@
    {
     "field": "start_date",
     "value": "2027-02-19",
-    "conf": 0.96,
+    "conf": 0.953,
     "auto_verdict": "wrong"
    },
    {
@@ -1311,13 +1311,13 @@
    {
     "field": "patient_dob",
     "value": "1976-09-11",
-    "conf": 0.96,
+    "conf": 0.95,
     "auto_verdict": "correct"
    },
    {
     "field": "member_id",
     "value": "SFB51546818",
-    "conf": 0.88,
+    "conf": 0.73,
     "auto_verdict": "correct"
    },
    {
@@ -1325,14 +1325,14 @@
     "value": [
      "97140"
     ],
-    "conf": 0.96,
+    "conf": 0.95,
     "auto_verdict": "correct"
    },
    {
     "field": "approved_units",
-    "value": 34,
-    "conf": 0.96,
-    "auto_verdict": "correct"
+    "value": null,
+    "conf": 0.0,
+    "auto_verdict": "missing"
    },
    {
     "field": "start_date",
@@ -1342,9 +1342,9 @@
    },
    {
     "field": "end_date",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": "2027-03-26",
+    "conf": 0.8,
+    "auto_verdict": "correct"
    },
    {
     "field": "provider_npi",
@@ -1388,7 +1388,7 @@
    {
     "field": "member_id",
     "value": "HBL88595657",
-    "conf": 0.91,
+    "conf": 0.92,
     "auto_verdict": "correct"
    },
    {
@@ -1435,7 +1435,7 @@
    {
     "field": "patient_name",
     "value": "Ava Nguyen",
-    "conf": 0.955,
+    "conf": 0.96,
     "auto_verdict": "correct"
    },
    {
@@ -1455,7 +1455,7 @@
     "value": [
      "M54.50"
     ],
-    "conf": 0.91,
+    "conf": 0.92,
     "auto_verdict": "correct"
    },
    {
@@ -1469,13 +1469,13 @@
    {
     "field": "requested_units",
     "value": 28,
-    "conf": 0.9,
+    "conf": 0.86,
     "auto_verdict": "correct"
    },
    {
     "field": "plan_start",
     "value": "2026-12-08",
-    "conf": 0.96,
+    "conf": 0.95,
     "auto_verdict": "correct"
    },
    {
@@ -1514,7 +1514,7 @@
    {
     "field": "patient_name",
     "value": "Owen Patel",
-    "conf": 0.705,
+    "conf": 0.65,
     "auto_verdict": "correct"
    },
    {
@@ -1526,7 +1526,7 @@
    {
     "field": "member_id",
     "value": "HBL34127884",
-    "conf": 0.9,
+    "conf": 0.86,
     "auto_verdict": "correct"
    },
    {
@@ -1535,7 +1535,7 @@
      "M17.11",
      "M25.561"
     ],
-    "conf": 0.885,
+    "conf": 0.845,
     "auto_verdict": "correct"
    },
    {
@@ -1579,7 +1579,7 @@
    {
     "field": "signature_date",
     "value": "2026-11-14",
-    "conf": 0.96,
+    "conf": 0.95,
     "auto_verdict": "correct"
    }
   ]
@@ -1594,7 +1594,7 @@
    {
     "field": "patient_name",
     "value": "Rohan Castillo",
-    "conf": 0.95,
+    "conf": 0.955,
     "auto_verdict": "correct"
    },
    {
@@ -1622,13 +1622,13 @@
     "value": [
      "97153"
     ],
-    "conf": 0.95,
+    "conf": 0.96,
     "auto_verdict": "correct"
    },
    {
     "field": "requested_units",
     "value": 157,
-    "conf": 0.66,
+    "conf": 0.58,
     "auto_verdict": "correct"
    },
    {
@@ -1693,7 +1693,7 @@
     "value": [
      "F8A.0"
     ],
-    "conf": 0.74,
+    "conf": 0.69,
     "auto_verdict": "correct"
    },
    {
@@ -1708,7 +1708,7 @@
    {
     "field": "requested_units",
     "value": 15,
-    "conf": 0.88,
+    "conf": 0.87,
     "auto_verdict": "correct"
    },
    {
@@ -1738,7 +1738,7 @@
    {
     "field": "signature_date",
     "value": "2026-11-12",
-    "conf": 0.96,
+    "conf": 0.94,
     "auto_verdict": "correct"
    }
   ]
@@ -1773,7 +1773,7 @@
     "value": [
      "F84.0"
     ],
-    "conf": 0.91,
+    "conf": 0.9,
     "auto_verdict": "wrong"
    },
    {
@@ -1832,7 +1832,7 @@
    {
     "field": "patient_name",
     "value": "Noah Haddad",
-    "conf": 0.955,
+    "conf": 0.96,
     "auto_verdict": "correct"
    },
    {
@@ -1852,7 +1852,7 @@
     "value": [
      "F84.0"
     ],
-    "conf": 0.93,
+    "conf": 0.92,
     "auto_verdict": "correct"
    },
    {
@@ -1861,19 +1861,19 @@
      "97155",
      "97156"
     ],
-    "conf": 0.945,
+    "conf": 0.95,
     "auto_verdict": "correct"
    },
    {
     "field": "requested_units",
     "value": 336,
-    "conf": 0.91,
+    "conf": 0.94,
     "auto_verdict": "correct"
    },
    {
     "field": "plan_start",
     "value": "2026-11-26",
-    "conf": 0.95,
+    "conf": 0.96,
     "auto_verdict": "correct"
    },
    {
@@ -1924,7 +1924,7 @@
    {
     "field": "member_id",
     "value": "NWH47203213",
-    "conf": 0.9,
+    "conf": 0.91,
     "auto_verdict": "correct"
    },
    {
@@ -1932,7 +1932,7 @@
     "value": [
      "F8A.0"
     ],
-    "conf": 0.74,
+    "conf": 0.69,
     "auto_verdict": "correct"
    },
    {
@@ -1947,7 +1947,7 @@
    {
     "field": "requested_units",
     "value": 423,
-    "conf": 0.81,
+    "conf": 0.85,
     "auto_verdict": "correct"
    },
    {
@@ -1998,7 +1998,7 @@
    {
     "field": "patient_dob",
     "value": "2000-01-13",
-    "conf": 0.9,
+    "conf": 0.95,
     "auto_verdict": "correct"
    },
    {
@@ -2013,7 +2013,7 @@
      "M17.11",
      "M54"
     ],
-    "conf": 0.63,
+    "conf": 0.61,
     "auto_verdict": "wrong"
    },
    {
@@ -2025,7 +2025,7 @@
    {
     "field": "requested_units",
     "value": 10,
-    "conf": 0.95,
+    "conf": 0.96,
     "auto_verdict": "correct"
    },
    {
@@ -2070,7 +2070,7 @@
    {
     "field": "patient_name",
     "value": "Leah Lindqvist",
-    "conf": 0.935,
+    "conf": 0.945,
     "auto_verdict": "correct"
    },
    {
@@ -2091,7 +2091,7 @@
      "F32.1",
      "F41.1"
     ],
-    "conf": 0.915,
+    "conf": 0.92,
     "auto_verdict": "correct"
    },
    {
@@ -2100,7 +2100,7 @@
      "90834",
      "90847"
     ],
-    "conf": 0.93,
+    "conf": 0.95,
     "auto_verdict": "correct"
    },
    {
@@ -2151,7 +2151,7 @@
    {
     "field": "patient_name",
     "value": "Lucas Brennan",
-    "conf": 0.95,
+    "conf": 0.96,
     "auto_verdict": "correct"
    },
    {
@@ -2171,7 +2171,7 @@
     "value": [
      "M54.50"
     ],
-    "conf": 0.91,
+    "conf": 0.92,
     "auto_verdict": "correct"
    },
    {
@@ -2179,13 +2179,13 @@
     "value": [
      "97140"
     ],
-    "conf": 0.96,
+    "conf": 0.94,
     "auto_verdict": "correct"
    },
    {
     "field": "requested_units",
     "value": 34,
-    "conf": 0.83,
+    "conf": 0.81,
     "auto_verdict": "correct"
    },
    {
@@ -2256,7 +2256,7 @@
     "value": [
      "90837"
     ],
-    "conf": 0.9,
+    "conf": 0.93,
     "auto_verdict": "correct"
    },
    {
@@ -2319,7 +2319,7 @@
    {
     "field": "member_id",
     "value": "KCM71602021",
-    "conf": 0.89,
+    "conf": 0.91,
     "auto_verdict": "correct"
    },
    {
@@ -2328,7 +2328,7 @@
      "F32.1",
      "F41.1"
     ],
-    "conf": 0.87,
+    "conf": 0.855,
     "auto_verdict": "correct"
    },
    {
@@ -2337,7 +2337,7 @@
      "90834",
      "90837"
     ],
-    "conf": 0.96,
+    "conf": 0.955,
     "auto_verdict": "correct"
    },
    {
@@ -2480,7 +2480,7 @@
    {
     "field": "member_id",
     "value": "SFB42760619",
-    "conf": 0.9,
+    "conf": 0.91,
     "auto_verdict": "correct"
    },
    {
@@ -2489,7 +2489,7 @@
      "M17.11",
      "M25.561"
     ],
-    "conf": 0.84,
+    "conf": 0.87,
     "auto_verdict": "correct"
    },
    {
@@ -2497,13 +2497,13 @@
     "value": [
      "97140"
     ],
-    "conf": 0.93,
+    "conf": 0.94,
     "auto_verdict": "correct"
    },
    {
     "field": "requested_units",
     "value": 16,
-    "conf": 0.75,
+    "conf": 0.71,
     "auto_verdict": "correct"
    },
    {
@@ -2548,13 +2548,13 @@
    {
     "field": "patient_name",
     "value": "Leah Castillo",
-    "conf": 0.95,
+    "conf": 0.96,
     "auto_verdict": "correct"
    },
    {
     "field": "patient_dob",
     "value": "2001-12-21",
-    "conf": 0.95,
+    "conf": 0.96,
     "auto_verdict": "correct"
    },
    {
@@ -2627,13 +2627,13 @@
    {
     "field": "patient_name",
     "value": "Caleb Fujimoto",
-    "conf": 0.955,
+    "conf": 0.96,
     "auto_verdict": "correct"
    },
    {
     "field": "patient_dob",
     "value": "2008-12-11",
-    "conf": 0.95,
+    "conf": 0.96,
     "auto_verdict": "correct"
    },
    {
@@ -2656,13 +2656,13 @@
      "97153",
      "97155"
     ],
-    "conf": 0.95,
+    "conf": 0.945,
     "auto_verdict": "correct"
    },
    {
     "field": "requested_units",
     "value": 392,
-    "conf": 0.85,
+    "conf": 0.84,
     "auto_verdict": "correct"
    },
    {
@@ -2707,7 +2707,7 @@
    {
     "field": "patient_name",
     "value": "Mateo Varga",
-    "conf": 0.95,
+    "conf": 0.955,
     "auto_verdict": "correct"
    },
    {
@@ -2739,7 +2739,7 @@
    {
     "field": "requested_units",
     "value": 95,
-    "conf": 0.8,
+    "conf": 0.76,
     "auto_verdict": "correct"
    },
    {
@@ -2795,16 +2795,16 @@
    },
    {
     "field": "member_id",
-    "value": "SFB11168389",
-    "conf": 0.67,
-    "auto_verdict": "correct"
+    "value": null,
+    "conf": 0.0,
+    "auto_verdict": "missing"
    },
    {
     "field": "icd10_codes",
     "value": [
      "M17.11"
     ],
-    "conf": 0.84,
+    "conf": 0.88,
     "auto_verdict": "correct"
    },
    {
@@ -2848,7 +2848,7 @@
    {
     "field": "signature_date",
     "value": "2026-11-15",
-    "conf": 0.96,
+    "conf": 0.95,
     "auto_verdict": "correct"
    }
   ]
@@ -2892,7 +2892,7 @@
      "97153",
      "97155"
     ],
-    "conf": 0.95,
+    "conf": 0.945,
     "auto_verdict": "correct"
    },
    {
@@ -2904,7 +2904,7 @@
    {
     "field": "plan_start",
     "value": "2026-12-02",
-    "conf": 0.95,
+    "conf": 0.96,
     "auto_verdict": "correct"
    },
    {
@@ -2955,7 +2955,7 @@
    {
     "field": "member_id",
     "value": "PRV83557332",
-    "conf": 0.9,
+    "conf": 0.84,
     "auto_verdict": "correct"
    },
    {
@@ -2964,7 +2964,7 @@
      "F84.5",
      "F88"
     ],
-    "conf": 0.59,
+    "conf": 0.645,
     "auto_verdict": "correct"
    },
    {
@@ -2973,7 +2973,7 @@
      "97153",
      "97155"
     ],
-    "conf": 0.73,
+    "conf": 0.81,
     "auto_verdict": "correct"
    },
    {
@@ -3009,7 +3009,7 @@
    {
     "field": "signature_date",
     "value": "2026-11-05",
-    "conf": 0.84,
+    "conf": 0.91,
     "auto_verdict": "correct"
    }
   ]
