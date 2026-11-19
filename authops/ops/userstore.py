@@ -68,7 +68,12 @@ def _url() -> str:
         except Exception:
             url = None
     if url:
-        return url.replace("postgres://", "postgresql+psycopg2://", 1) if url.startswith("postgres://") else url
+        url = url.strip()
+        # Pin the psycopg2 driver: SQLAlchemy 2.1+ defaults plain postgresql:// to psycopg (v3).
+        for prefix in ("postgres://", "postgresql://"):
+            if url.startswith(prefix):
+                return "postgresql+psycopg2://" + url[len(prefix):]
+        return url
     path = Path(os.environ.get("AUTHOPS_USERDB", Path(__file__).resolve().parents[2] / "data" / "userstudy.db"))
     path.parent.mkdir(parents=True, exist_ok=True)
     return f"sqlite:///{path}"
