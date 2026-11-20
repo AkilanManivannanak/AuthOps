@@ -1,6 +1,8 @@
 # AuthOps
 
-**Live app:** _add your Streamlit URL here after deploying_ · start at **Join the study** to test it.
+**Live app:** https://akilan-silna-pa-agent.streamlit.app · start at **Join the study** to test it.
+
+> Independent portfolio project by Akilan Manivannan for the Silna Health AI Deployment Analyst application. Not affiliated with or endorsed by Silna Health. All patients, providers and payors are synthetic.
 
 **Prior-authorization agent operations, end to end:** scanned documents in, validated cases out,
 submitted through a FHIR API, a browser agent or a phone agent, with experiments, QA review and

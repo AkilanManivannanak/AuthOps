@@ -47,5 +47,6 @@ with st.sidebar:
     else:
         st.markdown("You're exploring as a guest. **Join the study** to have your reviews counted.")
     st.caption("Synthetic patients and fictional payors only. Do not enter real PHI.")
+    st.caption("Independent portfolio project by Akilan Manivannan for the Silna Health AI Deployment Analyst application. Not affiliated with or endorsed by Silna Health.")
 
 nav.run()

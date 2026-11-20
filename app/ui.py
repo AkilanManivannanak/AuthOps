@@ -96,13 +96,19 @@ def require_tester(reason: str = "so your work counts in the study") -> dict | N
 
 # ------------------------------------------------------------------ components
 
+# Lets a components.html iframe grow or shrink to fit its content when the grid wraps on narrow screens.
+AUTOSIZE = """<script>(function(){const send=()=>window.parent.postMessage({isStreamlitMessage:true,
+type:"streamlit:setFrameHeight",height:Math.ceil(document.documentElement.scrollHeight)},"*");
+new ResizeObserver(send).observe(document.body);window.addEventListener("load",send);setTimeout(send,150);})();</script>"""
+
+
 def tiles(items: list[tuple]) -> None:
     """items: (value, label, fmt, hot) ; values count up in the browser."""
     cells = ""
     for i, (value, label, fmt, hot) in enumerate(items):
         cells += (f"<div class='ao-tile {'hot' if hot else ''}'><div class='ao-fig' data-to='{value}' data-fmt='{fmt}' "
                   f"id='t{i}'>0</div><div class='ao-lab'>{label}</div></div>")
-    html = f"""{CSS}<div style="display:grid;grid-template-columns:repeat({len(items)},1fr);gap:12px">{cells}</div>
+    html = f"""{CSS}<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px">{cells}</div>
     <script>
     const ease=t=>1-Math.pow(1-t,3);
     document.querySelectorAll('.ao-fig').forEach(el=>{{
@@ -112,7 +118,7 @@ def tiles(items: list[tuple]) -> None:
       const step=n=>{{const f=Math.min(1,(n-t0)/dur); el.textContent=show(to*ease(f)); if(f<1) requestAnimationFrame(step);}};
       requestAnimationFrame(step);
     }});
-    </script>"""
+    </script>{AUTOSIZE}"""
     components.html(html, height=168)
 
 
@@ -146,7 +152,7 @@ def proof_cards(cards: list[dict], height: int = 300) -> None:
           <div class="face back"><div class="t">{c['title']}</div><p>{c['method']}</p><div class="hint">tap to flip back</div></div></button></div>""")
     html = f"""<style>
     body{{margin:0;font-family:Inter,system-ui,sans-serif;color:{INK}}}
-    .grid{{display:grid;grid-template-columns:repeat({min(3, len(cards))},1fr);gap:12px}}
+    .grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}}
     .wrap{{height:{height - 30}px;perspective:1200px}} .card{{all:unset;display:block;position:relative;width:100%;height:100%;cursor:pointer;transform-style:preserve-3d;transition:transform .55s}}
     .card.f{{transform:rotateY(180deg)}} .face{{position:absolute;inset:0;border-radius:18px;padding:18px;backface-visibility:hidden;display:flex;flex-direction:column;justify-content:space-between;box-sizing:border-box}}
     .front{{background:#fff;border:1px solid {RULE}}} .back{{background:{FOREST};color:{PAPER};transform:rotateY(180deg)}}
@@ -160,7 +166,7 @@ def proof_cards(cards: list[dict], height: int = 300) -> None:
     </style><div class="grid">{''.join(blocks)}</div>
     <script>setTimeout(()=>{{document.querySelectorAll('.sweep').forEach(c=>c.style.strokeDashoffset=c.dataset.to);
     document.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w+'%');
-    document.querySelectorAll('.dots i').forEach(d=>{{d.style.opacity=1;d.style.transform='scale(1)'}});}},80);</script>"""
+    document.querySelectorAll('.dots i').forEach(d=>{{d.style.opacity=1;d.style.transform='scale(1)'}});}},80);</script>{AUTOSIZE}"""
     rows = (len(cards) + 2) // 3
     components.html(html, height=height * rows)
 

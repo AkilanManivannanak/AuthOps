@@ -28,10 +28,10 @@ steps = [("📄", "Read", "OCR + extraction with per-field confidence; unsure fi
          ("🤖", "Submit", "Browser agent with guards, retries and a 50-turn cap"),
          ("✅", "Verify", "Confirmation must match patient, member and codes"),
          ("📈", "Earn autonomy", "Human QA share drops only while metrics hold")]
-cols = st.columns(len(steps))
-for col, (icon, name, desc) in zip(cols, steps):
-    col.markdown(f"<div class='ao-tile'><div style='font-size:1.8rem'>{icon}</div><b>{name}</b>"
-                 f"<div class='ao-muted'>{desc}</div></div>", unsafe_allow_html=True)
+cells = "".join(f"<div class='ao-tile'><div style='font-size:1.8rem'>{icon}</div><b>{name}</b>"
+                f"<div class='ao-muted'>{desc}</div></div>" for icon, name, desc in steps)
+st.markdown(f"<div style='display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px'>{cells}</div>",
+            unsafe_allow_html=True)
 
 st.markdown("### Measured, not claimed")
 cards = []
