@@ -67,6 +67,17 @@ class UsageMeter:
         self.latency_ms.append(r.latency_ms)
 
 
+def create_message(client, **kw):
+    """messages.create that works on SDK 0.x/1.x (temperature accepted) and 2.x (removed)."""
+    try:
+        return client.messages.create(**kw)
+    except TypeError as e:
+        if "temperature" in str(e) and "temperature" in kw:
+            kw.pop("temperature")
+            return client.messages.create(**kw)
+        raise
+
+
 def llm_available() -> bool:
     return bool(os.environ.get("ANTHROPIC_API_KEY"))
 
@@ -88,7 +99,8 @@ class ClaudeLLM:
                 "data": base64.b64encode(Path(img).read_bytes()).decode()}})
         content.append({"type": "text", "text": prompt})
         t0 = time.perf_counter()
-        msg = self.client.messages.create(
+        msg = create_message(
+            self.client,
             model=self.model, max_tokens=max_tokens, temperature=0.0,
             system=system or "You are a careful healthcare operations assistant.",
             messages=[{"role": "user", "content": content}],

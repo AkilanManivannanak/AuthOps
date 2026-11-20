@@ -22,6 +22,12 @@ pages = {
         st.Page(V + "agent_theater.py", title="Agent Theater", icon="🤖"),
         st.Page(V + "qa_console.py", title="QA Console", icon="✅"),
     ],
+    "Care readiness": [
+        st.Page(V + "long_charts.py", title="Long-chart validation", icon="📚"),
+        st.Page(V + "coverage_monitor.py", title="Coverage Monitor", icon="📡"),
+        st.Page(V + "benefits_cost.py", title="Benefits and cost", icon="💵"),
+        st.Page(V + "cases_api.py", title="Cases and API", icon="🗂️"),
+    ],
     "Operate and improve": [
         st.Page(V + "autonomy_ramp.py", title="Autonomy Ramp", icon="📈"),
         st.Page(V + "playbook_studio.py", title="Playbook Studio", icon="📝"),

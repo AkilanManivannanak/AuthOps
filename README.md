@@ -102,6 +102,43 @@ Each of these was found by a failing run in the step table, then fixed and re-ru
   limited to 20 visits); it only shows up when a case lands in that window.
 - Rendered documents are cleaner than real faxes (no handwriting, stamps or multi-column layouts).
 
+## Care readiness: built against where Silna says it is going
+
+Each feature answers a gap Silna has named in public: in its engineering posts, product launches
+and job listings. All results come from synthetic data and are reproducible with
+`python scripts/run_care_readiness.py`. App pages are under **Care readiness**.
+
+| Silna's stated direction | What this adds | Result |
+|---|---|---|
+| Document validation breaks on 100+ page charts, cross-page and medical-necessity rules; moving to background multi-turn document agents (engineering blog, Jun 2026) | Long-chart corpus (12 to 150 pages, distractors, answer keys) and a tool-using document agent, with every verdict tied to a page and quote | Claude one-shot vs Claude agent: run `--llm` (pending) |
+| Care Readiness Platform: real-time insurance monitoring and expiration alerts | 26-week panel sim: coverage lapses, payor switches, partial approvals; reactive vs monthly vs proactive burn-down monitor | Proactive cuts denied revenue 91% vs reactive (range 89% to 92%, 5 seeds); 91% of alerts needed |
+| Phone agents for benefits checks; "a fluent wrong answer can delay care"; eval tooling is the next step (blog, Apr 2026) | Benefits-call eval: spoken numbers, self-corrections, remaining vs met, plan-pays phrasing, carve-outs, teen/ty ASR swaps; read-back guard; patient cost estimator | Field accuracy 83.2% → 94.1% → 99.4%; 12-visit estimate error $473 → $28 |
+| Pull the email-based clinician process into case management; external API (engineering job listing) | Case state machine with SLA clocks, reminders at 50/80%, escalation, audit trail; FastAPI `/v1` with API keys, idempotency keys, HMAC-signed webhooks | 11 tests cover SLA expiry, idempotency, routing and signature checks |
+| CMS-0057-F makes basic PA submission an API call by 2027 | Existing FHIR router, plus the four features above: the work that stays hard after submission becomes an API | See FHIR and channels |
+
+### Long-chart validation (30 charts, 8 rules each)
+
+| Arm | Accuracy (decided) | Coverage | Coverage on 100+ pages | False passes | Charts fully right |
+|---|---|---|---|---|---|
+| Offline single pass (first match, context budget) | 0.938 | 0.804 | 0.479 | 3 | 16/30 |
+| Offline document finder | 1.000 | 1.000 | 1.000 | 0 | 30/30 |
+
+The offline arms are deterministic stand-ins, so the harness can run without an API key. The
+document finder is written against the chart template, so its perfect score proves the plumbing,
+not model quality. The real comparison is Claude one-shot vs Claude agent.
+
+### Coverage monitoring (200 patients, 26 weeks, mean of 5 seeds)
+
+| Policy | Denied visits | Denied dollars | Days without a valid auth | Reauths | Eligibility checks |
+|---|---|---|---|---|---|
+| reactive | 3649 | $1,031,008 | 10748 | 457 | 0 |
+| scheduled | 1737 | $521,400 | 4367 | 541 | 1400 |
+| proactive | 332 | $96,652 | 783 | 587 | 5200 |
+
+The panel is deliberately stressed (45% Medicaid, 30% partial approvals, short PT auths), so the
+absolute dollars are not a forecast. The comparison between policies is the result, and it holds
+on every seed.
+
 ## The app
 
 An interactive Streamlit app puts every part of the system in front of a person:

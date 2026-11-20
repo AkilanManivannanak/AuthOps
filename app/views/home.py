@@ -33,6 +33,18 @@ cells = "".join(f"<div class='ao-tile'><div style='font-size:1.8rem'>{icon}</div
 st.markdown(f"<div style='display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px'>{cells}</div>",
             unsafe_allow_html=True)
 
+st.markdown("### Care readiness: what happens between visits")
+cr = asset_json("care_readiness.json") or {}
+if cr:
+    mon, bv = cr["monitor"]["proactive"], cr["benefits"]
+    l1, l2, l3, l4 = st.columns(4)
+    l1.page_link("app/views/long_charts.py", label="Long-chart validation: 12 to 150 page charts", icon="📚")
+    l2.page_link("app/views/coverage_monitor.py",
+                 label=f"Coverage Monitor: {mon['denied_dollars_cut_vs_reactive'][1]:.0%} less denied revenue", icon="📡")
+    l3.page_link("app/views/benefits_cost.py",
+                 label=f"Benefits calls: {bv['careful_readback']['field_accuracy']:.1%} fields right", icon="💵")
+    l4.page_link("app/views/cases_api.py", label="Cases and API: SLA clocks, webhooks", icon="🗂️")
+
 st.markdown("### Measured, not claimed")
 cards = []
 if ex:
