@@ -128,8 +128,12 @@ class Tools:
         opts = el.get("options", [])
         match = next((o for o in opts if o.lower() == str(value).lower()), None) or next(
             (o for o in opts if str(value).lower() in o.lower()), None)
-        if match is None:
-            raise ToolError("option_not_found", f"'{value}' not in {opts}")
+        if match is None:   # the observation lists option values; also accept the visible option text
+            try:
+                loc.select_option(label=str(value))
+                return ToolResult(True, f"selected '{value}' by label in '{target}'")
+            except Exception:
+                raise ToolError("option_not_found", f"'{value}' not in {opts}")
         try:
             loc.select_option(value=match)
         except Exception:
@@ -298,6 +302,8 @@ TOOL_REGISTRY = {
 }
 
 PORTAL_TOOLS = {
+    "lakeshore": ["goto", "fill", "select", "check", "click", "upload", "pick_date", "dismiss_overlays",
+                  "type_credential", "read_confirmation", "wait", "finish"],
     "northwind": ["goto", "fill", "select", "click", "upload", "pick_date", "dismiss_overlays",
                   "type_credential", "read_confirmation", "wait", "finish"],
     "keystone": ["goto", "fill", "select", "click", "upload", "pick_date", "dismiss_overlays",

@@ -23,8 +23,12 @@ import hmac
 import json
 import os
 import uuid
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from typing import Literal, Optional
+
+
+def _utcnow() -> datetime:
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 from fastapi import Depends, FastAPI, Header, HTTPException
 from pydantic import BaseModel, Field
@@ -109,7 +113,7 @@ def create_app(today: date | None = None, sender=None) -> FastAPI:
     def emit(kind: str, payload: dict) -> None:
         for h in hooks.values():
             if "*" in h["events"] or kind in h["events"]:
-                body = json.dumps({"event": kind, "data": payload, "sent_at": datetime.utcnow().isoformat()},
+                body = json.dumps({"event": kind, "data": payload, "sent_at": _utcnow().isoformat()},
                                   default=str, sort_keys=True)
                 sig = hmac.new(h["secret"].encode(), body.encode(), hashlib.sha256).hexdigest()
                 headers = {"X-AuthOps-Event": kind, "X-AuthOps-Signature": f"sha256={sig}"}
@@ -150,7 +154,7 @@ def create_app(today: date | None = None, sender=None) -> FastAPI:
                "channel": payor.channel, "payor": payor.name, "specialty": body.specialty,
                "issues": [{"rule": r.rule, "fix": r.message} for r in rep.blocking],
                "needs_human": [r.rule for r in rep.needs_human], "decision": None, "units_approved": None,
-               "open_cases": [], "created_at": datetime.utcnow().isoformat()}
+               "open_cases": [], "created_at": _utcnow().isoformat()}
         store[aid] = rec
         if idempotency_key:
             idem[(key, idempotency_key)] = aid
@@ -168,7 +172,7 @@ def create_app(today: date | None = None, sender=None) -> FastAPI:
         rec = store.get(aid)
         if not rec:
             raise HTTPException(404, "not found")
-        now = datetime.utcnow()
+        now = _utcnow()
         if ev.type in REQUEST_TYPES:
             c = cases.open(aid, ev.type, rec["specialty"], aid, now, owner=None)
             rec["status"] = "action_required"
@@ -182,7 +186,7 @@ def create_app(today: date | None = None, sender=None) -> FastAPI:
 
     @app.get("/v1/cases")
     def list_cases(key: str = Depends(auth)):
-        now = datetime.utcnow()
+        now = _utcnow()
         cases.tick(now)
         return {"queue": cases.queue(now), "stats": cases.stats()}
 
@@ -191,7 +195,7 @@ def create_app(today: date | None = None, sender=None) -> FastAPI:
         if cid not in cases.cases:
             raise HTTPException(404, "not found")
         try:
-            c = cases.respond(cid, body.response, datetime.utcnow())
+            c = cases.respond(cid, body.response, _utcnow())
         except ValueError as e:
             raise HTTPException(409, str(e))
         rec = store.get(c.auth_id)

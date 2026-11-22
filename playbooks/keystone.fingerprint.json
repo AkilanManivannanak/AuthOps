@@ -1,0 +1,55 @@
+{
+ "/keystone/portal": {
+  "fields": [
+   [
+    "Attachments",
+    "file"
+   ],
+   [
+    "Is a school schedule attached?",
+    "select"
+   ],
+   [
+    "Medicaid ID",
+    "text"
+   ],
+   [
+    "Member Date of Birth",
+    "text"
+   ],
+   [
+    "Primary and Secondary Diagnosis",
+    "text"
+   ],
+   [
+    "Procedure Codes",
+    "text"
+   ],
+   [
+    "Requested hours on school days",
+    "text"
+   ],
+   [
+    "Service Category",
+    "select"
+   ],
+   [
+    "Service From",
+    "text"
+   ],
+   [
+    "Service Through",
+    "text"
+   ],
+   [
+    "Servicing Provider NPI",
+    "text"
+   ],
+   [
+    "Total Units",
+    "text"
+   ]
+  ],
+  "button": "Submit Authorization"
+ }
+}

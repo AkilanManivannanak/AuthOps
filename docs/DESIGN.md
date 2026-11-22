@@ -7,12 +7,10 @@ patients are fictional. Nothing here touches a real portal or real PHI.
 
 ## 1. Research basis
 
-Silna Health (NYC, founded 2023, Accel and Bain Capital Ventures) automates prior
-authorizations, benefit checks and insurance monitoring for behavioral health, physical
-health, ambulatory and post-acute providers. Their engineering blog describes four systems.
-Each one maps to a module here.
+Public engineering write-ups on prior-authorization automation (2026) describe four systems
+that production teams run. Each maps to a module here.
 
-| Silna system (from their engineering posts) | What they describe | AuthOps module |
+| System (public write-ups) | What is described | AuthOps module |
 |---|---|---|
 | Autonomous Browser Agents (Feb 2026) | Playwright over CDP in isolated Kasm containers; in-house durable "Pipelines" on Dramatiq + Postgres where each inference and tool call is a step; windowed context; priority scheduling; credential pooling with leases; TOTP and email-OTP handling; 50-turn cap; smoothness score; verification of downloaded approval letters | `agent/runtime.py`, `agent/tools.py`, `agent/credentials.py`, `ops/store.py`, `ops/scoring.py` |
 | Beyond the Agent: AI Operations (May 2026) | Per payor x specialty configuration; sandbox backtests; model chosen per portal on cost, context, intelligence and speed; Experiments platform splitting auto-submit vs human QA and model arms (e.g. Haiku-4.5 vs GPT-5.4); failure modes: hidden pop-ups, concurrency limits, upload rules, non-standard UI, conditional forms, lockouts, context bloat, session drift; 0-100 insight signal | `portals/app.py` (sandbox with those failure modes), `ops/experiments.py`, `agent/policy.py`, `playbooks/` |
@@ -36,26 +34,10 @@ Two consequences shape the design:
    submitting a complete, correct request the first time. That is the rules engine plus
    extraction, and it is why validation runs before any channel.
 
-Silna's stated next steps also point upstream: background document agents that loop with
-tools instead of one-shot calls, and automating agent configuration itself (5,000+ hours of
-manual configuration at static tooling). The playbook format here (plain-English `.md` for
+Published next steps in the field also point upstream: background document agents that loop
+with tools instead of one-shot calls, and automating agent configuration itself. The playbook format here (plain-English `.md` for
 people and the LLM, structured `.yaml` for the deterministic policy) is the input such a
 configuration generator would produce and test.
-
-## 3. Job description coverage (AI Deployment Analyst)
-
-| JD line | Where it lives | Evidence produced |
-|---|---|---|
-| Develop, test and refine AI deployments that extract structured information from treatment plans and PA approvals | `docintel/` | field-level accuracy, precision, coverage and silent-error rate by condition (clean/scan/fax), template and field |
-| ...or web-based authorization and verification workflows | `agent/`, `portals/` | verified submit rate per portal, error classes, ablations |
-| Analyze model outputs for accuracy and identify areas for improvement | `docintel/evaluate.py`, `ops/qa.py` | `extraction_errors_*.csv`, `error_dataset.csv` (agent value vs correct value, minor/major) |
-| Translate healthcare and insurance workflows into technical specifications | `configs/payor_requirements.yaml`, `playbooks/*.yaml` | payor x specialty rules, per-portal plans |
-| Documentation and playbooks so prompt strategies are reproducible | `playbooks/*.md`, extraction prompts in `docintel/extract.py` | plain-English playbooks the LLM policy reads verbatim |
-| Best practices in prompting, document parsing, healthcare data handling | evidence-quoted extraction, groundedness check, strict schemas, credentials never in prompts | see §4 |
-| Work cross-functionally to roll out automation | QA ramp, error dataset, playbooks editable without code | `qa_ramp` log in the report |
-| Measure progress with clearly defined metrics | `ops/scoring.py`, `docintel/evaluate.py`, `REPORT.md` | defined below |
-| Phone agents | `phone/ivr.py` | completion rate, turns, ASR repeat count |
-| Python, SQL, healthcare/insurance workflows | whole repo; `reports/authops.db` is queryable | SQL examples in README |
 
 ## 4. Safety and data handling choices
 
@@ -83,8 +65,10 @@ configuration generator would produce and test.
 ## 6. Known limits (stated, not hidden)
 
 - The sandbox portals are built by the same person who wrote the agent. Passing them shows the
-  controls work. It does not prove the agent would handle an unseen real portal. The LLM arm is the
-  test of generalization, and it needs an API key to run.
+  controls work. It does not prove the agent would handle an unseen real portal. Lakeshore is held
+  out (no hand-written playbook) and auto-config drafts a working playbook for it, but the same
+  person wrote Lakeshore and the label lexicon. The Claude label mapper (no lexicon) is the fairer
+  test, and a real unseen portal is the only real one.
 - The playbook policy is deterministic (RPA with recovery). It is the baseline, not the "AI".
 - Rendered documents are cleaner than real faxes: no handwriting, no stamps, no multi-column scans.
 - The requirements database is tiny and fictional. One hidden payor policy change is planted on

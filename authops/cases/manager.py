@@ -13,7 +13,11 @@ from __future__ import annotations
 
 import itertools
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+
+
+def _utcnow() -> datetime:
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 REQUEST_TYPES = {  # type -> (SLA hours, who must act, what the payor asked for)
     "peer_to_peer": (48, "rendering clinician", "Schedule and complete a peer-to-peer call with the payor's medical director."),
@@ -53,7 +57,7 @@ class ClinicalCase:
         return min(1.5, max(0.0, (now - self.opened_at).total_seconds() / total))
 
     def as_dict(self, now: datetime | None = None) -> dict:
-        now = now or datetime.utcnow()
+        now = now or _utcnow()
         return {"case_id": self.case_id, "auth_id": self.auth_id, "request_type": self.request_type,
                 "state": self.state, "assignee": self.assignee, "specialty": self.specialty,
                 "patient_ref": self.patient_ref, "opened_at": self.opened_at.isoformat(),

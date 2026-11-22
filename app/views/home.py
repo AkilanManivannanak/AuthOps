@@ -27,7 +27,8 @@ steps = [("📄", "Read", "OCR + extraction with per-field confidence; unsure fi
          ("🔀", "Route", "FHIR API if the payor has one, else portal agent, else phone"),
          ("🤖", "Submit", "Browser agent with guards, retries and a 50-turn cap"),
          ("✅", "Verify", "Confirmation must match patient, member and codes"),
-         ("📈", "Earn autonomy", "Human QA share drops only while metrics hold")]
+         ("📈", "Earn autonomy", "Human QA share drops only while metrics hold"),
+         ("📡", "Stay current", "Payor rule changes and portal releases detected and repaired")]
 cells = "".join(f"<div class='ao-tile'><div style='font-size:1.8rem'>{icon}</div><b>{name}</b>"
                 f"<div class='ao-muted'>{desc}</div></div>" for icon, name, desc in steps)
 st.markdown(f"<div style='display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px'>{cells}</div>",

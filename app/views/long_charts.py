@@ -6,10 +6,9 @@ from authops.docagent.longdoc import RULES, make_chart
 from authops.docagent.validators import offline_agent, offline_oneshot
 
 setup("Long-chart validation",
-      "Silna's own engineering post names where one-shot document checks break: charts over 100 pages, "
-      "rules that combine facts from different pages, and medical-necessity rules. This page compares a single "
-      "pass with a background agent that searches, reads and cites, on synthetic charts built to have exactly "
-      "those problems.")
+      "Validate a full chart against payor rules: 12 to 150 pages, facts spread across documents, decoys, and "
+      "medical-necessity requirements. Compare a single model call with a background agent that searches, reads "
+      "and cites evidence for every rule.")
 
 m = asset_json("care_readiness.json") or {}
 da = m.get("docagent", {})
@@ -44,7 +43,7 @@ if da:
     cost = pd.DataFrame([{"arm": LABEL[a], "p50 seconds per chart": da[a]["p50_seconds"],
                           "cost per chart (USD)": da[a]["cost_per_chart_usd"], "mean turns": da[a]["mean_turns"],
                           "charts fully correct": f"{da[a]['charts_fully_correct']}/{da[a]['charts']}"} for a in arms])
-    st.markdown("### The trade-off Silna described: latency for accuracy")
+    st.markdown("### Latency and cost per chart")
     st.dataframe(cost, hide_index=True, use_container_width=True)
     st.caption("A false pass is the expensive error: the request goes out, the payor denies it, and care waits. "
                "Coverage below 100% means the arm sent a rule to a person instead of guessing, which costs minutes, "
@@ -88,4 +87,4 @@ with st.expander("How the charts are built and scored"):
         "- Every verdict must cite a page and an exact quote. A quote that is not on the cited page turns the "
         "verdict into needs-human, so a confident answer without evidence never counts as a pass.\n"
         "- The Claude agent gets three tools: keyword search over the chart, read up to 3 pages, and record a "
-        "finding. It runs in the background, which is the design Silna's post says they are moving to.")
+        "finding. It runs asynchronously, outside the request path.")

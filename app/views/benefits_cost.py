@@ -5,9 +5,9 @@ from app.ui import asset_json, log, setup, tiles
 from authops.benefits.calls import estimate, extract_careful, extract_naive, make_calls
 
 setup("Benefits and cost",
-      "For ABA, a phone call is often the only accurate source of plan details, and Silna's phone-agent post warns "
-      "that a fluent wrong answer delays care. This page scores three ways of turning a rep's answers into plan "
-      "fields, and shows what each mistake does to the patient's cost estimate.")
+      "For ABA and other specialty benefits, a payor call is often the only accurate source of plan details. Score "
+      "three ways of turning a rep's answers into plan fields, and see what each error does to the patient's "
+      "cost estimate.")
 
 m = asset_json("care_readiness.json") or {}
 bv = m.get("benefits", {})

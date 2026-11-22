@@ -249,13 +249,22 @@ def chunk_text(text: str, max_chars: int = 2500, overlap: int = 200) -> list[str
 
 
 class ClaudeExtractor:
-    def __init__(self, llm, use_images: bool = False):
+    def __init__(self, llm, use_images: bool = False, prompt=None):
+        """prompt: an authops.ops.prompts.Prompt; defaults to the production version in prompts/extract/."""
+        if prompt is None:
+            try:
+                from authops.ops.prompts import production
+                prompt = production("extract")
+            except Exception:  # registry missing: fall back to the built-in text
+                prompt = None
         self.llm = llm
         self.use_images = use_images
+        self.template = prompt.template if prompt else EXTRACT_PROMPT
+        self.prompt_ref = prompt.ref if prompt else "builtin"
         self.name = f"claude:{llm.model}{':vision' if use_images else ''}"
 
     def _call(self, doc_type, text, pages):
-        r = self.llm.complete(EXTRACT_PROMPT.format(doc_type=doc_type.value.replace("_", " "),
+        r = self.llm.complete(self.template.format(doc_type=doc_type.value.replace("_", " "),
                                                     schema=_schema_desc(doc_type), text=text),
                               images=pages if self.use_images else None, max_tokens=1500)
         return r, _parse(r.text)

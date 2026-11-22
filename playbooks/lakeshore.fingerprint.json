@@ -1,0 +1,60 @@
+{
+ "/lakeshore/request/lookup": {
+  "fields": [
+   [
+    "Birthdate (MM/DD/YYYY)",
+    "text"
+   ],
+   [
+    "Patient last name",
+    "text"
+   ],
+   [
+    "Subscriber number",
+    "text"
+   ]
+  ],
+  "button": "Find patient"
+ },
+ "/lakeshore/request/details": {
+  "fields": [
+   [
+    "I attest that this information is accurate and complete",
+    "checkbox"
+   ],
+   [
+    "Primary and secondary diagnoses (ICD-10)",
+    "text"
+   ],
+   [
+    "Procedure codes (CPT/HCPCS)",
+    "text"
+   ],
+   [
+    "Program",
+    "select"
+   ],
+   [
+    "Quantity (units)",
+    "number"
+   ],
+   [
+    "Rendering clinician NPI",
+    "text"
+   ],
+   [
+    "Service from",
+    "date"
+   ],
+   [
+    "Service through",
+    "date"
+   ],
+   [
+    "Supporting documentation",
+    "file"
+   ]
+  ],
+  "button": "Send to Utilization Review"
+ }
+}

@@ -1,0 +1,47 @@
+{
+ "/northwind/new": {
+  "fields": [
+   [
+    "CPT Codes (comma separated)",
+    "text"
+   ],
+   [
+    "Clinical Documents",
+    "file"
+   ],
+   [
+    "Diagnosis Codes (ICD-10)",
+    "text"
+   ],
+   [
+    "End Date",
+    "date"
+   ],
+   [
+    "Member ID",
+    "text"
+   ],
+   [
+    "Patient Date of Birth",
+    "date"
+   ],
+   [
+    "Rendering Provider NPI",
+    "text"
+   ],
+   [
+    "Service Type",
+    "select"
+   ],
+   [
+    "Start Date",
+    "date"
+   ],
+   [
+    "Units Requested",
+    "number"
+   ]
+  ],
+  "button": "Submit Request"
+ }
+}

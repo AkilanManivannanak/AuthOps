@@ -9,6 +9,10 @@ northwind  commercial. Plain forms, native date inputs, a marketing survey modal
 keystone   Medicaid MCO. Form lives inside an iframe, member ID needs a masked format,
            a custom calendar widget instead of date inputs, a session notice that pops
            up after a delay, conditional ABA fields (school schedule).
+lakeshore  regional commercial plan, held out: no hand-written playbook. Different labels for
+           every field, a patient lookup step before the form, date of birth typed as MM/DD/YYYY
+           text, a decoy "Save draft" button, and a required attestation checkbox. Used to test
+           automatic configuration on a portal nobody configured by hand.
 summit     federal. TOTP MFA, one live session per credential (a second login kicks
            the first), lockout after 3 bad passwords, a flaky 503 on submit, a
            multi-step wizard, per-file document type and PDF-only uploads.
@@ -45,6 +49,8 @@ CREDENTIALS = {
                # stale credential: password rotated by the payor, agent must classify and disable
                {"username": "sfb-ops-c", "password": "Sfb$charlie9-OLD", "totp": "MFRGGZDFMZTWQ2LKMFRGGZDFMZTWQ2LK"}],
 }
+CREDENTIALS["lakeshore"] = [{"username": "LSP-40117", "password": "Lake!shore7"},
+                             {"username": "LSP-40118", "password": "Lake!shore8"}]
 SUMMIT_REAL_PASSWORDS = {"sfb-ops-a": "Sfb$alpha9", "sfb-ops-b": "Sfb$bravo9", "sfb-ops-c": "Sfb$charlie9-NEW"}
 
 
@@ -55,6 +61,9 @@ class Chaos:
     summit_503_rate: float = 0.15
     summit_kick_rate: float = 0.08  # a human signs in with the same credential mid-run
     seed: int = 3
+    # northwind release: "" (current), "v2" (relabeled and reordered form, new button, optional
+    # place of service) or "v2-required" (v2, and place of service becomes required)
+    northwind_release: str = ""
 
 
 @dataclass
@@ -66,6 +75,7 @@ class PortalState:
     summit_fail: dict = field(default_factory=dict)
     summit_locked: set = field(default_factory=set)
     wizard: dict = field(default_factory=dict)  # token -> partial summit request
+    lookup: dict = field(default_factory=dict)  # lakeshore token -> case found at patient lookup
     submissions: list = field(default_factory=list)
     events: list = field(default_factory=list)
 
@@ -122,7 +132,7 @@ def create_app(cases_path: str | Path | None = None, chaos: Chaos | None = None)
         return c
 
     def record(portal, user, fields: dict, files: list, case):
-        ref = {"northwind": "NW", "keystone": "KC", "summit": "SFB-T"}[portal] + "-" + str(
+        ref = {"northwind": "NW", "keystone": "KC", "summit": "SFB-T", "lakeshore": "LS"}[portal] + "-" + str(
             rng.randint(100000, 999999))
         st.submissions.append({"portal": portal, "user": user, "ref": ref, "fields": fields,
                                "files": files, "case_id": case["case_id"] if case else None,
@@ -174,12 +184,38 @@ def create_app(cases_path: str | Path | None = None, chaos: Chaos | None = None)
         <p><a id='new-auth' href='/northwind/new'>New Prior Authorization</a></p>
         <p><a href='/northwind/status'>Check authorization status</a></p>{modal}""", "Northwind Health Plan")
 
+    NW_V2 = {"member_id": ("subscriber_id", "Subscriber ID"), "dob": ("birth_date", "Date of birth"),
+             "service_type": ("benefit", "Benefit category"), "cpt": ("hcpcs", "Procedure / HCPCS codes"),
+             "icd": ("dx_codes", "ICD-10 diagnoses"), "units": ("qty", "Units / visits"),
+             "start": ("from_dt", "Service start"), "end": ("to_dt", "Service end"),
+             "npi": ("treating_npi", "Treating provider NPI"), "docs": ("attachments", "Supporting records")}
+
+    def nw_v2_form(e: str) -> str:
+        req = chaos.northwind_release == "v2-required"
+        f = {k: v for k, v in NW_V2.items()}
+        sel = (f"<label for='{f['service_type'][0]}'>{f['service_type'][1]}</label><select id='{f['service_type'][0]}' "
+               f"name='{f['service_type'][0]}'><option value=''>Select...</option><option value='aba'>Applied Behavior "
+               "Analysis</option><option value='physical_therapy'>Physical Therapy</option><option value='behavioral_health'>"
+               "Outpatient Behavioral Health</option></select>")
+        inp = lambda k, t="text": f"<label for='{f[k][0]}'>{f[k][1]}</label><input id='{f[k][0]}' name='{f[k][0]}' type='{t}'>"  # noqa: E731
+        pos = ("<label for='pos'>Place of service" + ("" if req else " (optional)") + "</label><select id='pos' name='pos'>"
+               "<option value=''>--</option><option value='11'>Office</option><option value='12'>Home</option>"
+               "<option value='03'>School</option><option value='02'>Telehealth</option></select>")
+        return f"""<h2>Request a service authorization</h2>{e}
+        <form method='post' action='/northwind/new' enctype='multipart/form-data'>
+        {inp('member_id')}{inp('dob', 'date')}{sel}{inp('npi')}{inp('start', 'date')}{inp('end', 'date')}
+        {inp('icd')}{inp('cpt')}{inp('units', 'number')}{pos}
+        <label for='attachments'>Supporting records</label><input id='attachments' name='attachments' type='file' multiple>
+        <button id='nw-send' type='submit'>Send for review</button></form>"""
+
     @app.get("/northwind/new")
     def nw_new(request: Request, err: str = ""):
         user, _ = who(request, "northwind")
         if not user:
             return RedirectResponse("/northwind/login", 303)
         e = f"<p class='err' id='form-error'>{html.escape(err)}</p>" if err else ""
+        if chaos.northwind_release:
+            return page("Northwind - Service Authorization", nw_v2_form(e), "Northwind Health Plan")
         return page("Northwind - New Prior Authorization", f"""<h2>New Prior Authorization</h2>{e}
         <form method='post' action='/northwind/new' enctype='multipart/form-data'>
         <label for='member_id'>Member ID</label><input id='member_id' name='member_id'>
@@ -203,9 +239,16 @@ def create_app(cases_path: str | Path | None = None, chaos: Chaos | None = None)
         if not user:
             return RedirectResponse("/northwind/login", 303)
         form = await request.form()
-        f = {k: form.get(k, "") for k in ["member_id", "dob", "service_type", "cpt", "icd", "units",
-                                         "start", "end", "npi"]}
-        files = [u.filename for u in form.getlist("docs") if getattr(u, "filename", "")]
+        if chaos.northwind_release:
+            f = {k: form.get(NW_V2[k][0], "") for k in ["member_id", "dob", "service_type", "cpt", "icd", "units",
+                                                         "start", "end", "npi"]}
+            files = [u.filename for u in form.getlist("attachments") if getattr(u, "filename", "")]
+            if chaos.northwind_release == "v2-required" and not form.get("pos"):
+                return RedirectResponse("/northwind/new?err=Place+of+service+is+required", 303)
+        else:
+            f = {k: form.get(k, "") for k in ["member_id", "dob", "service_type", "cpt", "icd", "units",
+                                             "start", "end", "npi"]}
+            files = [u.filename for u in form.getlist("docs") if getattr(u, "filename", "")]
         case = eligible(f["member_id"].strip(), f["dob"])
         if not case:
             return RedirectResponse("/northwind/new?err=Member+not+found+or+date+of+birth+does+not+match", 303)
@@ -524,6 +567,124 @@ def create_app(cases_path: str | Path | None = None, chaos: Chaos | None = None)
         ref = record("summit", user, fields, [f["name"] for f in w.get("files", [])], case)
         st.wizard.pop(tok, None)
         return page("Summit - Confirmation", confirmation("summit", ref, case, fields), "Summit Federal Benefits")
+
+    # ================================================================ LAKESHORE (held out)
+    @app.get("/lakeshore/signin")
+    def ls_signin(err: str = ""):
+        e = f"<p class='err'>{html.escape(err)}</p>" if err else ""
+        return page("Lakeshore Provider Connect", f"""<h2>Log in to Provider Connect</h2>{e}
+        <form method='post' action='/lakeshore/signin'>
+        <label for='pid'>Provider ID</label><input id='pid' name='pid'>
+        <label for='pcode'>Passcode</label><input id='pcode' name='pcode' type='password'>
+        <button id='go' type='submit'>Log in</button></form>""", "Lakeshore Health Partners")
+
+    @app.post("/lakeshore/signin")
+    def ls_signin_post(pid: str = Form(""), pcode: str = Form("")):
+        if not login_ok("lakeshore", pid, pcode):
+            return RedirectResponse("/lakeshore/signin?err=We+could+not+verify+that+Provider+ID+and+Passcode", 303)
+        tok = secrets.token_hex(8)
+        st.sessions[tok] = ("lakeshore", pid)
+        r = RedirectResponse("/lakeshore/workqueue", 303)
+        r.set_cookie("lakeshore_session", tok)
+        return r
+
+    @app.get("/lakeshore/workqueue")
+    def ls_queue(request: Request):
+        user, _ = who(request, "lakeshore")
+        if not user:
+            return RedirectResponse("/lakeshore/signin", 303)
+        return page("Lakeshore - Work queue", f"""<h2>Work queue for {html.escape(user)}</h2>
+        <p><a id='msgs' href='/lakeshore/messages'>Messages (3)</a></p>
+        <p><a id='elig' href='/lakeshore/eligibility'>Eligibility and benefits</a></p>
+        <p><a id='start' href='/lakeshore/request/lookup'>Start a utilization review request</a></p>""",
+                    "Lakeshore Health Partners")
+
+    @app.get("/lakeshore/request/lookup")
+    def ls_lookup(request: Request, err: str = ""):
+        user, _ = who(request, "lakeshore")
+        if not user:
+            return RedirectResponse("/lakeshore/signin", 303)
+        e = f"<p class='err' id='form-error'>{html.escape(err)}</p>" if err else ""
+        return page("Lakeshore - Find patient", f"""<h2>Step 1 of 2: Find the patient</h2>{e}
+        <form method='post' action='/lakeshore/request/lookup'>
+        <label for='sub'>Subscriber number</label><input id='sub' name='sub'>
+        <label for='bd'>Birthdate (MM/DD/YYYY)</label><input id='bd' name='bd' placeholder='MM/DD/YYYY'>
+        <label for='ln'>Patient last name</label><input id='ln' name='ln'>
+        <button id='find' type='submit'>Find patient</button></form>""", "Lakeshore Health Partners")
+
+    @app.post("/lakeshore/request/lookup")
+    def ls_lookup_post(request: Request, sub: str = Form(""), bd: str = Form(""), ln: str = Form("")):
+        user, tok = who(request, "lakeshore")
+        if not user:
+            return RedirectResponse("/lakeshore/signin", 303)
+        try:
+            iso = datetime.strptime(bd.strip(), "%m/%d/%Y").date().isoformat()
+        except ValueError:
+            return RedirectResponse("/lakeshore/request/lookup?err=Birthdate+must+be+MM/DD/YYYY", 303)
+        case = eligible(sub.strip(), iso, ln)
+        if not case:
+            return RedirectResponse("/lakeshore/request/lookup?err=No+matching+subscriber", 303)
+        st.lookup[tok] = case
+        return RedirectResponse("/lakeshore/request/details", 303)
+
+    @app.get("/lakeshore/request/details")
+    def ls_details(request: Request, err: str = ""):
+        user, tok = who(request, "lakeshore")
+        if not user:
+            return RedirectResponse("/lakeshore/signin", 303)
+        case = st.lookup.get(tok)
+        if not case:
+            return RedirectResponse("/lakeshore/request/lookup", 303)
+        e = f"<p class='err' id='form-error'>{html.escape(err)}</p>" if err else ""
+        p = case["patient"]
+        return page("Lakeshore - Request details", f"""<h2>Step 2 of 2: Request details</h2>{e}
+        <p>Patient: {html.escape(p['first_name'])} {html.escape(p['last_name'])}</p>
+        <form method='post' action='/lakeshore/request/details' enctype='multipart/form-data'>
+        <label for='prog'>Program</label><select id='prog' name='prog'><option value=''>Choose a program</option>
+          <option value='ABA'>ABA Therapy</option><option value='PTOT'>PT / OT Rehabilitation</option>
+          <option value='MHO'>Mental Health Outpatient</option></select>
+        <label for='proc'>Procedure codes (CPT/HCPCS)</label><input id='proc' name='proc'>
+        <label for='dx'>Primary and secondary diagnoses (ICD-10)</label><input id='dx' name='dx'>
+        <label for='qty'>Quantity (units)</label><input id='qty' name='qty' type='number'>
+        <label for='sfrom'>Service from</label><input id='sfrom' name='sfrom' type='date'>
+        <label for='sthru'>Service through</label><input id='sthru' name='sthru' type='date'>
+        <label for='rnpi'>Rendering clinician NPI</label><input id='rnpi' name='rnpi'>
+        <label for='att'>Supporting documentation</label><input id='att' name='att' type='file' multiple>
+        <label><input type='checkbox' id='attest' name='attest' value='yes'> I attest that this information is
+          accurate and complete</label>
+        <button id='draft' name='action' value='draft' type='submit'>Save draft</button>
+        <button id='send' name='action' value='send' type='submit'>Send to Utilization Review</button>
+        </form>""", "Lakeshore Health Partners")
+
+    @app.post("/lakeshore/request/details")
+    async def ls_details_post(request: Request):
+        user, tok = who(request, "lakeshore")
+        if not user:
+            return RedirectResponse("/lakeshore/signin", 303)
+        case = st.lookup.get(tok)
+        if not case:
+            return RedirectResponse("/lakeshore/request/lookup", 303)
+        form = await request.form()
+        if form.get("action") == "draft":
+            st.events.append({"portal": "lakeshore", "event": "draft_saved", "ts": time.time()})
+            return RedirectResponse("/lakeshore/request/details?err=Draft+saved.+The+request+has+NOT+been+sent", 303)
+        f = {k: form.get(k, "") for k in ["prog", "proc", "dx", "qty", "sfrom", "sthru", "rnpi"]}
+        files = [u.filename for u in form.getlist("att") if getattr(u, "filename", "")]
+        missing = [k for k, v in f.items() if not str(v).strip()] + ([] if files else ["att"])
+        if missing:
+            return RedirectResponse(f"/lakeshore/request/details?err=Required:+{'+'.join(missing)}", 303)
+        if form.get("attest") != "yes":
+            return RedirectResponse("/lakeshore/request/details?err=Please+attest+before+sending", 303)
+        prog = {"ABA": "aba", "PTOT": "physical_therapy", "MHO": "behavioral_health"}.get(f["prog"])
+        if prog != case["specialty"]:
+            return RedirectResponse("/lakeshore/request/details?err=Program+does+not+match+the+request", 303)
+        fields = {"member_id": case["patient"]["member_id"], "service_type": prog, "units": f["qty"],
+                  "start": f["sfrom"], "end": f["sthru"], "npi": f["rnpi"],
+                  "cpt": [c.strip() for c in f["proc"].split(",") if c.strip()],
+                  "icd": [c.strip() for c in f["dx"].split(",") if c.strip()]}
+        ref = record("lakeshore", user, fields, files, case)
+        st.lookup.pop(tok, None)
+        return page("Lakeshore - Sent", confirmation("lakeshore", ref, case, fields), "Lakeshore Health Partners")
 
     # ================================================================ FHIR (CMS-0057-F)
     @app.post("/fhir/Claim/$submit")

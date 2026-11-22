@@ -1,0 +1,23 @@
+id: extract
+version: v1
+model: claude-haiku-4-5
+max_tokens: 1500
+owner: AI Ops
+status: production
+purpose: Extract typed fields from treatment plans, approval letters and denial letters.
+changelog: 'Initial strategy: per-field value + verbatim evidence + confidence; null when unsure.'
+template: |-
+  Extract fields from this {doc_type} for a prior authorization workflow.
+
+  Return ONLY a JSON object. For each field give an object:
+    {{"value": <value or null>, "evidence": "<exact substring copied from the document>", "confidence": 0.0-1.0}}
+  Use null when the field is absent or unreadable. Never guess. Dates as YYYY-MM-DD.
+  Names as "First Last". Code lists as JSON arrays of strings.
+
+  Fields and types:
+  {schema}
+
+  Document text (from OCR, may contain errors):
+  <<<
+  {text}
+  >>>

@@ -7,8 +7,8 @@ from authops.monitor.panel import PAYOR_TURNAROUND, forecast, make_panel, simula
 
 setup("Coverage Monitor",
       "Specialty patients come weekly for months. An auth that runs out of units, a Medicaid plan that lapses at "
-      "redetermination, or a switch to a new payor turns every later visit into an unpaid claim. Silna sells "
-      "care readiness: keep watching between visits. This page measures what watching is worth.")
+      "redetermination, or a switch to a new payor turns every later visit into an unpaid claim. Monitor coverage "
+      "and authorization burn-down between visits, and compare monitoring policies.")
 
 m = asset_json("care_readiness.json") or {}
 mon = m.get("monitor", {})

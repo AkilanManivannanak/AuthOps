@@ -80,7 +80,7 @@ def start_agent_run(case: dict, portal: str, chaos_cfg: dict, guard: bool, thres
             from authops.agent.runtime import AgentRuntime
             from authops.ops.store import Store
 
-            for k, v in chaos_cfg.items():
+            for k, v in {"northwind_release": "", **chaos_cfg}.items():   # a release is per run, never sticky
                 setattr(chaos, k, v)
             srv.state.summit_locked.clear()
             srv.state.summit_fail.clear()

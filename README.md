@@ -102,21 +102,20 @@ Each of these was found by a failing run in the step table, then fixed and re-ru
   limited to 20 visits); it only shows up when a case lands in that window.
 - Rendered documents are cleaner than real faxes (no handwriting, stamps or multi-column layouts).
 
-## Care readiness: built against where Silna says it is going
+## Care readiness
 
-Each feature answers a gap Silna has named in public: in its engineering posts, product launches
-and job listings. All results come from synthetic data and are reproducible with
-`python scripts/run_care_readiness.py`. App pages are under **Care readiness**.
+Work that happens before and between submissions. Synthetic data; reproduce with
+`python scripts/run_care_readiness.py` (add `--llm` for the Claude arms).
 
-| Silna's stated direction | What this adds | Result |
+| Capability | Implementation | Result |
 |---|---|---|
-| Document validation breaks on 100+ page charts, cross-page and medical-necessity rules; moving to background multi-turn document agents (engineering blog, Jun 2026) | Long-chart corpus (12 to 150 pages, distractors, answer keys) and a tool-using document agent, with every verdict tied to a page and quote | Claude Haiku 4.5, 30 charts: agent 0 false passes vs 5 for one call; 28/30 charts fully right vs 17/30; on 100+ pages 97.9% vs 85.1% accurate. Cost $0.057 vs $0.013 per chart, 25s vs 10s |
-| Care Readiness Platform: real-time insurance monitoring and expiration alerts | 26-week panel sim: coverage lapses, payor switches, partial approvals; reactive vs monthly vs proactive burn-down monitor | Proactive cuts denied revenue 91% vs reactive (range 89% to 92%, 5 seeds); 91% of alerts needed |
-| Phone agents for benefits checks; "a fluent wrong answer can delay care"; eval tooling is the next step (blog, Apr 2026) | Benefits-call eval: spoken numbers, self-corrections, remaining vs met, plan-pays phrasing, carve-outs, teen/ty ASR swaps; read-back guard; patient cost estimator | Field accuracy 83.2% → 94.1% → 99.4%; 12-visit estimate error $473 → $28 |
-| Pull the email-based clinician process into case management; external API (engineering job listing) | Case state machine with SLA clocks, reminders at 50/80%, escalation, audit trail; FastAPI `/v1` with API keys, idempotency keys, HMAC-signed webhooks | 11 tests cover SLA expiry, idempotency, routing and signature checks |
-| CMS-0057-F makes basic PA submission an API call by 2027 | Existing FHIR router, plus the four features above: the work that stays hard after submission becomes an API | See FHIR and channels |
+| Long-chart validation | `docagent/`: 12-150 page charts with distractors and answer keys; a background agent that searches, reads and records a cited verdict per rule | Claude Haiku 4.5, 30 charts: 0 false passes vs 5 for a single call; 97.9% vs 85.1% accurate on 100+ pages; $0.057 vs $0.013 and 25s vs 10s per chart |
+| Coverage and authorization monitoring | `monitor/`: 26-week panel with coverage lapses, payor switches, partial approvals; unit burn-down forecast | Weekly monitoring cut denied revenue 91% vs reacting to denials (89-92% across 5 seeds) |
+| Benefits verification calls | `benefits/`: spoken numbers, self-corrections, remaining-vs-met, plan-pays phrasing, carve-outs, ASR teen/ty swaps; read-back; patient cost estimate | Field accuracy 83.2% -> 94.1% -> 99.4% with read-back; 12-visit estimate error $473 -> $28 |
+| Clinical case management | `cases/`: SLA clocks, reminders at 50% and 80%, escalation, audit trail | Covered by tests |
+| External API | `api/`: `/v1` with API keys, idempotency keys, HMAC-signed webhooks | Covered by tests |
 
-### Long-chart validation (30 charts, 8 rules each, Claude Haiku 4.5)
+### Long-chart validation (30 charts, 8 rules each)
 
 | Arm | Accuracy (decided) | Coverage | Accuracy on 100+ pages | False passes | Charts fully right | p50 time | Cost per chart |
 |---|---|---|---|---|---|---|---|
@@ -125,11 +124,10 @@ and job listings. All results come from synthetic data and are reproducible with
 | Offline single pass (first match, context budget) | 0.938 | 0.804 | 0.957 | 3 | 16/30 | 0.0s | $0.000 |
 | Offline document finder (template-aware) | 1.000 | 1.000 | 1.000 | 0 | 30/30 | 0.0s | $0.000 |
 
-What it shows:
-- The single call gets worse as charts get longer: 97.9% accurate on charts up to 40 pages, 85.1% on 100+ pages. Three of its five false passes are unsigned or stale treatment-plan signatures on 100 and 150-page charts, where a signed consent form elsewhere in the chart looks like the answer.
-- The agent made no false passes and held 97.9% on 100+ pages, at about 4x the cost and 2.5x the time. That is the trade Silna described: run it in the background, not in the request flow.
-- Every verdict must cite pages and verbatim evidence. The first Claude run exposed a bug in that guard: it rejected correct cross-page answers because the model joined two quotes into one. The fix checks each piece of evidence separately and still rejects a quote with any changed number (tested).
-- The offline arms only prove the harness runs without an API key. The document finder is written against the chart template, so its perfect score says nothing about model quality.
+- A single call degrades with length: 97.9% on charts up to 40 pages, 85.1% on 100+. Three of its five false passes are unsigned or stale plan signatures on 100-150 page charts, where a signed consent form elsewhere looks like the answer.
+- The background agent made no false passes at about 4x the cost and 2.5x the latency, so it runs asynchronously, not in the request path.
+- Every verdict cites pages and verbatim evidence. The first Claude run exposed a bug in that check (correct cross-page answers rejected because two quotes were joined); the fix checks each piece separately and still rejects any changed number.
+- The offline arms only exercise the harness without an API key; the template-aware finder's perfect score says nothing about model quality.
 
 ### Coverage monitoring (200 patients, 26 weeks, mean of 5 seeds)
 
@@ -139,9 +137,22 @@ What it shows:
 | scheduled | 1737 | $521,400 | 4367 | 541 | 1400 |
 | proactive | 332 | $96,652 | 783 | 587 | 5200 |
 
-The panel is deliberately stressed (45% Medicaid, 30% partial approvals, short PT auths), so the
-absolute dollars are not a forecast. The comparison between policies is the result, and it holds
-on every seed.
+The panel is deliberately stressed (45% Medicaid, 30% partial approvals, short PT auths); compare policies, not absolute dollars.
+
+## Configuration, prompts and reporting
+
+| Capability | Implementation | Result |
+|---|---|---|
+| Playbook drafting | `agent/autoconfig.py` walks a portal sandbox once with a test patient: label-to-field mapping, decoy buttons ignored, calendar widgets and masked IDs handled, attestations checked | 8 of 12 walks reach a confirmation, 3/3 on **Lakeshore**, a portal with no hand-written playbook; 92.6% of hand mappings reproduced, 0 wrong, same result with the Claude mapper. Stopped walks list the fields that need a specialist (ABA school schedule, clinical yes/no questions). Drafted playbooks pass the browser end-to-end tests |
+| Prompt registry and regression gate | `prompts/<id>/<version>.yaml` with owner, status, hypothesis and fingerprint; `scripts/backtest_prompt.py` | extract@v2 vs production v1 on 60 golden docs: accuracy 0.957 -> 0.952, ICD-10 0.933 -> 0.900, signature 1.000 -> 0.967. **Blocked**; v1 stays in production |
+| Weekly operations report | `scripts/write_ops_report.py` from run artifacts | [reports/WEEKLY_OPS_REPORT.md](reports/WEEKLY_OPS_REPORT.md) |
+
+## Keeping rules and playbooks current
+
+| Capability | Implementation | Result (synthetic, reproducible) |
+|---|---|---|
+| Payor policy drift detection | `intel/drift.py`: one-sided CUSUM per payor x specialty x denial reason (pooled prior), new-reason trigger, partial-approval clustering for soft caps, turnaround shift; each alarm proposes a requirements edit with rates before and after and example decisions. App: **Denial Shield** | 20 streams of 26 weeks with 4 planted changes and a volume-surge decoy: unit caps, new requirements and turnaround shifts detected 100% with median delay 0 weeks and the correct rule proposed; soft caps 90%. 0.9 false alarms per 26 weeks across 10 payor x specialty pairs. 221 denials before the rule is live vs 1,210 if found 6 weeks after the change |
+| Self-healing playbooks | `agent/heal.py`, `scripts/canary.py`: daily form fingerprints; on a release, re-draft, keep hand-written judgment steps, verify in the sandbox, emit a patch for review. App: **Playbook Studio** | Northwind redesign (10 relabeled fields, reordered form, new button): detected, re-mapped and verified; the approved playbook fails in the browser and the healed one submits (`test_portal_release_breaks_playbook_and_heal_recovers`). A new required question is returned for a specialist instead of guessed |
 
 ## The app
 
@@ -151,11 +162,11 @@ An interactive Streamlit app puts every part of the system in front of a person:
 |---|---|
 | Command center | Count-up KPIs and flip cards that show how each number was measured |
 | Document Lab | Generate a letter or treatment plan (choose payor layout, outcome, clean/scan/fax), watch the AI read it with highlighted evidence, move the abstain threshold, correct the fields, and see AI vs you against ground truth |
-| Denial Shield | Build a request, watch the payor rules check it live, send it to the simulated payor, and hunt for the hidden policy change |
+| Denial Shield | Build a request, watch the payor rules check it live, send it to the simulated payor; replay the decision stream to see policy-drift alerts and approve the proposed rule |
 | Agent Theater | Run the browser agent live on a sandbox portal with chaos sliders and safety toggles, or scrub through recorded runs step by step; diagnose a failed run |
 | QA Console | Grade extracted fields against the document; your verdicts are scored against truth and other reviewers (Cohen's kappa) |
 | Autonomy Ramp | Plant a portal regression and watch the QA gate catch it versus a fixed QA share |
-| Playbook Studio | Edit a portal's executable plan and backtest it live |
+| Playbook Studio | Edit a portal's executable plan and backtest it live; simulate a portal release and review the healed playbook |
 | Phone Agent | Watch an IVR call, or play the payor rep yourself |
 | FHIR and channels | CMS-0057-F timeline, routing decision, PAS bundle, live submit |
 | Study and evidence | Every usage number computed from real tester activity, plus a claim builder |

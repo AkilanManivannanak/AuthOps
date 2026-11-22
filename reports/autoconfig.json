@@ -1,0 +1,1424 @@
+{
+  "generated_at": "2026-11-21 22:11",
+  "rows": [
+    {
+      "mapper": "lexicon",
+      "portal": "northwind",
+      "specialty": "aba",
+      "reached": true,
+      "stopped": "confirmation",
+      "pages": 3,
+      "flagged_for_person": [],
+      "hand_recall": 1.0,
+      "wrong": [],
+      "seconds": 0.02
+    },
+    {
+      "mapper": "lexicon",
+      "portal": "northwind",
+      "specialty": "physical_therapy",
+      "reached": true,
+      "stopped": "confirmation",
+      "pages": 3,
+      "flagged_for_person": [],
+      "hand_recall": 1.0,
+      "wrong": [],
+      "seconds": 0.01
+    },
+    {
+      "mapper": "lexicon",
+      "portal": "northwind",
+      "specialty": "behavioral_health",
+      "reached": true,
+      "stopped": "confirmation",
+      "pages": 3,
+      "flagged_for_person": [],
+      "hand_recall": 1.0,
+      "wrong": [],
+      "seconds": 0.01
+    },
+    {
+      "mapper": "lexicon",
+      "portal": "keystone",
+      "specialty": "aba",
+      "reached": false,
+      "stopped": "portal rejected the draft's input: Required: school school_hours",
+      "pages": 3,
+      "flagged_for_person": [
+        "Is a school schedule attached?",
+        "Requested hours on school days"
+      ],
+      "hand_recall": 1.0,
+      "wrong": [],
+      "seconds": 0.02
+    },
+    {
+      "mapper": "lexicon",
+      "portal": "keystone",
+      "specialty": "physical_therapy",
+      "reached": true,
+      "stopped": "confirmation",
+      "pages": 2,
+      "flagged_for_person": [
+        "Is a school schedule attached?",
+        "Requested hours on school days"
+      ],
+      "hand_recall": 1.0,
+      "wrong": [],
+      "seconds": 0.01
+    },
+    {
+      "mapper": "lexicon",
+      "portal": "keystone",
+      "specialty": "behavioral_health",
+      "reached": true,
+      "stopped": "confirmation",
+      "pages": 2,
+      "flagged_for_person": [
+        "Is a school schedule attached?",
+        "Requested hours on school days"
+      ],
+      "hand_recall": 1.0,
+      "wrong": [],
+      "seconds": 0.01
+    },
+    {
+      "mapper": "lexicon",
+      "portal": "summit",
+      "specialty": "aba",
+      "reached": false,
+      "stopped": "portal rejected the draft's input: Answer all required questions",
+      "pages": 5,
+      "flagged_for_person": [
+        "Is the member currently admitted inpatient?",
+        "Prior authorization number"
+      ],
+      "hand_recall": 0.778,
+      "wrong": [],
+      "seconds": 0.02
+    },
+    {
+      "mapper": "lexicon",
+      "portal": "summit",
+      "specialty": "physical_therapy",
+      "reached": false,
+      "stopped": "portal rejected the draft's input: Answer all required questions",
+      "pages": 5,
+      "flagged_for_person": [
+        "Is the member currently admitted inpatient?",
+        "Prior authorization number"
+      ],
+      "hand_recall": 0.778,
+      "wrong": [],
+      "seconds": 0.02
+    },
+    {
+      "mapper": "lexicon",
+      "portal": "summit",
+      "specialty": "behavioral_health",
+      "reached": false,
+      "stopped": "portal rejected the draft's input: Answer all required questions",
+      "pages": 5,
+      "flagged_for_person": [
+        "Is the member currently admitted inpatient?",
+        "Prior authorization number"
+      ],
+      "hand_recall": 0.778,
+      "wrong": [],
+      "seconds": 0.02
+    },
+    {
+      "mapper": "lexicon",
+      "portal": "lakeshore",
+      "specialty": "aba",
+      "reached": true,
+      "stopped": "confirmation",
+      "pages": 4,
+      "flagged_for_person": [],
+      "hand_recall": null,
+      "wrong": [],
+      "seconds": 0.01
+    },
+    {
+      "mapper": "lexicon",
+      "portal": "lakeshore",
+      "specialty": "physical_therapy",
+      "reached": true,
+      "stopped": "confirmation",
+      "pages": 4,
+      "flagged_for_person": [],
+      "hand_recall": null,
+      "wrong": [],
+      "seconds": 0.01
+    },
+    {
+      "mapper": "lexicon",
+      "portal": "lakeshore",
+      "specialty": "behavioral_health",
+      "reached": true,
+      "stopped": "confirmation",
+      "pages": 4,
+      "flagged_for_person": [],
+      "hand_recall": null,
+      "wrong": [],
+      "seconds": 0.01
+    },
+    {
+      "mapper": "claude",
+      "portal": "northwind",
+      "specialty": "aba",
+      "reached": true,
+      "stopped": "confirmation",
+      "pages": 3,
+      "flagged_for_person": [],
+      "hand_recall": 1.0,
+      "wrong": [],
+      "seconds": 1.44
+    },
+    {
+      "mapper": "claude",
+      "portal": "northwind",
+      "specialty": "physical_therapy",
+      "reached": true,
+      "stopped": "confirmation",
+      "pages": 3,
+      "flagged_for_person": [],
+      "hand_recall": 1.0,
+      "wrong": [],
+      "seconds": 1.28
+    },
+    {
+      "mapper": "claude",
+      "portal": "northwind",
+      "specialty": "behavioral_health",
+      "reached": true,
+      "stopped": "confirmation",
+      "pages": 3,
+      "flagged_for_person": [],
+      "hand_recall": 1.0,
+      "wrong": [],
+      "seconds": 1.35
+    },
+    {
+      "mapper": "claude",
+      "portal": "keystone",
+      "specialty": "aba",
+      "reached": false,
+      "stopped": "portal rejected the draft's input: Required: school school_hours",
+      "pages": 3,
+      "flagged_for_person": [
+        "Is a school schedule attached?",
+        "Requested hours on school days"
+      ],
+      "hand_recall": 1.0,
+      "wrong": [],
+      "seconds": 2.85
+    },
+    {
+      "mapper": "claude",
+      "portal": "keystone",
+      "specialty": "physical_therapy",
+      "reached": true,
+      "stopped": "confirmation",
+      "pages": 2,
+      "flagged_for_person": [
+        "Is a school schedule attached?",
+        "Requested hours on school days"
+      ],
+      "hand_recall": 1.0,
+      "wrong": [],
+      "seconds": 1.52
+    },
+    {
+      "mapper": "claude",
+      "portal": "keystone",
+      "specialty": "behavioral_health",
+      "reached": true,
+      "stopped": "confirmation",
+      "pages": 2,
+      "flagged_for_person": [
+        "Is a school schedule attached?",
+        "Requested hours on school days"
+      ],
+      "hand_recall": 1.0,
+      "wrong": [],
+      "seconds": 1.42
+    },
+    {
+      "mapper": "claude",
+      "portal": "summit",
+      "specialty": "aba",
+      "reached": false,
+      "stopped": "portal rejected the draft's input: Answer all required questions",
+      "pages": 5,
+      "flagged_for_person": [
+        "Is the member currently admitted inpatient?",
+        "Is this a continuation of an existing authorization?",
+        "Prior authorization number"
+      ],
+      "hand_recall": 0.778,
+      "wrong": [],
+      "seconds": 1.88
+    },
+    {
+      "mapper": "claude",
+      "portal": "summit",
+      "specialty": "physical_therapy",
+      "reached": false,
+      "stopped": "portal rejected the draft's input: Answer all required questions",
+      "pages": 5,
+      "flagged_for_person": [
+        "Is the member currently admitted inpatient?",
+        "Is this a continuation of an existing authorization?",
+        "Prior authorization number"
+      ],
+      "hand_recall": 0.778,
+      "wrong": [],
+      "seconds": 1.87
+    },
+    {
+      "mapper": "claude",
+      "portal": "summit",
+      "specialty": "behavioral_health",
+      "reached": false,
+      "stopped": "portal rejected the draft's input: Answer all required questions",
+      "pages": 5,
+      "flagged_for_person": [
+        "Is the member currently admitted inpatient?",
+        "Is this a continuation of an existing authorization?",
+        "Prior authorization number"
+      ],
+      "hand_recall": 0.778,
+      "wrong": [],
+      "seconds": 2.06
+    },
+    {
+      "mapper": "claude",
+      "portal": "lakeshore",
+      "specialty": "aba",
+      "reached": true,
+      "stopped": "confirmation",
+      "pages": 4,
+      "flagged_for_person": [],
+      "hand_recall": null,
+      "wrong": [],
+      "seconds": 1.9
+    },
+    {
+      "mapper": "claude",
+      "portal": "lakeshore",
+      "specialty": "physical_therapy",
+      "reached": true,
+      "stopped": "confirmation",
+      "pages": 4,
+      "flagged_for_person": [],
+      "hand_recall": null,
+      "wrong": [],
+      "seconds": 1.99
+    },
+    {
+      "mapper": "claude",
+      "portal": "lakeshore",
+      "specialty": "behavioral_health",
+      "reached": true,
+      "stopped": "confirmation",
+      "pages": 4,
+      "flagged_for_person": [],
+      "hand_recall": null,
+      "wrong": [],
+      "seconds": 1.91
+    }
+  ],
+  "drafts": {
+    "lexicon:northwind": {
+      "portal": "northwind",
+      "start": "/northwind/login",
+      "generated": true,
+      "pages": [
+        {
+          "match": {
+            "url": "/northwind/login"
+          },
+          "actions": [
+            [
+              "type_credential",
+              {
+                "user_target": "Username",
+                "pass_target": "Password",
+                "button": "Sign in"
+              }
+            ]
+          ]
+        },
+        {
+          "match": {
+            "url": "/northwind/home"
+          },
+          "actions": [
+            [
+              "click",
+              {
+                "target": "New Prior Authorization"
+              }
+            ]
+          ]
+        },
+        {
+          "match": {
+            "url": "/northwind/new"
+          },
+          "actions": [
+            [
+              "upload",
+              {
+                "target": "Clinical Documents",
+                "files": "{files}"
+              }
+            ],
+            [
+              "conditional",
+              {
+                "if_specialty": "aba",
+                "actions": [
+                  [
+                    "select",
+                    {
+                      "target": "Service Type",
+                      "value": "aba"
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "conditional",
+              {
+                "if_specialty": "physical_therapy",
+                "actions": [
+                  [
+                    "select",
+                    {
+                      "target": "Service Type",
+                      "value": "physical_therapy"
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "conditional",
+              {
+                "if_specialty": "behavioral_health",
+                "actions": [
+                  [
+                    "select",
+                    {
+                      "target": "Service Type",
+                      "value": "behavioral_health"
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "pick_date",
+              {
+                "target": "Patient Date of Birth",
+                "iso": "{dob}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Diagnosis Codes (ICD-10)",
+                "value": "{icd_csv}"
+              }
+            ],
+            [
+              "pick_date",
+              {
+                "target": "Start Date",
+                "iso": "{start}"
+              }
+            ],
+            [
+              "pick_date",
+              {
+                "target": "End Date",
+                "iso": "{end}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Member ID",
+                "value": "{member_id}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "CPT Codes (comma separated)",
+                "value": "{cpt_csv}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Units Requested",
+                "value": "{units}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Rendering Provider NPI",
+                "value": "{npi}"
+              }
+            ],
+            [
+              "click",
+              {
+                "target": "Submit Request",
+                "submit": true
+              }
+            ]
+          ]
+        },
+        {
+          "match": {
+            "text": "Request submitted"
+          },
+          "actions": [
+            [
+              "read_confirmation",
+              {}
+            ],
+            [
+              "finish",
+              {
+                "status": "submitted"
+              }
+            ]
+          ]
+        }
+      ],
+      "expected_steps": 19
+    },
+    "lexicon:keystone": {
+      "portal": "keystone",
+      "start": "/keystone/login",
+      "generated": true,
+      "pages": [
+        {
+          "match": {
+            "url": "/keystone/login"
+          },
+          "actions": [
+            [
+              "type_credential",
+              {
+                "user_target": "User ID",
+                "pass_target": "Password",
+                "button": "Log in"
+              }
+            ]
+          ]
+        },
+        {
+          "match": {
+            "url": "/keystone/portal"
+          },
+          "actions": [
+            [
+              "upload",
+              {
+                "target": "Attachments",
+                "files": "{files}"
+              }
+            ],
+            [
+              "conditional",
+              {
+                "if_specialty": "aba",
+                "actions": [
+                  [
+                    "select",
+                    {
+                      "target": "Service Category",
+                      "value": "aba"
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "conditional",
+              {
+                "if_specialty": "physical_therapy",
+                "actions": [
+                  [
+                    "select",
+                    {
+                      "target": "Service Category",
+                      "value": "physical_therapy"
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "conditional",
+              {
+                "if_specialty": "behavioral_health",
+                "actions": [
+                  [
+                    "select",
+                    {
+                      "target": "Service Category",
+                      "value": "behavioral_health"
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "pick_date",
+              {
+                "target": "Member Date of Birth",
+                "iso": "{dob}"
+              }
+            ],
+            [
+              "pick_date",
+              {
+                "target": "Service From",
+                "iso": "{start}"
+              }
+            ],
+            [
+              "pick_date",
+              {
+                "target": "Service Through",
+                "iso": "{end}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Medicaid ID",
+                "value": "{member_id|mask3}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Procedure Codes",
+                "value": "{cpt_csv}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Primary and Secondary Diagnosis",
+                "value": "{icd_csv}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Total Units",
+                "value": "{units}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Servicing Provider NPI",
+                "value": "{npi}"
+              }
+            ],
+            [
+              "click",
+              {
+                "target": "Submit Authorization",
+                "submit": true
+              }
+            ]
+          ]
+        },
+        {
+          "match": {
+            "text": "Request submitted"
+          },
+          "actions": [
+            [
+              "read_confirmation",
+              {}
+            ],
+            [
+              "finish",
+              {
+                "status": "submitted"
+              }
+            ]
+          ]
+        }
+      ],
+      "expected_steps": 18
+    },
+    "lexicon:lakeshore": {
+      "portal": "lakeshore",
+      "start": "/lakeshore/signin",
+      "generated": true,
+      "pages": [
+        {
+          "match": {
+            "url": "/lakeshore/signin"
+          },
+          "actions": [
+            [
+              "type_credential",
+              {
+                "user_target": "Provider ID",
+                "pass_target": "Passcode",
+                "button": "Log in"
+              }
+            ]
+          ]
+        },
+        {
+          "match": {
+            "url": "/lakeshore/workqueue"
+          },
+          "actions": [
+            [
+              "click",
+              {
+                "target": "Start a utilization review request"
+              }
+            ]
+          ]
+        },
+        {
+          "match": {
+            "url": "/lakeshore/request/lookup"
+          },
+          "actions": [
+            [
+              "pick_date",
+              {
+                "target": "Birthdate (MM/DD/YYYY)",
+                "iso": "{dob}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Patient last name",
+                "value": "{last_name}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Subscriber number",
+                "value": "{member_id}"
+              }
+            ],
+            [
+              "click",
+              {
+                "target": "Find patient"
+              }
+            ]
+          ]
+        },
+        {
+          "match": {
+            "url": "/lakeshore/request/details"
+          },
+          "actions": [
+            [
+              "upload",
+              {
+                "target": "Supporting documentation",
+                "files": "{files}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Procedure codes (CPT/HCPCS)",
+                "value": "{cpt_csv}"
+              }
+            ],
+            [
+              "conditional",
+              {
+                "if_specialty": "aba",
+                "actions": [
+                  [
+                    "select",
+                    {
+                      "target": "Program",
+                      "value": "ABA"
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "conditional",
+              {
+                "if_specialty": "physical_therapy",
+                "actions": [
+                  [
+                    "select",
+                    {
+                      "target": "Program",
+                      "value": "PTOT"
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "conditional",
+              {
+                "if_specialty": "behavioral_health",
+                "actions": [
+                  [
+                    "select",
+                    {
+                      "target": "Program",
+                      "value": "MHO"
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Primary and secondary diagnoses (ICD-10)",
+                "value": "{icd_csv}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Quantity (units)",
+                "value": "{units}"
+              }
+            ],
+            [
+              "pick_date",
+              {
+                "target": "Service from",
+                "iso": "{start}"
+              }
+            ],
+            [
+              "pick_date",
+              {
+                "target": "Service through",
+                "iso": "{end}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Rendering clinician NPI",
+                "value": "{npi}"
+              }
+            ],
+            [
+              "check",
+              {
+                "target": "I attest that this information is accurate and complete"
+              }
+            ],
+            [
+              "click",
+              {
+                "target": "Send to Utilization Review",
+                "submit": true
+              }
+            ]
+          ]
+        },
+        {
+          "match": {
+            "text": "Request submitted"
+          },
+          "actions": [
+            [
+              "read_confirmation",
+              {}
+            ],
+            [
+              "finish",
+              {
+                "status": "submitted"
+              }
+            ]
+          ]
+        }
+      ],
+      "expected_steps": 22
+    },
+    "claude:northwind": {
+      "portal": "northwind",
+      "start": "/northwind/login",
+      "generated": true,
+      "pages": [
+        {
+          "match": {
+            "url": "/northwind/login"
+          },
+          "actions": [
+            [
+              "type_credential",
+              {
+                "user_target": "Username",
+                "pass_target": "Password",
+                "button": "Sign in"
+              }
+            ]
+          ]
+        },
+        {
+          "match": {
+            "url": "/northwind/home"
+          },
+          "actions": [
+            [
+              "click",
+              {
+                "target": "New Prior Authorization"
+              }
+            ]
+          ]
+        },
+        {
+          "match": {
+            "url": "/northwind/new"
+          },
+          "actions": [
+            [
+              "fill",
+              {
+                "target": "Member ID",
+                "value": "{member_id}"
+              }
+            ],
+            [
+              "pick_date",
+              {
+                "target": "Patient Date of Birth",
+                "iso": "{dob}"
+              }
+            ],
+            [
+              "conditional",
+              {
+                "if_specialty": "aba",
+                "actions": [
+                  [
+                    "select",
+                    {
+                      "target": "Service Type",
+                      "value": "aba"
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "conditional",
+              {
+                "if_specialty": "physical_therapy",
+                "actions": [
+                  [
+                    "select",
+                    {
+                      "target": "Service Type",
+                      "value": "physical_therapy"
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "conditional",
+              {
+                "if_specialty": "behavioral_health",
+                "actions": [
+                  [
+                    "select",
+                    {
+                      "target": "Service Type",
+                      "value": "behavioral_health"
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "CPT Codes (comma separated)",
+                "value": "{cpt_csv}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Diagnosis Codes (ICD-10)",
+                "value": "{icd_csv}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Units Requested",
+                "value": "{units}"
+              }
+            ],
+            [
+              "pick_date",
+              {
+                "target": "Start Date",
+                "iso": "{start}"
+              }
+            ],
+            [
+              "pick_date",
+              {
+                "target": "End Date",
+                "iso": "{end}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Rendering Provider NPI",
+                "value": "{npi}"
+              }
+            ],
+            [
+              "upload",
+              {
+                "target": "Clinical Documents",
+                "files": "{files}"
+              }
+            ],
+            [
+              "click",
+              {
+                "target": "Submit Request",
+                "submit": true
+              }
+            ]
+          ]
+        },
+        {
+          "match": {
+            "text": "Request submitted"
+          },
+          "actions": [
+            [
+              "read_confirmation",
+              {}
+            ],
+            [
+              "finish",
+              {
+                "status": "submitted"
+              }
+            ]
+          ]
+        }
+      ],
+      "expected_steps": 19
+    },
+    "claude:keystone": {
+      "portal": "keystone",
+      "start": "/keystone/login",
+      "generated": true,
+      "pages": [
+        {
+          "match": {
+            "url": "/keystone/login"
+          },
+          "actions": [
+            [
+              "type_credential",
+              {
+                "user_target": "User ID",
+                "pass_target": "Password",
+                "button": "Log in"
+              }
+            ]
+          ]
+        },
+        {
+          "match": {
+            "url": "/keystone/portal"
+          },
+          "actions": [
+            [
+              "fill",
+              {
+                "target": "Medicaid ID",
+                "value": "{member_id|mask3}"
+              }
+            ],
+            [
+              "pick_date",
+              {
+                "target": "Member Date of Birth",
+                "iso": "{dob}"
+              }
+            ],
+            [
+              "conditional",
+              {
+                "if_specialty": "aba",
+                "actions": [
+                  [
+                    "select",
+                    {
+                      "target": "Service Category",
+                      "value": "aba"
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "conditional",
+              {
+                "if_specialty": "physical_therapy",
+                "actions": [
+                  [
+                    "select",
+                    {
+                      "target": "Service Category",
+                      "value": "physical_therapy"
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "conditional",
+              {
+                "if_specialty": "behavioral_health",
+                "actions": [
+                  [
+                    "select",
+                    {
+                      "target": "Service Category",
+                      "value": "behavioral_health"
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Procedure Codes",
+                "value": "{cpt_csv}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Primary and Secondary Diagnosis",
+                "value": "{icd_csv}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Total Units",
+                "value": "{units}"
+              }
+            ],
+            [
+              "pick_date",
+              {
+                "target": "Service From",
+                "iso": "{start}"
+              }
+            ],
+            [
+              "pick_date",
+              {
+                "target": "Service Through",
+                "iso": "{end}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Servicing Provider NPI",
+                "value": "{npi}"
+              }
+            ],
+            [
+              "upload",
+              {
+                "target": "Attachments",
+                "files": "{files}"
+              }
+            ],
+            [
+              "click",
+              {
+                "target": "Submit Authorization",
+                "submit": true
+              }
+            ]
+          ]
+        },
+        {
+          "match": {
+            "text": "Request submitted"
+          },
+          "actions": [
+            [
+              "read_confirmation",
+              {}
+            ],
+            [
+              "finish",
+              {
+                "status": "submitted"
+              }
+            ]
+          ]
+        }
+      ],
+      "expected_steps": 18
+    },
+    "claude:lakeshore": {
+      "portal": "lakeshore",
+      "start": "/lakeshore/signin",
+      "generated": true,
+      "pages": [
+        {
+          "match": {
+            "url": "/lakeshore/signin"
+          },
+          "actions": [
+            [
+              "type_credential",
+              {
+                "user_target": "Provider ID",
+                "pass_target": "Passcode",
+                "button": "Log in"
+              }
+            ]
+          ]
+        },
+        {
+          "match": {
+            "url": "/lakeshore/workqueue"
+          },
+          "actions": [
+            [
+              "click",
+              {
+                "target": "Start a utilization review request"
+              }
+            ]
+          ]
+        },
+        {
+          "match": {
+            "url": "/lakeshore/request/lookup"
+          },
+          "actions": [
+            [
+              "fill",
+              {
+                "target": "Subscriber number",
+                "value": "{member_id}"
+              }
+            ],
+            [
+              "pick_date",
+              {
+                "target": "Birthdate (MM/DD/YYYY)",
+                "iso": "{dob}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Patient last name",
+                "value": "{last_name}"
+              }
+            ],
+            [
+              "click",
+              {
+                "target": "Find patient"
+              }
+            ]
+          ]
+        },
+        {
+          "match": {
+            "url": "/lakeshore/request/details"
+          },
+          "actions": [
+            [
+              "conditional",
+              {
+                "if_specialty": "aba",
+                "actions": [
+                  [
+                    "select",
+                    {
+                      "target": "Program",
+                      "value": "ABA"
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "conditional",
+              {
+                "if_specialty": "physical_therapy",
+                "actions": [
+                  [
+                    "select",
+                    {
+                      "target": "Program",
+                      "value": "PTOT"
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "conditional",
+              {
+                "if_specialty": "behavioral_health",
+                "actions": [
+                  [
+                    "select",
+                    {
+                      "target": "Program",
+                      "value": "MHO"
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Procedure codes (CPT/HCPCS)",
+                "value": "{cpt_csv}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Primary and secondary diagnoses (ICD-10)",
+                "value": "{icd_csv}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Quantity (units)",
+                "value": "{units}"
+              }
+            ],
+            [
+              "pick_date",
+              {
+                "target": "Service from",
+                "iso": "{start}"
+              }
+            ],
+            [
+              "pick_date",
+              {
+                "target": "Service through",
+                "iso": "{end}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Rendering clinician NPI",
+                "value": "{npi}"
+              }
+            ],
+            [
+              "upload",
+              {
+                "target": "Supporting documentation",
+                "files": "{files}"
+              }
+            ],
+            [
+              "check",
+              {
+                "target": "I attest that this information is accurate and complete"
+              }
+            ],
+            [
+              "click",
+              {
+                "target": "Send to Utilization Review",
+                "submit": true
+              }
+            ]
+          ]
+        },
+        {
+          "match": {
+            "text": "Request submitted"
+          },
+          "actions": [
+            [
+              "read_confirmation",
+              {}
+            ],
+            [
+              "finish",
+              {
+                "status": "submitted"
+              }
+            ]
+          ]
+        }
+      ],
+      "expected_steps": 22
+    }
+  },
+  "summary:lexicon": {
+    "walks": 12,
+    "reached_confirmation": 8,
+    "hand_field_recall": 0.926,
+    "wrong_mappings": 0,
+    "held_out_lakeshore": "3/3"
+  },
+  "summary:claude": {
+    "walks": 12,
+    "reached_confirmation": 8,
+    "hand_field_recall": 0.926,
+    "wrong_mappings": 0,
+    "held_out_lakeshore": "3/3"
+  }
+}

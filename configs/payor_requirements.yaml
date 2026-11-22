@@ -1,5 +1,5 @@
 # Payor requirements database (fictional payors).
-# Silna's Payor Intelligence team keeps the real version of this, mined from payor
+# A requirements team keeps the real version of this, mined from payor
 # bulletins and weekly prior-auth volume. Here each payor x specialty pair lists the
 # rules a document set must pass before submission. Default rules are code; custom
 # rules are plain English and evaluated by an LLM that must answer yes or no.

@@ -31,6 +31,7 @@ pages = {
     "Operate and improve": [
         st.Page(V + "autonomy_ramp.py", title="Autonomy Ramp", icon="📈"),
         st.Page(V + "playbook_studio.py", title="Playbook Studio", icon="📝"),
+        st.Page(V + "config_lab.py", title="Config Lab", icon="🧪"),
         st.Page(V + "phone_agent.py", title="Phone Agent", icon="📞"),
         st.Page(V + "channels.py", title="FHIR and channels", icon="🔀"),
     ],

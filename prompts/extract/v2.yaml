@@ -1,0 +1,31 @@
+id: extract
+version: v2
+model: claude-haiku-4-5
+max_tokens: 1500
+owner: AI Ops
+status: candidate
+purpose: Extract typed fields from treatment plans, approval letters and denial letters.
+changelog: 'Hypothesis from the v1 error dataset: most silent errors are OCR code confusions and dates taken from
+  the wrong label. Adds code-format rules, label-matched dates and a confidence rubric. Must not lower accuracy
+  or raise silent error on any critical field.'
+template: |-
+  Extract fields from this {doc_type} for a prior authorization workflow.
+
+  Return ONLY a JSON object. For each field give an object:
+    {{"value": <value or null>, "evidence": "<exact substring copied from the document>", "confidence": 0.0-1.0}}
+  Use null when the field is absent or unreadable. Never guess. Dates as YYYY-MM-DD.
+  Names as "First Last". Code lists as JSON arrays of strings.
+  Codes: copy CPT codes as 5 characters and ICD-10 codes with their dot (F84.0), exactly as printed; OCR often
+  reads O as 0 and l as 1 in codes, so prefer the reading that is a valid code and lower confidence if unsure.
+  Dates: when a document shows several dates, use the one whose label matches the field (signed, start, end,
+  date of birth); never reuse a date across fields because it is the only one you can read.
+  Confidence: 0.9+ only when the value and its label are both clearly legible; 0.5-0.8 when you corrected
+  an OCR error; below 0.5 means the reviewer should check it.
+
+  Fields and types:
+  {schema}
+
+  Document text (from OCR, may contain errors):
+  <<<
+  {text}
+  >>>
