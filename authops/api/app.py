@@ -26,10 +26,6 @@ import uuid
 from datetime import date, datetime, timezone
 from typing import Literal, Optional
 
-
-def _utcnow() -> datetime:
-    return datetime.now(timezone.utc).replace(tzinfo=None)
-
 from fastapi import Depends, FastAPI, Header, HTTPException
 from pydantic import BaseModel, Field
 
@@ -39,6 +35,10 @@ from authops.monitor.panel import forecast
 from authops.schemas import Case, Patient, Provider
 from authops.synth.generate import PAYOR_BY_ID
 from authops.validation.rules import validate_case
+
+
+def _utcnow() -> datetime:
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 class AuthIn(BaseModel):

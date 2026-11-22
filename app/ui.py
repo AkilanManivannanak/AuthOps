@@ -28,7 +28,7 @@ h1 {{ font-size: 3rem !important; line-height: 1.05 !important; }}
 .ao-tile {{ border: 1px solid {RULE}; background: #fff; border-radius: 18px; padding: 18px 20px; transition: all .18s ease; height: 100%; }}
 .ao-tile:hover {{ transform: translateY(-2px); box-shadow: 0 8px 24px rgba(31,42,36,.10); border-color: {FOREST}; }}
 .ao-tile.hot {{ background: {TAG}; border-color: {INK}; }}
-.ao-fig {{ font-family: 'Fraunces', Georgia, serif; font-weight: 300; font-size: 2.9rem; line-height: 1; font-variant-numeric: tabular-nums; }}
+.ao-fig {{ font-family: 'Fraunces', Georgia, serif; font-weight: 300; font-size: clamp(1.9rem, 3.4vw, 2.9rem); line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap; }}
 .ao-lab {{ margin-top: 8px; font-size: .9rem; color: #444; }}
 .ao-pill {{ display:inline-block; border-radius: 999px; padding: 2px 10px; font-size: .78rem; font-weight: 700; }}
 .ao-ok {{ background: {FOREST}; color: {PAPER}; }} .ao-bad {{ background: {RED}; color: #fff; }} .ao-warn {{ background: {AMBER}; color: #fff; }}
@@ -108,7 +108,7 @@ def require_tester(reason: str = "so your work counts in the study") -> dict | N
 
 def _fmt(value, fmt: str) -> str:
     if fmt == "pct":
-        return f"{value * 100:.1f}%"
+        return f"{value * 100:.1f}".removesuffix(".0") + "%"
     if fmt == "pct0":
         return f"{round(value * 100)}%"
     if fmt == "f1":
@@ -149,7 +149,7 @@ def _card_front(c: dict) -> str:
     dots = lambda n, colr: "".join(f"<i style='background:{colr};animation-delay:{j * 35}ms'></i>" for j in range(n))  # noqa: E731
     return (f"<div style='display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center'>"
             f"<div><div class='ao-dots'>{dots(c['left'], RED)}</div><div class='ao-muted'>{c['left_label']} "
-            f"<b>{c['left']}</b></div></div><div class='ao-big ao-muted'>vs</div><div><div class='ao-dots'>"
+            f"<b>{c['left']}</b></div></div><div class='ao-muted' style='font-size:.95rem'>vs</div><div><div class='ao-dots'>"
             f"{dots(c['right'], FOREST)}</div><div class='ao-muted'>{c['right_label']} <b>{c['right']}</b></div></div></div>")
 
 

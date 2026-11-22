@@ -19,6 +19,7 @@ from datetime import datetime, timedelta, timezone
 def _utcnow() -> datetime:
     return datetime.now(timezone.utc).replace(tzinfo=None)
 
+
 REQUEST_TYPES = {  # type -> (SLA hours, who must act, what the payor asked for)
     "peer_to_peer": (48, "rendering clinician", "Schedule and complete a peer-to-peer call with the payor's medical director."),
     "additional_info": (14 * 24, "rendering clinician", "Send the clinical information the payor listed."),

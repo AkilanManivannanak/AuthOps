@@ -34,7 +34,7 @@ def main() -> None:
     backtests = [json.loads(x) for x in log.read_text().splitlines() if x.strip()] if log.exists() else []
     ag, val, ramp = m.get("agents", {}), m.get("validation", {}), m.get("qa_ramp", {})
     ex = m.get("extraction", {}).get("arms", {}).get("rules", {}).get("summary", {}).get("all", {})
-    L = [f"# AI Operations weekly report", f"_Generated {time.strftime('%Y-%m-%d')} from run artifacts. Synthetic "
+    L = ["# AI Operations weekly report", f"_Generated {time.strftime('%Y-%m-%d')} from run artifacts. Synthetic "
          "patients and sandbox portals only._", ""]
 
     # 1. headline

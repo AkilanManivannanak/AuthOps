@@ -18,8 +18,7 @@ tiles([
     (val.get("caught_before_submission", 0), f"denials caught before submission (of {val.get('payor_denials', 0)})", "int", False),
     (ag.get("verified_submit_rate", 0), "agent submissions verified on payor portals", "pct", False),
     (ex.get("precision", 0), "precision on fields the extractor fills in", "pct", False),
-    (c["testers"], "real testers in the study so far", "int", c["testers"] == 0),
-])
+] + ([(c["testers"], "testers in the user study", "int", False)] if c["testers"] else []))
 
 st.markdown("### How a request moves")
 steps = [("📄", "Read", "OCR + extraction with per-field confidence; unsure fields abstain"),
