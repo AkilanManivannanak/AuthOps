@@ -36,7 +36,10 @@ def browser_available() -> bool:
         return False
     if chrome_path():
         return True
-    return any(Path.home().glob(".cache/ms-playwright/chromium*"))
+    roots = [os.environ.get("PLAYWRIGHT_BROWSERS_PATH", ""), Path.home() / ".cache" / "ms-playwright",   # Linux
+             Path.home() / "Library" / "Caches" / "ms-playwright",                                        # macOS
+             Path(os.environ.get("LOCALAPPDATA", "")) / "ms-playwright"]                                   # Windows
+    return any(Path(r).is_dir() and any(Path(r).glob("chromium*")) for r in roots if str(r))
 
 
 @st.cache_resource(show_spinner="Setting up the sandbox: generating patients and documents...")
