@@ -27,6 +27,10 @@ a new-reason trigger, partial-approval clustering (soft caps) and a turnaround m
 with evidence for approval. A daily canary fingerprints every portal form; on a release the changed steps are
 re-drafted, judgment steps are kept, and the candidate must reach a confirmation in the sandbox before review.
 
+**Before and after the decision.** The approval outlook is a gradient-boosted classifier of full approval given the
+request and the units asked, evaluated on held-out weeks against the simulator's true adjudication. Appeal packets
+triage each denial from the chart evidence and draft letters only from verbatim, page-cited quotes.
+
 **Real-user study.** Testers consent, then their corrections, QA verdicts, task times and SUS answers are stored
 with timestamps. Agreement is Cohen's kappa over reviewer pairs on shared fields. Nothing is seeded.
 

@@ -25,6 +25,7 @@ REQUEST_TYPES = {  # type -> (SLA hours, who must act, what the payor asked for)
     "additional_info": (14 * 24, "rendering clinician", "Send the clinical information the payor listed."),
     "medical_records": (10 * 24, "front desk", "Upload the requested session notes and assessments."),
     "signature_correction": (5 * 24, "rendering clinician", "Sign and date the treatment plan and resubmit."),
+    "appeal": (30 * 24, "rendering clinician", "Review and sign the drafted appeal, then submit it to the payor."),
 }
 STATES = ("open", "assigned", "awaiting_clinician", "responded", "closed", "expired")
 TRANSITIONS = {

@@ -1,0 +1,910 @@
+{
+ "generated_at": "2026-11-22 01:28",
+ "approval": {
+  "0.7": {
+   "train_requests": 4800,
+   "test_requests": 1439,
+   "auc": 0.97,
+   "brier": 0.068,
+   "base_rate_full": 0.379,
+   "policies": [
+    {
+     "policy": "ask for clinical need",
+     "first_pass_full": 0.379,
+     "partial_rate": 0.621,
+     "units_approved_first_pass": 143871,
+     "units_left_on_table": 0
+    },
+    {
+     "policy": "fixed 15% haircut",
+     "first_pass_full": 0.68,
+     "partial_rate": 0.32,
+     "units_approved_first_pass": 134442,
+     "units_left_on_table": 9429
+    },
+    {
+     "policy": "model, target P(full) >= 70%",
+     "first_pass_full": 0.819,
+     "partial_rate": 0.181,
+     "units_approved_first_pass": 138605,
+     "units_left_on_table": 5266
+    }
+   ],
+   "calibration": [
+    {
+     "predicted": 0.015,
+     "observed": 0.016,
+     "n": 691
+    },
+    {
+     "predicted": 0.145,
+     "observed": 0.233,
+     "n": 90
+    },
+    {
+     "predicted": 0.254,
+     "observed": 0.34,
+     "n": 50
+    },
+    {
+     "predicted": 0.35,
+     "observed": 0.303,
+     "n": 33
+    },
+    {
+     "predicted": 0.454,
+     "observed": 0.242,
+     "n": 33
+    },
+    {
+     "predicted": 0.548,
+     "observed": 0.516,
+     "n": 31
+    },
+    {
+     "predicted": 0.656,
+     "observed": 0.6,
+     "n": 30
+    },
+    {
+     "predicted": 0.747,
+     "observed": 0.717,
+     "n": 53
+    },
+    {
+     "predicted": 0.856,
+     "observed": 0.844,
+     "n": 64
+    },
+    {
+     "predicted": 0.969,
+     "observed": 0.97,
+     "n": 364
+    }
+   ],
+   "target": 0.7
+  },
+  "0.8": {
+   "train_requests": 4800,
+   "test_requests": 1439,
+   "auc": 0.97,
+   "brier": 0.068,
+   "base_rate_full": 0.379,
+   "policies": [
+    {
+     "policy": "ask for clinical need",
+     "first_pass_full": 0.379,
+     "partial_rate": 0.621,
+     "units_approved_first_pass": 143871,
+     "units_left_on_table": 0
+    },
+    {
+     "policy": "fixed 15% haircut",
+     "first_pass_full": 0.68,
+     "partial_rate": 0.32,
+     "units_approved_first_pass": 134442,
+     "units_left_on_table": 9429
+    },
+    {
+     "policy": "model, target P(full) >= 80%",
+     "first_pass_full": 0.867,
+     "partial_rate": 0.133,
+     "units_approved_first_pass": 137172,
+     "units_left_on_table": 6699
+    }
+   ],
+   "calibration": [
+    {
+     "predicted": 0.015,
+     "observed": 0.016,
+     "n": 691
+    },
+    {
+     "predicted": 0.145,
+     "observed": 0.233,
+     "n": 90
+    },
+    {
+     "predicted": 0.254,
+     "observed": 0.34,
+     "n": 50
+    },
+    {
+     "predicted": 0.35,
+     "observed": 0.303,
+     "n": 33
+    },
+    {
+     "predicted": 0.454,
+     "observed": 0.242,
+     "n": 33
+    },
+    {
+     "predicted": 0.548,
+     "observed": 0.516,
+     "n": 31
+    },
+    {
+     "predicted": 0.656,
+     "observed": 0.6,
+     "n": 30
+    },
+    {
+     "predicted": 0.747,
+     "observed": 0.717,
+     "n": 53
+    },
+    {
+     "predicted": 0.856,
+     "observed": 0.844,
+     "n": 64
+    },
+    {
+     "predicted": 0.969,
+     "observed": 0.97,
+     "n": 364
+    }
+   ],
+   "target": 0.8
+  },
+  "0.9": {
+   "train_requests": 4800,
+   "test_requests": 1439,
+   "auc": 0.97,
+   "brier": 0.068,
+   "base_rate_full": 0.379,
+   "policies": [
+    {
+     "policy": "ask for clinical need",
+     "first_pass_full": 0.379,
+     "partial_rate": 0.621,
+     "units_approved_first_pass": 143871,
+     "units_left_on_table": 0
+    },
+    {
+     "policy": "fixed 15% haircut",
+     "first_pass_full": 0.68,
+     "partial_rate": 0.32,
+     "units_approved_first_pass": 134442,
+     "units_left_on_table": 9429
+    },
+    {
+     "policy": "model, target P(full) >= 90%",
+     "first_pass_full": 0.929,
+     "partial_rate": 0.071,
+     "units_approved_first_pass": 134295,
+     "units_left_on_table": 9576
+    }
+   ],
+   "calibration": [
+    {
+     "predicted": 0.015,
+     "observed": 0.016,
+     "n": 691
+    },
+    {
+     "predicted": 0.145,
+     "observed": 0.233,
+     "n": 90
+    },
+    {
+     "predicted": 0.254,
+     "observed": 0.34,
+     "n": 50
+    },
+    {
+     "predicted": 0.35,
+     "observed": 0.303,
+     "n": 33
+    },
+    {
+     "predicted": 0.454,
+     "observed": 0.242,
+     "n": 33
+    },
+    {
+     "predicted": 0.548,
+     "observed": 0.516,
+     "n": 31
+    },
+    {
+     "predicted": 0.656,
+     "observed": 0.6,
+     "n": 30
+    },
+    {
+     "predicted": 0.747,
+     "observed": 0.717,
+     "n": 53
+    },
+    {
+     "predicted": 0.856,
+     "observed": 0.844,
+     "n": 64
+    },
+    {
+     "predicted": 0.969,
+     "observed": 0.97,
+     "n": 364
+    }
+   ],
+   "target": 0.9
+  }
+ },
+ "appeals": {
+  "offline": {
+   "finder": "offline",
+   "denials": 30,
+   "wrongful": 18,
+   "triage_accuracy": 1.0,
+   "to_specialist": 0,
+   "appeals_on_correct_denials": 0,
+   "wrongful_denials_not_appealed": 0,
+   "appeal_letters_with_valid_citations": "18/18",
+   "appeals_citing_the_deciding_page": "18/18",
+   "rows": [
+    {
+     "denial": "DN-000",
+     "rule": "R6_specialty_requirement",
+     "pages": 12,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-001",
+     "rule": "R2_dx_consistent",
+     "pages": 12,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-002",
+     "rule": "R2_dx_consistent",
+     "pages": 12,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-003",
+     "rule": "R5_measurable_goals",
+     "pages": 12,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-004",
+     "rule": "R6_specialty_requirement",
+     "pages": 12,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-005",
+     "rule": "R4_assessment_current",
+     "pages": 12,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-006",
+     "rule": "R1_signature",
+     "pages": 30,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-007",
+     "rule": "R4_assessment_current",
+     "pages": 30,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-008",
+     "rule": "R8_medical_necessity",
+     "pages": 30,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-009",
+     "rule": "R5_measurable_goals",
+     "pages": 30,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-010",
+     "rule": "R2_dx_consistent",
+     "pages": 30,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-011",
+     "rule": "R2_dx_consistent",
+     "pages": 30,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-012",
+     "rule": "R4_assessment_current",
+     "pages": 60,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-013",
+     "rule": "R6_specialty_requirement",
+     "pages": 60,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-014",
+     "rule": "R2_dx_consistent",
+     "pages": 60,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-015",
+     "rule": "R8_medical_necessity",
+     "pages": 60,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-016",
+     "rule": "R2_dx_consistent",
+     "pages": 60,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-017",
+     "rule": "R6_specialty_requirement",
+     "pages": 60,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-018",
+     "rule": "R4_assessment_current",
+     "pages": 100,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-019",
+     "rule": "R1_signature",
+     "pages": 100,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-020",
+     "rule": "R5_measurable_goals",
+     "pages": 100,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-021",
+     "rule": "R8_medical_necessity",
+     "pages": 100,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-022",
+     "rule": "R8_medical_necessity",
+     "pages": 100,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-023",
+     "rule": "R5_measurable_goals",
+     "pages": 100,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-024",
+     "rule": "R1_signature",
+     "pages": 150,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-025",
+     "rule": "R5_measurable_goals",
+     "pages": 150,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-026",
+     "rule": "R5_measurable_goals",
+     "pages": 150,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-027",
+     "rule": "R2_dx_consistent",
+     "pages": 150,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-028",
+     "rule": "R4_assessment_current",
+     "pages": 150,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-029",
+     "rule": "R2_dx_consistent",
+     "pages": 150,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    }
+   ]
+  },
+  "claude": {
+   "finder": "claude",
+   "denials": 30,
+   "wrongful": 18,
+   "triage_accuracy": 0.967,
+   "to_specialist": 0,
+   "appeals_on_correct_denials": 0,
+   "wrongful_denials_not_appealed": 1,
+   "appeal_letters_with_valid_citations": "17/17",
+   "appeals_citing_the_deciding_page": "17/17",
+   "rows": [
+    {
+     "denial": "DN-000",
+     "rule": "R6_specialty_requirement",
+     "pages": 12,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-001",
+     "rule": "R2_dx_consistent",
+     "pages": 12,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-002",
+     "rule": "R2_dx_consistent",
+     "pages": 12,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-003",
+     "rule": "R5_measurable_goals",
+     "pages": 12,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-004",
+     "rule": "R6_specialty_requirement",
+     "pages": 12,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-005",
+     "rule": "R4_assessment_current",
+     "pages": 12,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-006",
+     "rule": "R1_signature",
+     "pages": 30,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-007",
+     "rule": "R4_assessment_current",
+     "pages": 30,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-008",
+     "rule": "R8_medical_necessity",
+     "pages": 30,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-009",
+     "rule": "R5_measurable_goals",
+     "pages": 30,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-010",
+     "rule": "R2_dx_consistent",
+     "pages": 30,
+     "wrongful": true,
+     "action": "corrective_resubmission",
+     "correct": false,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-011",
+     "rule": "R2_dx_consistent",
+     "pages": 30,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-012",
+     "rule": "R4_assessment_current",
+     "pages": 60,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-013",
+     "rule": "R6_specialty_requirement",
+     "pages": 60,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-014",
+     "rule": "R2_dx_consistent",
+     "pages": 60,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-015",
+     "rule": "R8_medical_necessity",
+     "pages": 60,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-016",
+     "rule": "R2_dx_consistent",
+     "pages": 60,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-017",
+     "rule": "R6_specialty_requirement",
+     "pages": 60,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-018",
+     "rule": "R4_assessment_current",
+     "pages": 100,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-019",
+     "rule": "R1_signature",
+     "pages": 100,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-020",
+     "rule": "R5_measurable_goals",
+     "pages": 100,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-021",
+     "rule": "R8_medical_necessity",
+     "pages": 100,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-022",
+     "rule": "R8_medical_necessity",
+     "pages": 100,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-023",
+     "rule": "R5_measurable_goals",
+     "pages": 100,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-024",
+     "rule": "R1_signature",
+     "pages": 150,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-025",
+     "rule": "R5_measurable_goals",
+     "pages": 150,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-026",
+     "rule": "R5_measurable_goals",
+     "pages": 150,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-027",
+     "rule": "R2_dx_consistent",
+     "pages": 150,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    },
+    {
+     "denial": "DN-028",
+     "rule": "R4_assessment_current",
+     "pages": 150,
+     "wrongful": true,
+     "action": "appeal",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": true
+    },
+    {
+     "denial": "DN-029",
+     "rule": "R2_dx_consistent",
+     "pages": 150,
+     "wrongful": false,
+     "action": "corrective_resubmission",
+     "correct": true,
+     "citations_valid": true,
+     "cites_key_page": null
+    }
+   ],
+   "cost_usd": 1.7
+  }
+ },
+ "drift": {
+  "seeds": 20,
+  "threshold_h": 6.0,
+  "detection_rate": {
+   "unit_cap": 1.0,
+   "new_requirement": 1.0,
+   "soft_cap": 0.9,
+   "turnaround": 1.0
+  },
+  "median_delay_weeks": {
+   "unit_cap": 0,
+   "new_requirement": 0,
+   "soft_cap": 1,
+   "turnaround": 0
+  },
+  "proposal_correct": {
+   "unit_cap": 1.0,
+   "new_requirement": 1.0,
+   "soft_cap": 0.9,
+   "turnaround": 1.0
+  },
+  "false_alarms_per_26_weeks": 0.9,
+  "denials_before_rule": {
+   "automatic": 221,
+   "manual_6_weeks": 1210
+  }
+ }
+}

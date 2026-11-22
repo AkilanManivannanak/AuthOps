@@ -80,6 +80,68 @@ with out:
         else:
             st.success(f"{decision.title()} ({approved} units).")
 
+# ---------------------------------------------------------------- approval outlook
+st.markdown("#### Approval outlook")
+st.caption("Probability that the payor approves this request in full at a given unit count, learned from 40 weeks "
+           "of past decisions. Asking for more than the payor will fund usually ends in a partial approval weeks "
+           "later; the recommendation is the largest request that clears your target probability.")
+
+import altair as alt  # noqa: E402
+
+from authops.intel.approval import ApprovalModel, Request, history_from, simulate  # noqa: E402
+from authops.intel.approval import evaluate as approval_evaluate  # noqa: E402
+
+
+@st.cache_resource(show_spinner="Training on past decisions")
+def _approval_model():
+    reqs = simulate()
+    return ApprovalModel().fit([h for h in history_from(reqs, random.Random(8)) if h[0].week < 40])
+
+
+@st.cache_data(show_spinner=False)
+def _approval_eval(target: float):
+    return approval_evaluate(target=target)
+
+
+oc1, oc2, oc3, oc4 = st.columns(4)
+sev = oc1.slider("Assessment severity", 0.0, 1.0, 0.55, 0.05, help="Standardized assessment, mild (0) to severe (1).")
+first = oc2.toggle("First authorization", value=False)
+used = oc3.slider("Last authorization used", 0.0, 1.2, 0.85, 0.05, disabled=first,
+                  help="Share of the previous authorization's units actually delivered.")
+target = oc4.slider("Target P(full approval)", 0.5, 0.95, 0.8, 0.05)
+am = _approval_model()
+rq = Request(52, pid if pid in ("NWH", "KCM", "SFB", "HBL", "PRV") else "NWH", spec, sev, 0.0 if first else used, first,
+             0.85, units, 1.0)
+o = am.outlook(rq, units)
+rec = am.recommend(rq, target)
+r_o = am.outlook(rq, rec)
+m1, m2, m3 = st.columns(3)
+m1.metric(f"P(full) at {units} units", f"{o['p_full']:.0%}")
+m2.metric("Recommended request", f"{rec} units", f"{rec - units:+d} vs current", delta_color="off")
+m3.metric("Expected units approved", f"{r_o['expected_units']:.0f}", f"{r_o['expected_units'] - o['expected_units']:+.0f} vs current",
+          delta_color="off")
+cv = pd.DataFrame(am.curve(Request(rq.week, rq.payor, rq.specialty, rq.severity, rq.utilization, rq.first_auth,
+                                   rq.doc_score, max(units, rec), 1.0)))
+marks = pd.DataFrame([{"units": units, "what": "current request"}, {"units": rec, "what": "recommended"}])
+st.altair_chart(
+    (alt.Chart(cv).mark_line(color="#28543E", strokeWidth=2.5).encode(
+        x=alt.X("units:Q", title="units requested"), y=alt.Y("p_full:Q", title="P(full approval)",
+                                                              scale=alt.Scale(domain=[0, 1])))
+     + alt.Chart(pd.DataFrame([{"y": target}])).mark_rule(strokeDash=[2, 2], color="#9A9A9A").encode(y="y:Q")
+     + alt.Chart(marks).mark_rule(strokeDash=[4, 3]).encode(
+         x="units:Q", color=alt.Color("what:N", scale=alt.Scale(range=["#C98B1E", "#28543E"])), tooltip=["what", "units"])
+     ).properties(height=230), width="stretch")
+log("approval_outlook", {"payor": pid, "spec": spec, "units": units, "p": o["p_full"], "rec": rec})
+with st.expander("Backtest on 12 held-out weeks"):
+    ev = _approval_eval(target)
+    st.dataframe(pd.DataFrame(ev["policies"]).rename(columns={
+        "first_pass_full": "full approval, first pass", "partial_rate": "partial approvals",
+        "units_approved_first_pass": "units approved, first pass", "units_left_on_table": "units not requested"}),
+        hide_index=True, width="stretch")
+    st.caption(f"{ev['test_requests']:,} test requests; AUC {ev['auc']}, Brier {ev['brier']}. The model beats a fixed "
+               "haircut on both full approvals and units; against asking for the full clinical need it trades some "
+               "first-pass units for far fewer partial approvals, which is why the target is a setting.")
+
 hist = st.session_state.get("ds_history", [])
 if hist:
     st.markdown("#### Your attempts")

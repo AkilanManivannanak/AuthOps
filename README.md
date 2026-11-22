@@ -154,6 +154,13 @@ The panel is deliberately stressed (45% Medicaid, 30% partial approvals, short P
 | Payor policy drift detection | `intel/drift.py`: one-sided CUSUM per payor x specialty x denial reason (pooled prior), new-reason trigger, partial-approval clustering for soft caps, turnaround shift; each alarm proposes a requirements edit with rates before and after and example decisions. App: **Denial Shield** | 20 streams of 26 weeks with 4 planted changes and a volume-surge decoy: unit caps, new requirements and turnaround shifts detected 100% with median delay 0 weeks and the correct rule proposed; soft caps 90%. 0.9 false alarms per 26 weeks across 10 payor x specialty pairs. 221 denials before the rule is live vs 1,210 if found 6 weeks after the change |
 | Self-healing playbooks | `agent/heal.py`, `scripts/canary.py`: daily form fingerprints; on a release, re-draft, keep hand-written judgment steps, verify in the sandbox, emit a patch for review. App: **Playbook Studio** | Northwind redesign (10 relabeled fields, reordered form, new button): detected, re-mapped and verified; the approved playbook fails in the browser and the healed one submits (`test_portal_release_breaks_playbook_and_heal_recovers`). A new required question is returned for a specialist instead of guessed |
 
+## Before and after the payor decision
+
+| Capability | Implementation | Result (synthetic, reproducible with `python scripts/run_intel.py`) |
+|---|---|---|
+| Approval outlook | `intel/approval.py`: gradient-boosted P(full approval) learned from 40 weeks of decisions (handles the censoring: a full approval only shows the payor's ceiling was not reached); recommends the largest request that clears a target probability. App: **Denial Shield** | 12 held-out weeks, target 80%: full approval on first pass 37.9% -> 86.7% (fixed 15% haircut: 68.0%); partial approvals 62.1% -> 13.3%. Beats the haircut on units approved as well (137,172 vs 134,442), and gives up 4.7% of first-pass units vs asking for the full clinical need, which is why the target is a setting. AUC 0.97 |
+| Appeal packets | `appeals/packet.py`: denial reason -> rule -> evidence search in the chart -> appeal, corrective resubmission or specialist review; letters drafted only from verbatim quotes, every citation re-verified (editing a quote breaks verification). App: **Cases and API -> Appeals** | 30 denials on 12-150 page charts (18 wrongful, 12 correct). The offline finder is template-aware, so its 30/30 triage only shows the pipeline; `--llm` runs the Claude document agent as the finder |
+
 ## The app
 
 An interactive Streamlit app puts every part of the system in front of a person:
@@ -162,7 +169,7 @@ An interactive Streamlit app puts every part of the system in front of a person:
 |---|---|
 | Command center | Count-up KPIs and flip cards that show how each number was measured |
 | Document Lab | Generate a letter or treatment plan (choose payor layout, outcome, clean/scan/fax), watch the AI read it with highlighted evidence, move the abstain threshold, correct the fields, and see AI vs you against ground truth |
-| Denial Shield | Build a request, watch the payor rules check it live, send it to the simulated payor; replay the decision stream to see policy-drift alerts and approve the proposed rule |
+| Denial Shield | Build a request and watch the payor rules check it live; see the approval outlook and recommended units; send it to the simulated payor; replay the decision stream to review policy-drift alerts |
 | Agent Theater | Run the browser agent live on a sandbox portal with chaos sliders and safety toggles, or scrub through recorded runs step by step; diagnose a failed run |
 | QA Console | Grade extracted fields against the document; your verdicts are scored against truth and other reviewers (Cohen's kappa) |
 | Autonomy Ramp | Plant a portal regression and watch the QA gate catch it versus a fixed QA share |
