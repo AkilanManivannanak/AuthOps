@@ -52,7 +52,7 @@ def main() -> None:
     # per-chart detail for the app
     out["docagent_detail"] = [{"chart": r.chart_id, "arm": r.arm, "seconds": round(r.seconds, 2),
                                "turns": r.turns, "cost": round(r.cost_usd, 4),
-                               "findings": {k: [f.verdict, f.pages, f.quote[:160], f.reason[:160]]
+                               "findings": {k: [f.verdict, f.pages, f.quote[:300], f.reason[:200], f.raw_verdict]
                                             for k, f in r.findings.items()}} for r in results]
 
     # 2. coverage monitoring, 5 seeds

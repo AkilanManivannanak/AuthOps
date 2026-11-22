@@ -37,6 +37,8 @@ class Finding:
     pages: list[int] = field(default_factory=list)
     quote: str = ""
     reason: str = ""
+    quotes: list[str] = field(default_factory=list)
+    raw_verdict: str = ""
 
 
 @dataclass
@@ -51,17 +53,56 @@ class ChartResult:
     turns: int = 0
 
 
+TOKEN = re.compile(r"[a-z0-9]+(?:[./][a-z0-9]+)*%?")
+
+
+def _fragments(f: Finding) -> list[str]:
+    raw = f.quotes or [f.quote or ""]
+    parts: list[str] = []
+    for q in raw:
+        q = re.sub(r"\([^)]*\)", " ", q)                 # drop the model's own notes: "(page 1)"
+        parts += re.split(r"\s*(?:;|\||\n|\[[^\]]*\])\s*|\.\s+(?=[A-Z])|\s+vs\.?\s+|\s+and\s+(?=[A-Z])", q)
+    return [p.strip(" .\"'") for p in parts if p and len(p.strip(" .\"'")) >= 8]
+
+
+def _found(frag: str, page: str, max_gap: int = 4, max_label: int = 4) -> bool:
+    """Every token of the fragment, numbers and codes included, appears on the page in order with gaps of at
+    most `max_gap` filler words. Up to `max_label` leading words may be a label the model added
+    ("Treatment plan diagnosis ..."), but a dropped label may not contain a number."""
+    ft, pt = TOKEN.findall(frag.lower()), TOKEN.findall(page.lower())
+    if len(ft) < 2:                       # a single token: require the fragment verbatim
+        return _norm(frag) in _norm(page)
+    for drop in range(0, max(0, min(max_label, len(ft) - 2)) + 1):
+        if any(any(ch.isdigit() for ch in t) for t in ft[:drop]):
+            break
+        sub = ft[drop:]
+        for start in (i for i, t in enumerate(pt) if t == sub[0]):
+            j, ok = start, True
+            for t in sub[1:]:
+                nxt = next((k for k in range(j + 1, min(len(pt), j + 2 + max_gap)) if pt[k] == t), None)
+                if nxt is None:
+                    ok = False
+                    break
+                j = nxt
+            if ok:
+                return True
+    return False
+
+
 def grounded(chart: LongChart, f: Finding) -> Finding:
-    """Downgrade a verdict whose quote is not on any cited page."""
+    """Keep a verdict only if every evidence fragment is on one of the cited pages."""
+    f.raw_verdict = f.raw_verdict or f.verdict
     if f.verdict == "needs_human":
         return f
-    q = _norm(f.quote)
-    if len(q) < 4 or not f.pages:
-        return Finding(f.rule, "needs_human", f.pages, f.quote, "no usable evidence: " + f.reason)
-    for p in f.pages:
-        if 1 <= p <= chart.n_pages and q[:120] in _norm(chart.pages[p - 1]):
-            return f
-    return Finding(f.rule, "needs_human", f.pages, f.quote, "quote not found on cited page: " + f.reason)
+    frags = _fragments(f)
+    pages = [chart.pages[p - 1] for p in f.pages if 1 <= p <= chart.n_pages]
+    if not frags or not pages:
+        f.verdict, f.reason = "needs_human", "no usable evidence: " + f.reason
+        return f
+    missing = [x for x in frags if not any(_found(x, pg) for pg in pages)]
+    if missing:
+        f.verdict, f.reason = "needs_human", f"quote not found on cited page ({missing[0][:60]}): " + f.reason
+    return f
 
 
 # ---------------------------------------------------------------- deterministic checks
@@ -169,7 +210,8 @@ def offline_oneshot(chart: LongChart, budget_chars: int = 24_000) -> ChartResult
 
 RULE_TEXT = "\n".join(f"- {k}: {v}" for k, v in RULES.items())
 SYSTEM = ("You validate prior-authorization charts against payor rules. Decide each rule as pass or fail. "
-          "Cite the page number(s) and copy an exact quote (5 to 25 words) from the page that decides it. "
+          "Cite the page number(s) and give quotes: a list with one exact, verbatim excerpt (5 to 25 words) from each "
+          "cited page, copied character for character with no labels, brackets or commentary added. "
           "Beware of distractors: consent forms, prior-episode assessments, ruled-out diagnoses and early "
           "discussions are not the treatment plan. If you cannot find the deciding evidence, use needs_human.")
 
@@ -182,8 +224,11 @@ def _parse_findings(chart: LongChart, items) -> dict[str, Finding]:
             pages = it.get("pages") or ([it["page"]] if it.get("page") else [])
             v = str(it.get("verdict", "needs_human")).lower()
             v = v if v in ("pass", "fail", "needs_human") else "needs_human"
-            out[r] = grounded(chart, Finding(r, v, [int(p) for p in pages if str(p).isdigit()],
-                                             str(it.get("quote", "")), str(it.get("reason", ""))[:300]))
+            qs = it.get("quotes") or []
+            qs = [str(q) for q in qs] if isinstance(qs, list) else [str(qs)]
+            quote = " | ".join(qs) if qs else str(it.get("quote", ""))
+            out[r] = grounded(chart, Finding(r, v, [int(p) for p in pages if str(p).isdigit()], quote,
+                                             str(it.get("reason", ""))[:300], qs))
     for r in RULES:
         out.setdefault(r, Finding(r, "needs_human", [], "", "no answer"))
     return out
@@ -194,7 +239,7 @@ def claude_oneshot(chart: LongChart, llm) -> ChartResult:
     t0 = time.perf_counter()
     prompt = (f"Specialty: {chart.specialty}. Request date: {chart.request_date:%m/%d/%Y}.\nRules:\n{RULE_TEXT}\n\n"
               f"CHART ({chart.n_pages} pages):\n{chart.text()}\n\nReturn only a JSON array with one object per rule: "
-              '{"rule": id, "verdict": "pass|fail|needs_human", "pages": [n], "quote": "...", "reason": "..."}')
+              '{"rule": id, "verdict": "pass|fail|needs_human", "pages": [n], "quotes": ["exact text", ...], "reason": "..."}')
     before = (llm.meter.tokens_in, llm.meter.tokens_out, llm.meter.cost_usd)
     r = llm.complete(prompt, system=SYSTEM, max_tokens=2500)
     findings = _parse_findings(chart, parse_json(r.text))
@@ -212,8 +257,10 @@ TOOLS = [
     {"name": "record_finding", "description": "Record the verdict for one rule with page(s) and an exact quote.",
      "input_schema": {"type": "object", "properties": {
          "rule": {"type": "string"}, "verdict": {"type": "string", "enum": ["pass", "fail", "needs_human"]},
-         "pages": {"type": "array", "items": {"type": "integer"}}, "quote": {"type": "string"},
-         "reason": {"type": "string"}}, "required": ["rule", "verdict", "pages", "quote"]}},
+         "pages": {"type": "array", "items": {"type": "integer"}},
+         "quotes": {"type": "array", "items": {"type": "string"},
+                    "description": "One verbatim excerpt per cited page, no labels added."},
+         "reason": {"type": "string"}}, "required": ["rule", "verdict", "pages", "quotes"]}},
     {"name": "finish", "description": "Call when every rule has a recorded finding.",
      "input_schema": {"type": "object", "properties": {}}},
 ]

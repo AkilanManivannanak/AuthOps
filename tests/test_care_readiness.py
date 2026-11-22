@@ -117,3 +117,15 @@ def test_api_flow_idempotency_cases_and_signed_webhooks():
     est = cl.post("/v1/benefit-estimates", json={"deductible": 500, "coinsurance_pct": 20, "oop_max": 3000,
                                                   "allowed_per_visit": 100, "visits": 10}, headers=H).json()
     assert est["patient_total"] == 500 + 0.2 * 500
+
+
+def test_grounding_accepts_labeled_cross_page_quotes_but_not_changed_numbers():
+    c = make_chart(0, 30)
+    plan = c.key_pages["R3_units_consistent"][1]
+    line = next(ln for ln in c.pages[plan - 1].split("\n") if ln.startswith("Requested:"))
+    cover = next(ln for ln in c.pages[0].split("\n") if ln.startswith("Units requested:"))
+    ok = Finding("R3_units_consistent", "pass", [1, plan], f"Cover page: {cover}. Treatment Plan: {line}")
+    assert grounded(c, ok).verdict == "pass"
+    n = int(line.split()[1])
+    bad = Finding("R3_units_consistent", "pass", [plan], quotes=[line.replace(str(n), str(n + 7), 1)])
+    assert grounded(c, bad).verdict == "needs_human"

@@ -110,22 +110,26 @@ and job listings. All results come from synthetic data and are reproducible with
 
 | Silna's stated direction | What this adds | Result |
 |---|---|---|
-| Document validation breaks on 100+ page charts, cross-page and medical-necessity rules; moving to background multi-turn document agents (engineering blog, Jun 2026) | Long-chart corpus (12 to 150 pages, distractors, answer keys) and a tool-using document agent, with every verdict tied to a page and quote | Claude one-shot vs Claude agent: run `--llm` (pending) |
+| Document validation breaks on 100+ page charts, cross-page and medical-necessity rules; moving to background multi-turn document agents (engineering blog, Jun 2026) | Long-chart corpus (12 to 150 pages, distractors, answer keys) and a tool-using document agent, with every verdict tied to a page and quote | Claude Haiku 4.5, 30 charts: agent 0 false passes vs 5 for one call; 28/30 charts fully right vs 17/30; on 100+ pages 97.9% vs 85.1% accurate. Cost $0.057 vs $0.013 per chart, 25s vs 10s |
 | Care Readiness Platform: real-time insurance monitoring and expiration alerts | 26-week panel sim: coverage lapses, payor switches, partial approvals; reactive vs monthly vs proactive burn-down monitor | Proactive cuts denied revenue 91% vs reactive (range 89% to 92%, 5 seeds); 91% of alerts needed |
 | Phone agents for benefits checks; "a fluent wrong answer can delay care"; eval tooling is the next step (blog, Apr 2026) | Benefits-call eval: spoken numbers, self-corrections, remaining vs met, plan-pays phrasing, carve-outs, teen/ty ASR swaps; read-back guard; patient cost estimator | Field accuracy 83.2% → 94.1% → 99.4%; 12-visit estimate error $473 → $28 |
 | Pull the email-based clinician process into case management; external API (engineering job listing) | Case state machine with SLA clocks, reminders at 50/80%, escalation, audit trail; FastAPI `/v1` with API keys, idempotency keys, HMAC-signed webhooks | 11 tests cover SLA expiry, idempotency, routing and signature checks |
 | CMS-0057-F makes basic PA submission an API call by 2027 | Existing FHIR router, plus the four features above: the work that stays hard after submission becomes an API | See FHIR and channels |
 
-### Long-chart validation (30 charts, 8 rules each)
+### Long-chart validation (30 charts, 8 rules each, Claude Haiku 4.5)
 
-| Arm | Accuracy (decided) | Coverage | Coverage on 100+ pages | False passes | Charts fully right |
-|---|---|---|---|---|---|
-| Offline single pass (first match, context budget) | 0.938 | 0.804 | 0.479 | 3 | 16/30 |
-| Offline document finder | 1.000 | 1.000 | 1.000 | 0 | 30/30 |
+| Arm | Accuracy (decided) | Coverage | Accuracy on 100+ pages | False passes | Charts fully right | p50 time | Cost per chart |
+|---|---|---|---|---|---|---|---|
+| Claude, one call over the whole chart | 0.932 | 0.988 | 0.851 | 5 | 17/30 | 9.7s | $0.013 |
+| Claude, background agent (search, read, record) | 0.991 | 0.975 | 0.979 | 0 | 28/30 | 24.99s | $0.057 |
+| Offline single pass (first match, context budget) | 0.938 | 0.804 | 0.957 | 3 | 16/30 | 0.0s | $0.000 |
+| Offline document finder (template-aware) | 1.000 | 1.000 | 1.000 | 0 | 30/30 | 0.0s | $0.000 |
 
-The offline arms are deterministic stand-ins, so the harness can run without an API key. The
-document finder is written against the chart template, so its perfect score proves the plumbing,
-not model quality. The real comparison is Claude one-shot vs Claude agent.
+What it shows:
+- The single call gets worse as charts get longer: 97.9% accurate on charts up to 40 pages, 85.1% on 100+ pages. Three of its five false passes are unsigned or stale treatment-plan signatures on 100 and 150-page charts, where a signed consent form elsewhere in the chart looks like the answer.
+- The agent made no false passes and held 97.9% on 100+ pages, at about 4x the cost and 2.5x the time. That is the trade Silna described: run it in the background, not in the request flow.
+- Every verdict must cite pages and verbatim evidence. The first Claude run exposed a bug in that guard: it rejected correct cross-page answers because the model joined two quotes into one. The fix checks each piece of evidence separately and still rejects a quote with any changed number (tested).
+- The offline arms only prove the harness runs without an API key. The document finder is written against the chart template, so its perfect score says nothing about model quality.
 
 ### Coverage monitoring (200 patients, 26 weeks, mean of 5 seeds)
 
