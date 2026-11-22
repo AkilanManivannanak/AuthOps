@@ -9,9 +9,7 @@ import streamlit.components.v1 as components
 from app.sandbox import browser_available, sandbox, start_agent_run
 from app.ui import ASSETS, FOREST, RED, Timer, log, pill, require_tester, setup, store
 
-setup("Agent Theater",
-      "A browser agent submits prior auths on three sandbox payor portals built with the failure modes real "
-      "portals have. Turn the chaos up, switch the safety controls off, and watch what breaks.")
+setup("Agent Theater", "Run the browser agent on a sandbox portal. Turn up the chaos and watch it recover.")
 t = require_tester("so your runs and diagnosis count")
 
 TOOL_ICON = {"goto": "🌐", "type_credential": "🔑", "enter_totp": "🔢", "click": "👆", "fill": "⌨️", "select": "🔽",

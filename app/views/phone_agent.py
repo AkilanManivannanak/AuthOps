@@ -8,9 +8,7 @@ from app.ui import FOREST, log, setup
 from authops.phone.ivr import PhoneAgent, correct_asr, normalize_for_speech, run_call
 from authops.synth.generate import generate_cases
 
-setup("Phone Agent",
-      "Some payors have no portal and no API, so status checks and benefit checks happen on the phone. "
-      "Watch the agent work an IVR and a rep, or play the rep yourself.")
+setup("Phone Agent", "Watch the phone agent work an IVR, or play the payor rep yourself.")
 
 
 @st.cache_data

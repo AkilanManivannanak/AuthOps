@@ -4,12 +4,10 @@ import streamlit as st
 import yaml
 
 from app.sandbox import browser_available, sandbox, start_agent_run
-from app.ui import log, pill, setup
+from app.ui import log, note, pill, setup
 from authops.agent.policy import PLAYBOOK_DIR
 
-setup("Playbook Studio",
-      "Every portal has a plain-English playbook for people and the model, and a structured plan the agent "
-      "executes. Edit the plan, backtest it on the sandbox, and see whether your change helps or breaks it.")
+setup("Playbook Studio", "Edit a portal playbook and backtest it, or simulate a portal redesign and review the repair.")
 
 portal = st.radio("Portal", ["northwind", "keystone", "summit"], horizontal=True)
 import re  # noqa: E402
@@ -64,7 +62,7 @@ elif not browser_available():
 # ---------------------------------------------------------------- portal release watch
 st.divider()
 st.markdown("### Portal release watch")
-st.caption("A daily canary walks each portal in the sandbox and compares every form with the fingerprint stored "
+note("A daily canary walks each portal in the sandbox and compares every form with the fingerprint stored "
            "when its playbook was approved. On a mismatch the changed steps are re-drafted, hand-written judgment "
            "steps are kept, and the candidate must reach a confirmation in the sandbox before it is offered.")
 

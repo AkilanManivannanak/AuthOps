@@ -7,9 +7,7 @@ import streamlit.components.v1 as components
 from app.ui import FOREST, RED, log, setup
 from authops.ops.experiments import QARamp
 
-setup("Autonomy Ramp",
-      "A new portal starts with every submission checked by a person. The gate lowers that share only while results "
-      "hold, and snaps it back when they slip. Plant a hidden regression and watch the gate catch it.")
+setup("Autonomy Ramp", "Human review drops only while results hold. Plant a regression and watch the gate react.")
 
 c1, c2, c3, c4 = st.columns(4)
 base = c1.slider("Agent error rate when healthy", 0.0, 0.10, 0.02, 0.005, format="%.3f")

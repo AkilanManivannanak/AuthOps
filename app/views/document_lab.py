@@ -17,9 +17,7 @@ from authops.schemas import DocType
 from authops.synth.generate import PAYOR_BY_ID, generate_cases
 from authops.synth.render import render_corpus
 
-setup("Document Lab",
-      "The AI reads a prior-auth document and fills a structured record. You check it against the page. "
-      "Green fields it is sure of, amber it is unsure of, red it refused to guess.")
+setup("Document Lab", "Generate a document, watch it get read, and correct what the AI got wrong.")
 t = require_tester("so your corrections count")
 
 PAYOR_LABEL = {"NWH": "Northwind (template A, labelled fields)", "KCM": "Keystone (template B, letter prose)",

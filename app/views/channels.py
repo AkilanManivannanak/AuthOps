@@ -8,9 +8,7 @@ from authops.channels.router import build_pas_bundle, choose_channel
 from authops.synth.generate import PAYOR_BY_ID, PAYORS, generate_cases
 from authops.validation.rules import load_requirements
 
-setup("FHIR and channels",
-      "From January 1, 2027, regulated payors must run a FHIR Prior Authorization API (CMS-0057-F). Coverage will be "
-      "uneven for years, so every request is routed to the best channel the payor offers.")
+setup("FHIR and channels", "Every request goes to the best channel the payor offers: FHIR API, portal or phone.")
 req = load_requirements()
 
 steps = [("Jan 17, 2024", "CMS-0057-F finalized"), ("Jan 1, 2026", "72h urgent / 7-day standard decisions; public PA metrics"),

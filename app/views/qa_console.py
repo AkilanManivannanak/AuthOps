@@ -6,9 +6,7 @@ import streamlit as st
 from app.ui import ASSETS, Timer, asset_json, log, require_tester, setup, store
 from authops.ops.userstore import pairwise_kappa, qa_labels
 
-setup("QA Console",
-      "This is the specialist review step. Check each value the AI extracted against the document and mark it. "
-      "Your verdicts are scored against ground truth and against other reviewers.")
+setup("QA Console", "Grade what the AI extracted. Your verdicts are scored against the truth and other reviewers.")
 t = require_tester("to grade items (reviews are tied to a reviewer for agreement scoring)")
 items = (asset_json("qa/items.json") or [])
 if not items:

@@ -5,10 +5,7 @@ from app.ui import asset_json, log, setup, tiles
 from authops.docagent.longdoc import RULES, make_chart
 from authops.docagent.validators import offline_agent, offline_oneshot
 
-setup("Long-chart validation",
-      "Validate a full chart against payor rules: 12 to 150 pages, facts spread across documents, decoys, and "
-      "medical-necessity requirements. Compare a single model call with a background agent that searches, reads "
-      "and cites evidence for every rule.")
+setup("Long-chart validation", "Check a 12 to 150 page chart against payor rules, one model call vs a background agent.")
 
 m = asset_json("care_readiness.json") or {}
 da = m.get("docagent", {})

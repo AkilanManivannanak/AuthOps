@@ -7,9 +7,7 @@ import yaml
 from app.ui import ASSETS, asset_json, log, setup, tiles
 from authops.ops import prompts
 
-setup("Config Lab",
-      "Draft a portal playbook from one sandbox walk, gate prompt changes on a golden set, and generate the weekly "
-      "operations report from run data.")
+setup("Config Lab", "Draft playbooks automatically, gate prompt changes, and generate the weekly report.")
 
 tab_auto, tab_prompts, tab_report = st.tabs(["Auto-drafted playbooks", "Prompt registry and gate", "Weekly ops report"])
 

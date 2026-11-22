@@ -7,10 +7,7 @@ import streamlit as st
 from app.ui import log, pill, setup
 from authops.cases.manager import REQUEST_TYPES, CaseManager
 
-setup("Cases and API",
-      "When a payor needs the clinician (a peer-to-peer, more records, a corrected signature), an inbox loses the "
-      "request and the deadline passes. Here every request becomes a case with a clock, an owner, reminders and "
-      "escalation, and a clinic's own systems can drive all of it through the API.")
+setup("Cases and API", "Payor requests become cases with deadlines. Denials become appeals or fixes.")
 
 tab_q, tab_appeal, tab_api = st.tabs(["Clinician queue", "Appeals", "External API"])
 

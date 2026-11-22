@@ -106,6 +106,12 @@ def require_tester(reason: str = "so your work counts in the study") -> dict | N
 
 # ------------------------------------------------------------------ components
 
+def note(text: str, label: str = "ⓘ How this works") -> None:
+    """Long explanations live behind a small popover instead of on the page."""
+    with st.popover(label):
+        st.markdown(text)
+
+
 def _fmt(value, fmt: str) -> str:
     if fmt == "pct":
         return f"{value * 100:.1f}".removesuffix(".0") + "%"

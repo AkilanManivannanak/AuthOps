@@ -8,9 +8,7 @@ import streamlit as st
 from app.ui import FOREST, RED, setup, store
 from authops.ops import userstore as us
 
-setup("Study and evidence",
-      "Everything on this page is computed live from what real testers did in the app. Nothing is seeded. "
-      "If a number is zero, nobody has done that yet.")
+setup("Study and evidence", "Live counts from real tester activity. Nothing is seeded.")
 
 S = store()
 if not S.persistent:

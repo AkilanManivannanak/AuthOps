@@ -5,16 +5,14 @@ import pandas as pd
 import streamlit as st
 import yaml
 
-from app.ui import Timer, checklist, log, pill, require_tester, setup, store
+from app.ui import Timer, checklist, log, note, pill, require_tester, setup, store
 from authops.docintel.normalize import KNOWN_ICD10, SPECIALTY_CPT
 from authops.llm import ClaudeLLM, llm_available
 from authops.synth.generate import PAYOR_BY_ID, PAYORS, generate_cases, payor_decision
 from authops.validation.rules import NLRule, load_requirements, validate_case
 
 TODAY = date(2026, 11, 17)
-setup("Denial Shield",
-      "Build a prior-auth request and watch the payor rules check it live. Then send it to the simulated payor. "
-      "One payor changed a policy that the rules database has not caught up with. Can you find it?")
+setup("Denial Shield", "Build a request, see its approval odds, and catch payor rule changes as they happen.")
 t = require_tester("so finding the hidden rule counts as a completed task")
 req = load_requirements()
 
@@ -82,7 +80,7 @@ with out:
 
 # ---------------------------------------------------------------- approval outlook
 st.markdown("#### Approval outlook")
-st.caption("Probability that the payor approves this request in full at a given unit count, learned from 40 weeks "
+note("Probability that the payor approves this request in full at a given unit count, learned from 40 weeks "
            "of past decisions. Asking for more than the payor will fund usually ends in a partial approval weeks "
            "later; the recommendation is the largest request that clears your target probability.")
 
@@ -170,7 +168,7 @@ with st.expander("Write a plain-English rule (LLM yes/no)"):
 # ---------------------------------------------------------------- policy drift monitor
 st.divider()
 st.markdown("### Policy drift monitor")
-st.caption("Watches every payor decision as it arrives. A sustained shift in a denial reason, a denial reason never "
+note("Watches every payor decision as it arrives. A sustained shift in a denial reason, a denial reason never "
            "seen before, partial approvals clustering on one value, or slower decisions raise an alert with a "
            "proposed rule and its evidence. A person approves the rule before it reaches validation.")
 

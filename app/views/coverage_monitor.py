@@ -5,10 +5,7 @@ import streamlit as st
 from app.ui import FOREST, RED, asset_json, log, setup, tiles
 from authops.monitor.panel import PAYOR_TURNAROUND, forecast, make_panel, simulate
 
-setup("Coverage Monitor",
-      "Specialty patients come weekly for months. An auth that runs out of units, a Medicaid plan that lapses at "
-      "redetermination, or a switch to a new payor turns every later visit into an unpaid claim. Monitor coverage "
-      "and authorization burn-down between visits, and compare monitoring policies.")
+setup("Coverage Monitor", "Catch lapsed coverage and expiring authorizations between visits.")
 
 m = asset_json("care_readiness.json") or {}
 mon = m.get("monitor", {})

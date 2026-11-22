@@ -4,10 +4,7 @@ import streamlit as st
 from app.ui import asset_json, log, setup, tiles
 from authops.benefits.calls import estimate, extract_careful, extract_naive, make_calls
 
-setup("Benefits and cost",
-      "For ABA and other specialty benefits, a payor call is often the only accurate source of plan details. Score "
-      "three ways of turning a rep's answers into plan fields, and see what each error does to the patient's "
-      "cost estimate.")
+setup("Benefits and cost", "Turn a payor call into plan fields and a patient cost estimate.")
 
 m = asset_json("care_readiness.json") or {}
 bv = m.get("benefits", {})
