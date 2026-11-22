@@ -27,7 +27,7 @@ with tab_auto:
                             "left for a person": "; ".join(r["flagged_for_person"]) or "",
                             "where it stopped": "" if r["reached"] else r["stopped"]}
                            for r in ac["rows"] if r["mapper"] == "lexicon"])
-        st.dataframe(df, hide_index=True, use_container_width=True)
+        st.dataframe(df, hide_index=True, width="stretch")
         if "summary:claude" in ac:
             c = ac["summary:claude"]
             st.markdown(f"**Claude label mapper:** {c['reached_confirmation']}/{c['walks']} walks reached a "
@@ -66,7 +66,7 @@ with tab_prompts:
                                     "silent error": f"{r['silent_error'][0]:.3f} -> {r['silent_error'][1]:.3f}",
                                     "verdict": "promote" if r["promote"] else "blocked",
                                     "why": "; ".join(r["reasons"])} for r in rows]),
-                     hide_index=True, use_container_width=True)
+                     hide_index=True, width="stretch")
     else:
         st.info("No backtests logged yet. Run `python scripts/backtest_prompt.py --candidate extract@v2`.")
 

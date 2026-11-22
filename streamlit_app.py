@@ -8,7 +8,7 @@ sys.path.insert(0, str(ROOT))
 import streamlit as st  # noqa: E402
 
 st.set_page_config(page_title="AuthOps: prior-auth agent operations", page_icon="🩺", layout="wide",
-                   initial_sidebar_state="expanded")
+                   initial_sidebar_state="auto")
 
 V = "app/views/"
 pages = {

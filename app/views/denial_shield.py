@@ -61,7 +61,7 @@ with out:
     checklist([("ok" if r.passed else "bad" if r.passed is False else "warn",
                 r.rule.replace("_", " "), r.message or "passes") for r in rep.results])
 
-    if st.button("Send to the payor (simulated)", type="primary", use_container_width=True):
+    if st.button("Send to the payor (simulated)", type="primary", width="stretch"):
         decision, approved, reason = payor_decision(case, random.Random(hash((pid, spec, units))))
         drift = rep.ready and decision == "denied"
         st.session_state.ds_history.insert(0, {"payor": pid, "specialty": spec, "units": units,
@@ -83,7 +83,7 @@ with out:
 hist = st.session_state.get("ds_history", [])
 if hist:
     st.markdown("#### Your attempts")
-    st.dataframe(pd.DataFrame(hist), hide_index=True, use_container_width=True)
+    st.dataframe(pd.DataFrame(hist), hide_index=True, width="stretch")
     n = len(hist)
     agree = sum((h["rules said"] == "blocked") == (h["payor said"] == "denied") for h in hist)
     st.caption(f"Rules agreed with the payor on {agree} of {n} attempts.")
@@ -114,7 +114,7 @@ st.caption("Watches every payor decision as it arrives. A sustained shift in a d
 
 import altair as alt  # noqa: E402
 
-from authops.intel.drift import DEFAULT_CHANGES, denials_avoided, detect, evaluate, match, simulate_stream  # noqa: E402
+from authops.intel.drift import DEFAULT_CHANGES, denials_avoided, detect, evaluate, match, severity, simulate_stream  # noqa: E402
 
 
 @st.cache_data(show_spinner=False)
@@ -146,10 +146,13 @@ k4.metric("Denials before the rule is live", f"{ev['denials_before_rule']['autom
 if not alerts:
     st.info(f"No alerts through week {upto}.")
 else:
-    rows = [{"week": a.week_detected, "payor": a.payor, "specialty": a.specialty.replace("_", " "),
-             "signal": a.signal, "before": a.rate_before, "after": a.rate_after, "trigger": a.evidence}
-            for a in alerts]
-    st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+    alerts = sorted(alerts, key=lambda a: (-severity(a), a.week_detected))
+    level = {4: "new rule", 3: "soft cap", 2: "turnaround", 1: "investigate"}
+    rows = [{"priority": level[severity(a)], "week": a.week_detected, "payor": a.payor,
+             "specialty": a.specialty.replace("_", " "), "signal": a.signal, "before": f"{a.rate_before:.1%}"
+             if a.kind != "turnaround" else f"{a.rate_before} d", "after": f"{a.rate_after:.1%}"
+             if a.kind != "turnaround" else f"{a.rate_after} d", "trigger": a.evidence} for a in alerts]
+    st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
     pick = st.selectbox("Review alert", range(len(alerts)),
                         format_func=lambda i: f"week {alerts[i].week_detected} · {alerts[i].payor} "
                                               f"{alerts[i].specialty.replace('_', ' ')} · {alerts[i].signal[:60]}")
@@ -176,19 +179,26 @@ else:
                           {"week": a.week_detected, "what": "alert"}])
     rule = alt.Chart(marks).mark_rule(strokeDash=[4, 3]).encode(
         x="week:Q", color=alt.Color("what:N", scale=alt.Scale(range=["#C98B1E", "#B3402F"])), tooltip=["what", "week"])
-    left.altair_chart((line + rule).properties(height=260), use_container_width=True)
+    left.altair_chart((line + rule).properties(height=260), width="stretch")
     right.markdown(f"**{a.payor} · {a.specialty.replace('_', ' ')}**  \n{a.signal}")
-    right.markdown(f"Rate {a.rate_before:.1%} before, {a.rate_after:.1%} since week {a.week_estimated} "
-                   f"({a.n_after} decisions). Trigger: {a.evidence}.")
+    if a.kind == "turnaround":
+        right.markdown(f"Mean {a.rate_before} days to decision before, {a.rate_after} since week {a.week_estimated} "
+                       f"({a.n_after} decisions). Trigger: {a.evidence}.")
+    else:
+        right.markdown(f"Rate {a.rate_before:.1%} before, {a.rate_after:.1%} since week {a.week_estimated} "
+                       f"({a.n_after} decisions). Trigger: {a.evidence}.")
     if a.examples:
         right.caption("Example decisions: " + ", ".join(a.examples))
-    right.markdown("**Proposed change to the requirements database**")
-    right.code(yaml.safe_dump({"payors": {a.payor: {"specialties": a.proposal["specialties"]}}}, sort_keys=False),
-               language="yaml")
+    if a.proposal.get("action") == "investigate":
+        right.markdown("**Recommended action: investigate, no new rule**")
+    else:
+        right.markdown("**Proposed change to the requirements database**")
+        right.code(yaml.safe_dump({"payors": {a.payor: {"specialties": a.proposal["specialties"]}}}, sort_keys=False),
+                   language="yaml")
     right.caption(a.proposal.get("note", ""))
     st.session_state.setdefault("drift_approved", {})
     key = f"{dseed}:{a.payor}:{a.specialty}:{a.signal}"
-    if right.button("Approve rule", key="approve_" + key):
+    if a.proposal.get("action") != "investigate" and right.button("Approve rule", key="approve_" + key):
         st.session_state.drift_approved[key] = a.week_detected
         log("drift_approve", {"alert": key})
     if key in st.session_state.drift_approved:
@@ -204,6 +214,6 @@ else:
                           "requested-units recommendation rather than blocking a request.")
     with st.expander("Answer key for this stream"):
         m = match(alerts, DEFAULT_CHANGES)
-        st.dataframe(pd.DataFrame(m["changes"]), hide_index=True, use_container_width=True)
+        st.dataframe(pd.DataFrame(m["changes"]), hide_index=True, width="stretch")
         st.caption(f"Alerts that match no planted change: {m['false_alarms']}. " +
                    "; ".join(m["false_alarm_detail"]))

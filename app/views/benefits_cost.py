@@ -23,10 +23,10 @@ if bv:
                                 "wrong fields given confidently": v["fluent_wrong_fields"],
                                 "calls fully right": f"{v['calls_fully_correct']}/{v['calls']}",
                                 "estimates off by $100+": v["estimates_off_by_100_plus"]} for a, v in bv.items()]),
-                 hide_index=True, use_container_width=True)
+                 hide_index=True, width="stretch")
     pf = pd.DataFrame({LABEL[a]: v["per_field"] for a, v in bv.items()})
     st.markdown("### Accuracy by field")
-    st.dataframe(pf, use_container_width=True)
+    st.dataframe(pf, width="stretch")
     st.caption("120 synthetic calls. Reps spell numbers out, correct themselves, answer with 'remaining' instead "
                "of 'met', say what the plan pays instead of what the member pays, and carve behavioral health out "
                "to another vendor. Speech recognition swaps teens and tens (fifteen heard as fifty) on a quarter of "
@@ -45,7 +45,7 @@ for f, q, heard in call.turns:
     rows.append({"field": f, "rep said (as heard)": heard, "truth": str(t),
                  "first number": f"{naive[f]} {'✓' if naive[f] == t else '✗'}",
                  "careful": f"{careful[f]} {'✓' if careful[f] == t else '✗'}"})
-st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True, height=460)
+st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch", height=460)
 e_t, e_n, e_c = (estimate(x, 150, 12) for x in (call.truth, naive, careful))
 c1, c2, c3 = st.columns(3)
 c1.metric("True 12-visit cost", f"${e_t['patient_total']}" if e_t["patient_total"] is not None else "carve-out")

@@ -1,5 +1,5 @@
 # AI Operations weekly report
-_Generated 2026-11-21 from run artifacts. Synthetic patients and sandbox portals only._
+_Generated 2026-11-22 from run artifacts. Synthetic patients and sandbox portals only._
 
 ## Headline
 
@@ -26,7 +26,7 @@ _Generated 2026-11-21 from run artifacts. Synthetic patients and sandbox portals
 
 | Week | Payor | Specialty | Signal | Before | After | Proposed |
 |---|---|---|---|---|---|---|
-| 7 | HBL | physical therapy | Submitted treatment plan dates have expired. | 0.011 | 0.152 | `{"physical_therapy": {"custom_rules": ["Does the request meet this pay` |
+| 7 | HBL | physical therapy | Submitted treatment plan dates have expired. | 0.011 | 0.152 | `{"physical_therapy": {"check_rule": "plan_not_expired"}}` |
 | 8 | KCM | physical therapy | Physical therapy is limited to 20 visits per authorizat | 0.0 | 0.4 | `{"physical_therapy": {"max_units_per_request": 20}}` |
 | 10 | HBL | physical therapy | days to decision | 3.5 | 7.5 | `{"physical_therapy": {"turnaround_p90_days": 9}}` |
 | 12 | NWH | aba | Standardized assessment must be dated within 6 months o | 0.0 | 0.176 | `{"aba": {"custom_rules": ["Does the request meet this payor requiremen` |

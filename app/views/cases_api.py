@@ -39,7 +39,7 @@ with tab_q:
                                     "owner": x["assignee"], "hours left": x["hours_left"],
                                     "SLA used": f"{x['sla_used']:.0%}", "reminders": ", ".join(x["reminders_sent"]),
                                     "escalated": "yes" if x["escalated"] else "", "what to do": x["action"]}
-                                   for x in q]), hide_index=True, use_container_width=True)
+                                   for x in q]), hide_index=True, width="stretch")
         pick = st.selectbox("Respond to", [x["case_id"] for x in q])
         resp = st.text_input("Response", "Peer-to-peer completed with the medical director; notes uploaded.")
         if st.button("Send response"):

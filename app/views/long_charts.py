@@ -39,12 +39,12 @@ if da:
                              "caught failing rules": s["catch_rate"], "false passes": s["false_pass"],
                              "false blocks": s["false_block"]})
     st.markdown("### Results by chart length and rule type")
-    st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+    st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
     cost = pd.DataFrame([{"arm": LABEL[a], "p50 seconds per chart": da[a]["p50_seconds"],
                           "cost per chart (USD)": da[a]["cost_per_chart_usd"], "mean turns": da[a]["mean_turns"],
                           "charts fully correct": f"{da[a]['charts_fully_correct']}/{da[a]['charts']}"} for a in arms])
     st.markdown("### Latency and cost per chart")
-    st.dataframe(cost, hide_index=True, use_container_width=True)
+    st.dataframe(cost, hide_index=True, width="stretch")
     st.caption("A false pass is the expensive error: the request goes out, the payor denies it, and care waits. "
                "Coverage below 100% means the arm sent a rule to a person instead of guessing, which costs minutes, "
                "not a denial.")
@@ -64,7 +64,7 @@ for rule, text in RULES.items():
         f = r.findings[rule]
         row[LABEL[r.arm]] = f.verdict + (f" (p{', '.join(map(str, f.pages))})" if f.pages else "")
     detail.append(row)
-c2.dataframe(pd.DataFrame(detail), hide_index=True, use_container_width=True, height=330)
+c2.dataframe(pd.DataFrame(detail), hide_index=True, width="stretch", height=330)
 c1.caption(f"{chart.n_pages} pages, {len(chart.handwritten)} handwritten-style scans, specialty "
            f"{chart.specialty.replace('_', ' ')}. Rules this chart fails: "
            f"{', '.join(k for k, v in chart.truth.items() if not v) or 'none'}.")

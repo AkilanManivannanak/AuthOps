@@ -36,7 +36,7 @@ item = queue_left[0]
 timer = Timer(f"qa_{item['item_id']}")
 left, right = st.columns([1.05, 1])
 with left:
-    st.image(str(ASSETS / "qa" / item["image"]), use_container_width=True)
+    st.image(str(ASSETS / "qa" / item["image"]), width="stretch")
     st.caption(f"{item['doc_type'].replace('_', ' ')} · {item['condition']} image · item {item['item_id']}")
 with right:
     st.markdown("#### What the AI extracted")
@@ -52,7 +52,7 @@ with right:
             verdicts[f["field"]] = st.radio(f"**{label}**: `{shown}`", opts, horizontal=True, index=None,
                                             key=f"v_{item['item_id']}_{f['field']}", help=help_txt)
         comment = st.text_input("Comment (optional)")
-        submitted = st.form_submit_button("Submit review", type="primary", use_container_width=True, disabled=t is None)
+        submitted = st.form_submit_button("Submit review", type="primary", width="stretch", disabled=t is None)
     if submitted:
         if any(v is None for v in verdicts.values()):
             st.error("Give every field a verdict.")

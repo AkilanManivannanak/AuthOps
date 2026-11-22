@@ -33,6 +33,11 @@ PAIRS = [("NWH", "aba"), ("NWH", "physical_therapy"), ("NWH", "behavioral_health
          ("SFB", "aba"), ("SFB", "physical_therapy"), ("SFB", "behavioral_health"),
          ("HBL", "physical_therapy")]
 UNITS = {"aba": (80, 400), "physical_therapy": (8, 30), "behavioral_health": (6, 24)}
+COVERED_BY = {  # denial reasons that an existing validation rule already checks before submission
+    "Treatment plan is not signed by the rendering provider.": "signature_present",
+    "Diagnosis code is invalid or not billable.": "icd10_billable",
+    "Submitted treatment plan dates have expired.": "plan_not_expired",
+}
 BASE_DENIAL = {  # background denial reasons present all along (documentation gaps etc.)
     "Treatment plan is not signed by the rendering provider.": 0.03,
     "Diagnosis code is invalid or not billable.": 0.025,
@@ -244,7 +249,19 @@ def detect(stream: list[Decision], h: float = 6.0, warmup: int = 6, min_new_reas
     return sorted(alerts, key=lambda a: a.week_detected)
 
 
+def severity(a: Alert) -> int:
+    """New reasons and caps first, turnaround next, rises in already-covered reasons last."""
+    if a.kind == "denial_reason" and a.signal in COVERED_BY:
+        return 1
+    return {"denial_reason": 4, "soft_cap": 3, "turnaround": 2}.get(a.kind, 1)
+
+
 def propose_from_reason(payor: str, spc: str, reason: str, ds: list[Decision]) -> dict:
+    if reason in COVERED_BY:
+        return {"payor": payor, "action": "investigate", "specialties": {spc: {"check_rule": COVERED_BY[reason]}},
+                "note": f"No new rule: '{COVERED_BY[reason]}' already checks this before submission. A rise means "
+                        "requests are reaching the payor without it (bypassed validation, a document type it does "
+                        "not read, or a stricter payor reading). Pull the example decisions and compare."}
     m = re.search(r"limited to (\d+) (visits|units|hours)", reason, re.I)
     if m:
         cap = int(m.group(1))

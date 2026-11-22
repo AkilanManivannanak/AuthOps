@@ -62,7 +62,7 @@ if src.startswith("Generate"):
     cond = c4.selectbox("Image quality", ["clean", "scan", "fax"], index=2)
     if "doc_seed" not in st.session_state:
         st.session_state.doc_seed = random.randint(1, 10_000)
-    if c5.button("New patient", use_container_width=True):
+    if c5.button("New patient", width="stretch"):
         st.session_state.doc_seed = random.randint(1, 10_000)
         Timer("doc").reset()
     doc = make_doc(st.session_state.doc_seed, payor, outcome, cond, kind)
@@ -121,7 +121,7 @@ with left:
             if pi == 0:
                 c = col[status]
                 dr.rectangle([x - 4, y - 3, x + w + 4, y + h + 3], outline=c + (255,), width=4, fill=c + (45,))
-    st.image(img, use_container_width=True)
+    st.image(img, width="stretch")
     st.caption(f"Read in {res['latency_ms'] / 1000:.1f}s · mean OCR confidence {res['ocr_mean']:.0f} · "
                f"classified as **{res['doc_type'].replace('_', ' ')}**")
 
@@ -133,7 +133,7 @@ with right:
         col.markdown(f"<div class='ao-tile'><div class='ao-fig' style='color:{colors[s]};font-size:2.2rem'>"
                      f"{(df.Status == s).sum()}</div><div class='ao-lab'>{s}</div></div>", unsafe_allow_html=True)
     edited = st.data_editor(
-        df.drop(columns=["_key"]), hide_index=True, use_container_width=True, key=f"ed_{doc_id}_{thr}",
+        df.drop(columns=["_key"]), hide_index=True, width="stretch", key=f"ed_{doc_id}_{thr}",
         disabled=["Field", "AI value", "Confidence", "Learned conf", "Status"],
         column_config={"Field": st.column_config.TextColumn(width="small"),
                        "Confidence": st.column_config.ProgressColumn("Conf", min_value=0, max_value=1, format="%.2f", width="small"),
@@ -141,7 +141,7 @@ with right:
                        "Status": st.column_config.TextColumn(width="small"),
                        "Your value": st.column_config.TextColumn("Your value ✎", width="medium",
                                                                  help="Fix anything wrong. Fill blanks if the page has the value.")})
-    if st.button("Submit my review", type="primary", use_container_width=True, disabled=truth is None and not t):
+    if st.button("Submit my review", type="primary", width="stretch", disabled=truth is None and not t):
         secs = timer.seconds
         ai_ok = you_ok = n = 0
         result_rows = []
@@ -170,7 +170,7 @@ with right:
                 store().task(tester_id=t["id"], task="doc_review", success=1, seconds=secs, detail=f"{reviewed} docs")
         if truth is not None:
             st.markdown(f"**AI {ai_ok}/{n} correct · you {you_ok}/{n} correct** in {secs:.0f}s")
-            st.dataframe(pd.DataFrame(result_rows), hide_index=True, use_container_width=True)
+            st.dataframe(pd.DataFrame(result_rows), hide_index=True, width="stretch")
             if you_ok > ai_ok:
                 st.success(f"You caught {you_ok - ai_ok} field(s) the AI got wrong or left blank. That is the human-in-the-loop value.")
 
@@ -187,7 +187,7 @@ if rows_all and rc:
         y=alt.Y("silent_error:Q", title="wrong values that would reach the payor", axis=alt.Axis(format="%")),
         color=alt.Color("score:N", scale=alt.Scale(range=["#9A9A9A", FOREST]), legend=alt.Legend(orient="top")))
     rule = alt.Chart(pd.DataFrame({"c": [cov_now]})).mark_rule(color=RED, strokeDash=[6, 4], size=2).encode(x="c:Q")
-    st.altair_chart((base + rule).properties(height=300), use_container_width=True)
+    st.altair_chart((base + rule).properties(height=300), width="stretch")
     st.caption(f"Held-out cases. The red line is where your threshold of {thr:.2f} puts the heuristic "
                f"(about {cov_now:.0%} of fields filled). Lower thresholds fill more fields and let more errors through; "
                "on these documents the learned calibrator tracks the heuristic closely and does not beat it yet.")

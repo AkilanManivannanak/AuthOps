@@ -36,14 +36,14 @@ c[5].metric("Surveys", len(surveys))
 if len(testers):
     st.markdown("#### Who took part")
     st.dataframe(testers.groupby(["role", "experience"]).size().rename("testers").reset_index(),
-                 hide_index=True, use_container_width=True)
+                 hide_index=True, width="stretch")
 
 if len(events):
     ev = events.copy()
     ev["day"] = pd.to_datetime(ev.ts, unit="s").dt.date.astype(str)
     st.altair_chart(alt.Chart(ev[ev.tester_id.notna()]).mark_bar(color=FOREST).encode(
         x=alt.X("day:N", title=None), y=alt.Y("count():Q", title="actions by testers")).properties(height=180),
-        use_container_width=True)
+        width="stretch")
 
 st.markdown("#### Human vs AI on documents")
 if len(docs):
@@ -87,14 +87,14 @@ if len(qa):
         x=alt.X("right:Q", title="reviewer agreement with truth", axis=alt.Axis(format="%")),
         y=alt.Y("field:N", sort="x", title=None),
         color=alt.condition(alt.datum.right < 0.8, alt.value(RED), alt.value(FOREST))).properties(height=320),
-        use_container_width=True)
+        width="stretch")
 else:
     st.caption("No QA verdicts yet.")
 
 st.markdown("#### Tasks and usability")
 if len(tasks):
     t2 = tasks[tasks.success == 1].groupby("task").tester_id.nunique().rename("testers completed").reset_index()
-    st.dataframe(t2, hide_index=True, use_container_width=True)
+    st.dataframe(t2, hide_index=True, width="stretch")
 if len(surveys):
     s = surveys.sus_score
     ci = 1.96 * s.std(ddof=1) / len(s) ** 0.5 if len(s) > 1 else 0

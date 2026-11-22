@@ -12,7 +12,9 @@ setup("Playbook Studio",
       "executes. Edit the plan, backtest it on the sandbox, and see whether your change helps or breaks it.")
 
 portal = st.radio("Portal", ["northwind", "keystone", "summit"], horizontal=True)
-md = (PLAYBOOK_DIR / f"{portal}.md").read_text()
+import re  # noqa: E402
+
+md = re.sub(r"(?m)^#{1,3} ", "#### ", (PLAYBOOK_DIR / f"{portal}.md").read_text())  # keep the page's own title on top
 yml = (PLAYBOOK_DIR / f"{portal}.yaml").read_text()
 a, b = st.columns(2)
 with a:
@@ -52,7 +54,7 @@ if st.button("Backtest this plan", type="primary", disabled=not (valid and brows
     df = pd.DataFrame(rows)
     ok = (df.status == "submitted").mean()
     st.markdown(f"### {pill(f'{ok:.0%} submitted', 'ok' if ok == 1 else 'bad')}", unsafe_allow_html=True)
-    st.dataframe(df, hide_index=True, use_container_width=True)
+    st.dataframe(df, hide_index=True, width="stretch")
     if edited != yml and ok < 1:
         st.info("Your edit broke something. Real AI Ops work is exactly this loop: change, backtest in a sandbox, "
                 "ship only what holds. Revert by switching portals and back.")
@@ -113,17 +115,26 @@ if st.session_state.get("release_watch") and st.session_state.release_watch[0] =
             c1.markdown(f"**{url}** changed")
             c1.dataframe(pd.DataFrame([{"change": "added", "field": f, "type": t} for f, t in ch["added"]] +
                                       [{"change": "removed", "field": f, "type": t} for f, t in ch["removed"]]),
-                         hide_index=True, use_container_width=True, height=260)
+                         hide_index=True, width="stretch", height=260)
             if ch["button"]:
                 c1.caption(f"Forward button: '{ch['button'][0]}' -> '{ch['button'][1]}'")
             status = {"healed": ("Candidate verified in the sandbox", "ok"),
                       "needs_human": ("Needs a specialist before it can be repaired", "bad")}.get(h.status, (h.status, "ok"))
             c2.markdown(pill(status[0], status[1]), unsafe_allow_html=True)
+            names = {"member_id": "Member ID", "dob": "Date of birth", "last_name": "Last name",
+                     "specialty": "Service type", "cpt_csv": "Procedure codes", "icd_csv": "Diagnosis codes",
+                     "units": "Units", "start": "Start date", "end": "End date", "npi": "Provider NPI",
+                     "files": "Documents"}
             if h.renamed:
-                c2.dataframe(pd.DataFrame([{"request field": v, "approved label": o, "new label": n}
-                                           for v, o, n in h.renamed]), hide_index=True, use_container_width=True)
-            if h.added_unmapped:
-                c2.warning("Not mapped (decide before approving): " + "; ".join(h.added_unmapped))
+                c2.dataframe(pd.DataFrame([{"request field": names.get(v, v), "approved label": o.capitalize(),
+                                            "new label": n.capitalize()} for v, o, n in h.renamed]),
+                             hide_index=True, width="stretch")
+            optional = [u for u in h.added_unmapped if "optional" in u.lower()]
+            required = [u for u in h.added_unmapped if u not in optional]
+            if required:
+                c2.warning("Needs a specialist before approval: " + "; ".join(required))
+            if optional:
+                c2.caption("New optional fields left blank: " + "; ".join(optional))
             if h.carried_over:
                 c2.caption("Kept from the approved playbook: " + "; ".join(h.carried_over))
             if h.stopped:

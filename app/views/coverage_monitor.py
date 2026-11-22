@@ -29,10 +29,10 @@ if mon:
         color=alt.Color("cause:N", scale=alt.Scale(range=[RED, "#C98B1E", "#609D7B", "#1F2A24"])),
         tooltip=["policy", "cause", "denied visits"]).properties(height=170)
     st.markdown("### Why visits get denied under each policy (mean of 5 seeds, 200 patients)")
-    st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, width="stretch")
     st.dataframe(pd.DataFrame([{"policy": p, **{k: mon[p][k] for k in ("visits", "denied_visits", "denied_dollars",
                  "days_without_valid_auth", "reauths", "eligibility_checks", "alerts")}} for p in
-                 ("reactive", "scheduled", "proactive")]), hide_index=True, use_container_width=True)
+                 ("reactive", "scheduled", "proactive")]), hide_index=True, width="stretch")
     st.caption("Reactive: the clinic learns from the denial about 3 weeks after the visit. Scheduled: monthly "
                "eligibility checks and reauth 14 days before the end date. Proactive: weekly eligibility checks and a "
                "unit burn-down forecast that starts the reauth when the runway is shorter than the payor's 90th "

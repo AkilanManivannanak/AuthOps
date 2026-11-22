@@ -113,7 +113,7 @@ with tab_live:
         guard = st.toggle("Overlay guard", value=True)
         thr = st.select_slider("Disable a credential after N failed logins", [2, 3, 99], value=2,
                                format_func=lambda v: "never" if v == 99 else str(v))
-    if st.button("Run the agent", type="primary", use_container_width=True):
+    if st.button("Run the agent", type="primary", width="stretch"):
         log("agent_run_start", {"portal": portal, "popup": popup, "503": err503, "kick": kick, "guard": guard, "thr": thr})
         q, th = start_agent_run(cases[idx], portal, {"survey_modal_rate": popup, "summit_503_rate": err503,
                                                      "summit_kick_rate": kick}, guard, thr, wall_clock_s=45)
@@ -126,7 +126,7 @@ with tab_live:
             if kind == "step":
                 rows.append(a)
                 if b:
-                    img_ph.image(b, caption=f"step {a['idx']}: {a['tool']}", use_container_width=True)
+                    img_ph.image(b, caption=f"step {a['idx']}: {a['tool']}", width="stretch")
                 tl_ph.markdown("\n".join(
                     f"- {'✅' if s['ok'] else '❌'} {TOOL_ICON.get(s['tool'], '•')} **{s['tool']}** "
                     f"<span class='ao-muted'>{s['error_class'] or s['detail'][:60]}</span>" for s in rows[-14:]),
@@ -148,7 +148,7 @@ with tab_live:
             m4.metric("Verified confirmation", "yes" if result["verified"] else "no")
             st.caption(f"Guard and recovery events: {result['counts'] or 'none'} · portal lockouts so far: "
                        f"{result['lockouts_total']}")
-            st.dataframe(pd.DataFrame(result["credentials"]), hide_index=True, use_container_width=True)
+            st.dataframe(pd.DataFrame(result["credentials"]), hide_index=True, width="stretch")
             if t:
                 store().agent_run(tester_id=t["id"], portal=portal, case_id=cases[idx]["case_id"],
                                   status=result["status"], error_class=result["error_class"], steps=result["steps"],
