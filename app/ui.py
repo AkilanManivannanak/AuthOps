@@ -11,7 +11,6 @@ import time
 from pathlib import Path
 
 import streamlit as st
-import streamlit.components.v1 as components
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "app" / "assets"
@@ -35,6 +34,17 @@ h1 {{ font-size: 3rem !important; line-height: 1.05 !important; }}
 .ao-ok {{ background: {FOREST}; color: {PAPER}; }} .ao-bad {{ background: {RED}; color: #fff; }} .ao-warn {{ background: {AMBER}; color: #fff; }}
 .ao-muted {{ color: #6C6C6C; font-size: .88rem; }}
 .ao-card {{ border:1px solid {RULE}; background:#fff; border-radius: 16px; padding: 16px 18px; margin-bottom: 10px; }}
+.ao-grid {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-bottom:.6rem; }}
+.ao-rise {{ animation: aoIn .45s ease both; }}
+.ao-big {{ font-family:'Fraunces',Georgia,serif; font-weight:300; font-size:2.1rem; line-height:1.1; }}
+.ao-track {{ height:10px; background:#F1EEE6; border-radius:9px; margin-top:3px; overflow:hidden; }}
+.ao-fill {{ height:100%; width:var(--w); border-radius:9px; animation: aoGrow .9s cubic-bezier(.2,.7,.2,1) both; }}
+@keyframes aoGrow {{ from {{ width:0; }} to {{ width:var(--w); }} }}
+.ao-sweep {{ stroke-dashoffset:var(--to); animation: aoSweep 1.1s cubic-bezier(.2,.7,.2,1) both; }}
+@keyframes aoSweep {{ from {{ stroke-dashoffset:var(--from); }} to {{ stroke-dashoffset:var(--to); }} }}
+.ao-dots {{ display:flex; flex-wrap:wrap; gap:4px; max-width:9rem; }}
+.ao-dots i {{ width:12px; height:12px; border-radius:50%; animation: aoPop .3s ease both; }}
+@keyframes aoPop {{ from {{ opacity:0; transform:scale(0); }} to {{ opacity:1; transform:none; }} }}
 .ao-check {{ display:flex; gap:10px; align-items:flex-start; padding:8px 0; border-bottom:1px solid {RULE}; animation: aoIn .35s ease both; }}
 @keyframes aoIn {{ from {{ opacity:0; transform: translateY(6px); }} to {{ opacity:1; transform:none; }} }}
 div[data-testid="stMetricValue"] {{ font-family: 'Fraunces', Georgia, serif; font-weight: 300; }}
@@ -96,79 +106,63 @@ def require_tester(reason: str = "so your work counts in the study") -> dict | N
 
 # ------------------------------------------------------------------ components
 
-# Lets a components.html iframe grow or shrink to fit its content when the grid wraps on narrow screens.
-AUTOSIZE = """<script>(function(){const send=()=>window.parent.postMessage({isStreamlitMessage:true,
-type:"streamlit:setFrameHeight",height:Math.ceil(document.documentElement.scrollHeight)},"*");
-new ResizeObserver(send).observe(document.body);window.addEventListener("load",send);setTimeout(send,150);})();</script>"""
+def _fmt(value, fmt: str) -> str:
+    if fmt == "pct":
+        return f"{value * 100:.1f}%"
+    if fmt == "pct0":
+        return f"{round(value * 100)}%"
+    if fmt == "f1":
+        return f"{value:.1f}"
+    return f"{int(round(value)):,}"
 
 
 def tiles(items: list[tuple]) -> None:
-    """items: (value, label, fmt, hot) ; values count up in the browser."""
-    cells = ""
-    for i, (value, label, fmt, hot) in enumerate(items):
-        cells += (f"<div class='ao-tile {'hot' if hot else ''}'><div class='ao-fig' data-to='{value}' data-fmt='{fmt}' "
-                  f"id='t{i}'>0</div><div class='ao-lab'>{label}</div></div>")
-    html = f"""{CSS}<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px">{cells}</div>
-    <script>
-    const ease=t=>1-Math.pow(1-t,3);
-    document.querySelectorAll('.ao-fig').forEach(el=>{{
-      const to=parseFloat(el.dataset.to), fmt=el.dataset.fmt, t0=performance.now(), dur=1100;
-      const show=v=> fmt==='pct'? (v*100).toFixed(1)+'%' : fmt==='pct0'? Math.round(v*100)+'%' :
-                     fmt==='f1'? v.toFixed(1) : Math.round(v).toLocaleString();
-      const step=n=>{{const f=Math.min(1,(n-t0)/dur); el.textContent=show(to*ease(f)); if(f<1) requestAnimationFrame(step);}};
-      requestAnimationFrame(step);
-    }});
-    </script>{AUTOSIZE}"""
-    components.html(html, height=168)
+    """items: (value, label, fmt, hot). Native HTML grid: wraps to fit any screen, no iframe."""
+    cells = "".join(
+        f"<div class='ao-tile ao-rise {'hot' if hot else ''}' style='animation-delay:{i * 70}ms'>"
+        f"<div class='ao-fig'>{_fmt(value, fmt)}</div><div class='ao-lab'>{label}</div></div>"
+        for i, (value, label, fmt, hot) in enumerate(items))
+    st.markdown(f"<div class='ao-grid'>{cells}</div>", unsafe_allow_html=True)
+
+
+def _card_front(c: dict) -> str:
+    if c["kind"] == "ring":
+        share = c["k"] / c["n"] if c["n"] else 0
+        r, circ = 46, 2 * 3.14159 * 46
+        note = f"<span class='ao-pill ao-ok'>{c['note']}</span>" if c.get("note") else ""
+        return (f"<div style='display:flex;gap:14px;align-items:center'>"
+                f"<svg viewBox='0 0 112 112' width='96' height='96'><circle cx='56' cy='56' r='{r}' fill='none' "
+                f"stroke='{RULE}' stroke-width='11'/><circle class='ao-sweep' cx='56' cy='56' r='{r}' fill='none' "
+                f"stroke='{FOREST}' stroke-width='11' stroke-linecap='round' stroke-dasharray='{circ:.1f}' "
+                f"style='--from:{circ:.1f};--to:{circ * (1 - share):.1f}' transform='rotate(-90 56 56)'/></svg>"
+                f"<div><div class='ao-big'>{share * 100:.1f}%</div><div class='ao-muted'>{c['k']:,} of {c['n']:,}</div>"
+                f"{note}</div></div>")
+    if c["kind"] == "versus":
+        mx = max(c["left"], c["right"]) or 1
+        col = FOREST if c.get("good", True) else RED
+        bar = lambda lab, v, colr, b: (f"<div style='margin-top:8px'><div style='display:flex;justify-content:space-between;"  # noqa: E731
+                                       f"font-size:.82rem'><span>{'<b>' + lab + '</b>' if b else lab}</span><b>{v}</b></div>"
+                                       f"<div class='ao-track'><div class='ao-fill' style='--w:{v / mx * 100:.1f}%;"
+                                       f"background:{colr}'></div></div></div>")
+        return (f"<div class='ao-big' style='color:{col}'>{c['headline']}</div>"
+                + bar(c["left_label"], c["left"], "#9A9A9A", False) + bar(c["right_label"], c["right"], col, True))
+    dots = lambda n, colr: "".join(f"<i style='background:{colr};animation-delay:{j * 35}ms'></i>" for j in range(n))  # noqa: E731
+    return (f"<div style='display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center'>"
+            f"<div><div class='ao-dots'>{dots(c['left'], RED)}</div><div class='ao-muted'>{c['left_label']} "
+            f"<b>{c['left']}</b></div></div><div class='ao-big ao-muted'>vs</div><div><div class='ao-dots'>"
+            f"{dots(c['right'], FOREST)}</div><div class='ao-muted'>{c['right_label']} <b>{c['right']}</b></div></div></div>")
 
 
 def proof_cards(cards: list[dict], height: int = 300) -> None:
-    """Flip cards. card: {title, kind: ring|versus|dots, ..., method}."""
-    blocks = []
-    for i, c in enumerate(cards):
-        if c["kind"] == "ring":
-            share = c["k"] / c["n"] if c["n"] else 0
-            r, circ = 52, 2 * 3.14159 * 52
-            front = f"""<svg viewBox="0 0 128 128" width="112" height="112"><circle cx="64" cy="64" r="{r}" fill="none" stroke="{RULE}" stroke-width="12"/>
-              <circle class="sweep" cx="64" cy="64" r="{r}" fill="none" stroke="{FOREST}" stroke-width="12" stroke-linecap="round"
-              stroke-dasharray="{circ}" stroke-dashoffset="{circ}" data-to="{circ * (1 - share)}" transform="rotate(-90 64 64)"/></svg>
-              <div><div class="big">{share * 100:.1f}%</div><div class="mut">{c['k']:,} of {c['n']:,}</div>
-              {f"<span class='pill'>{c['note']}</span>" if c.get('note') else ''}</div>"""
-            front = f"<div style='display:flex;gap:14px;align-items:center'>{front}</div>"
-        elif c["kind"] == "versus":
-            mx = max(c["left"], c["right"]) or 1
-            col = FOREST if c.get("good", True) else RED
-            front = f"""<div class="big" style="color:{col}">{c['headline']}</div>
-              <div class="bar"><div class="lbl"><span>{c['left_label']}</span><b>{c['left']}</b></div><div class="track"><div class="fill" data-w="{c['left'] / mx * 100}" style="background:#9A9A9A"></div></div></div>
-              <div class="bar"><div class="lbl"><span><b>{c['right_label']}</b></span><b>{c['right']}</b></div><div class="track"><div class="fill" data-w="{c['right'] / mx * 100}" style="background:{col}"></div></div></div>"""
-        else:
-            dots_l = "".join(f"<i style='background:{RED};transition-delay:{j * 40}ms'></i>" for j in range(c["left"]))
-            dots_r = "".join(f"<i style='background:{FOREST};transition-delay:{j * 40}ms'></i>" for j in range(c["right"]))
-            front = f"""<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center">
-              <div><div class="dots">{dots_l}</div><div class="mut">{c['left_label']} <b>{c['left']}</b></div></div>
-              <div class="big mut">vs</div><div><div class="dots">{dots_r}</div><div class="mut">{c['right_label']} <b>{c['right']}</b></div></div></div>"""
-        blocks.append(f"""<div class="wrap"><button class="card" onclick="this.classList.toggle('f')">
-          <div class="face front"><div class="t">{c['title']}</div>{front}<div class="hint">tap to see how it was measured</div></div>
-          <div class="face back"><div class="t">{c['title']}</div><p>{c['method']}</p><div class="hint">tap to flip back</div></div></button></div>""")
-    html = f"""<style>
-    body{{margin:0;font-family:Inter,system-ui,sans-serif;color:{INK}}}
-    .grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}}
-    .wrap{{height:{height - 30}px;perspective:1200px}} .card{{all:unset;display:block;position:relative;width:100%;height:100%;cursor:pointer;transform-style:preserve-3d;transition:transform .55s}}
-    .card.f{{transform:rotateY(180deg)}} .face{{position:absolute;inset:0;border-radius:18px;padding:18px;backface-visibility:hidden;display:flex;flex-direction:column;justify-content:space-between;box-sizing:border-box}}
-    .front{{background:#fff;border:1px solid {RULE}}} .back{{background:{FOREST};color:{PAPER};transform:rotateY(180deg)}}
-    .t{{font-weight:700;font-size:1.02rem}} .big{{font-family:Fraunces,Georgia,serif;font-weight:300;font-size:2.3rem}} .mut{{color:#6C6C6C;font-size:.85rem}}
-    .pill{{display:inline-block;margin-top:4px;background:{FOREST};color:{PAPER};border-radius:999px;padding:2px 9px;font-size:.72rem;font-weight:700}}
-    .hint{{font-size:.72rem;opacity:.65}} .back p{{font-size:.86rem;line-height:1.45;opacity:.92}}
-    .bar{{margin-top:6px}} .lbl{{display:flex;justify-content:space-between;font-size:.82rem}} .track{{height:12px;background:#F1EEE6;border-radius:9px;margin-top:3px}}
-    .fill{{height:100%;width:0;border-radius:9px;transition:width .9s cubic-bezier(.2,.7,.2,1)}}
-    .dots{{display:flex;flex-wrap:wrap;gap:4px;max-width:9rem}} .dots i{{width:12px;height:12px;border-radius:50%;opacity:0;transform:scale(0);transition:all .3s ease}}
-    .sweep{{transition:stroke-dashoffset 1.1s cubic-bezier(.2,.7,.2,1)}}
-    </style><div class="grid">{''.join(blocks)}</div>
-    <script>setTimeout(()=>{{document.querySelectorAll('.sweep').forEach(c=>c.style.strokeDashoffset=c.dataset.to);
-    document.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w+'%');
-    document.querySelectorAll('.dots i').forEach(d=>{{d.style.opacity=1;d.style.transform='scale(1)'}});}},80);</script>{AUTOSIZE}"""
-    rows = (len(cards) + 2) // 3
-    components.html(html, height=height * rows)
+    """Result cards with an animated figure and a 'How it was measured' popover. Native, so they stack on phones."""
+    for row in range(0, len(cards), 3):
+        cols = st.columns(3)
+        for col, c in zip(cols, cards[row:row + 3]):
+            with col.container(border=True):
+                st.markdown(f"<div class='ao-rise'><div style='font-weight:700;margin-bottom:10px'>{c['title']}</div>"
+                            f"{_card_front(c)}</div>", unsafe_allow_html=True)
+                with st.popover("How it was measured", width="stretch"):
+                    st.write(c["method"])
 
 
 def checklist(items: list[tuple[str, str, str]]) -> None:

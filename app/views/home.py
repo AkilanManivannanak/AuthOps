@@ -46,7 +46,7 @@ if cr:
                  label=f"Benefits calls: {bv['careful_readback']['field_accuracy']:.1%} fields right", icon="💵")
     l4.page_link("app/views/cases_api.py", label="Cases and API: SLA clocks, webhooks", icon="🗂️")
 
-st.markdown("### Measured, not claimed")
+st.markdown("### Results")
 cards = []
 if ex:
     n_fields = ex.get("n", 0)
