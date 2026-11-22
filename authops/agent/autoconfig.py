@@ -304,6 +304,7 @@ def draft_playbook(client, portal: str, start: str, credential: dict, case: dict
         if err and trace and trace[-1]["url"] == path:
             reason = "portal rejected the draft's input: " + err.group(1)
             break
+        timed = "setTimeout(" in html   # delayed pop-ups the HTTP walk cannot see but a browser will
         if p.iframes and not [f for f in p.fields if f.kind != "hidden"]:
             inner = client.get(urljoin(str(resp.url), p.iframes[0]))
             q = read_page(inner.text, str(inner.url))
@@ -348,7 +349,8 @@ def draft_playbook(client, portal: str, start: str, credential: dict, case: dict
         mapping = claude_map(visible, llm) if mapper == "claude" else lexicon_map(visible)
         actions, data, files = [], {}, []
         by_label = {(f.label or f.name): f for f in visible}
-        for lab, var in mapping.items():
+        order = {id(f): i for i, f in enumerate(visible)}
+        for lab, var in sorted(mapping.items(), key=lambda kv: order.get(id(by_label.get(kv[0])), 999)):
             f = by_label.get(lab)
             if not f or not var:
                 continue
@@ -385,6 +387,9 @@ def draft_playbook(client, portal: str, start: str, credential: dict, case: dict
             reason = f"no forward button on {path}"
             break
         is_final = bool(files) or re.search(r"(?i)submit|send", btn[0]) is not None
+        if timed:
+            actions.insert(0, ["wait", {"ms": 1500}])
+        actions.append(["dismiss_overlays", {}])
         actions.append(["click", {"target": btn[0], **({"submit": True} if is_final else {})}])
         if btn[1]:
             data[btn[1]] = btn[2]

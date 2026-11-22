@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-21 22:11",
+  "generated_at": "2026-11-22 00:53",
   "rows": [
     {
       "mapper": "lexicon",
@@ -11,7 +11,7 @@
       "flagged_for_person": [],
       "hand_recall": 1.0,
       "wrong": [],
-      "seconds": 0.02
+      "seconds": 0.01
     },
     {
       "mapper": "lexicon",
@@ -50,7 +50,7 @@
       ],
       "hand_recall": 1.0,
       "wrong": [],
-      "seconds": 0.02
+      "seconds": 0.01
     },
     {
       "mapper": "lexicon",
@@ -95,7 +95,7 @@
       ],
       "hand_recall": 0.778,
       "wrong": [],
-      "seconds": 0.02
+      "seconds": 0.01
     },
     {
       "mapper": "lexicon",
@@ -110,7 +110,7 @@
       ],
       "hand_recall": 0.778,
       "wrong": [],
-      "seconds": 0.02
+      "seconds": 0.01
     },
     {
       "mapper": "lexicon",
@@ -125,7 +125,7 @@
       ],
       "hand_recall": 0.778,
       "wrong": [],
-      "seconds": 0.02
+      "seconds": 0.01
     },
     {
       "mapper": "lexicon",
@@ -173,7 +173,7 @@
       "flagged_for_person": [],
       "hand_recall": 1.0,
       "wrong": [],
-      "seconds": 1.44
+      "seconds": 1.53
     },
     {
       "mapper": "claude",
@@ -185,7 +185,7 @@
       "flagged_for_person": [],
       "hand_recall": 1.0,
       "wrong": [],
-      "seconds": 1.28
+      "seconds": 1.25
     },
     {
       "mapper": "claude",
@@ -197,7 +197,7 @@
       "flagged_for_person": [],
       "hand_recall": 1.0,
       "wrong": [],
-      "seconds": 1.35
+      "seconds": 1.38
     },
     {
       "mapper": "claude",
@@ -212,7 +212,7 @@
       ],
       "hand_recall": 1.0,
       "wrong": [],
-      "seconds": 2.85
+      "seconds": 2.95
     },
     {
       "mapper": "claude",
@@ -227,7 +227,7 @@
       ],
       "hand_recall": 1.0,
       "wrong": [],
-      "seconds": 1.52
+      "seconds": 1.38
     },
     {
       "mapper": "claude",
@@ -242,7 +242,7 @@
       ],
       "hand_recall": 1.0,
       "wrong": [],
-      "seconds": 1.42
+      "seconds": 1.45
     },
     {
       "mapper": "claude",
@@ -258,7 +258,7 @@
       ],
       "hand_recall": 0.778,
       "wrong": [],
-      "seconds": 1.88
+      "seconds": 1.79
     },
     {
       "mapper": "claude",
@@ -274,7 +274,7 @@
       ],
       "hand_recall": 0.778,
       "wrong": [],
-      "seconds": 1.87
+      "seconds": 1.98
     },
     {
       "mapper": "claude",
@@ -290,7 +290,7 @@
       ],
       "hand_recall": 0.778,
       "wrong": [],
-      "seconds": 2.06
+      "seconds": 2.03
     },
     {
       "mapper": "claude",
@@ -302,7 +302,7 @@
       "flagged_for_person": [],
       "hand_recall": null,
       "wrong": [],
-      "seconds": 1.9
+      "seconds": 2.03
     },
     {
       "mapper": "claude",
@@ -314,7 +314,7 @@
       "flagged_for_person": [],
       "hand_recall": null,
       "wrong": [],
-      "seconds": 1.99
+      "seconds": 2.01
     },
     {
       "mapper": "claude",
@@ -326,7 +326,7 @@
       "flagged_for_person": [],
       "hand_recall": null,
       "wrong": [],
-      "seconds": 1.91
+      "seconds": 2.05
     }
   ],
   "drafts": {
@@ -369,10 +369,17 @@
           },
           "actions": [
             [
-              "upload",
+              "fill",
               {
-                "target": "Clinical Documents",
-                "files": "{files}"
+                "target": "Member ID",
+                "value": "{member_id}"
+              }
+            ],
+            [
+              "pick_date",
+              {
+                "target": "Patient Date of Birth",
+                "iso": "{dob}"
               }
             ],
             [
@@ -421,10 +428,10 @@
               }
             ],
             [
-              "pick_date",
+              "fill",
               {
-                "target": "Patient Date of Birth",
-                "iso": "{dob}"
+                "target": "CPT Codes (comma separated)",
+                "value": "{cpt_csv}"
               }
             ],
             [
@@ -432,6 +439,13 @@
               {
                 "target": "Diagnosis Codes (ICD-10)",
                 "value": "{icd_csv}"
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Units Requested",
+                "value": "{units}"
               }
             ],
             [
@@ -451,30 +465,20 @@
             [
               "fill",
               {
-                "target": "Member ID",
-                "value": "{member_id}"
-              }
-            ],
-            [
-              "fill",
-              {
-                "target": "CPT Codes (comma separated)",
-                "value": "{cpt_csv}"
-              }
-            ],
-            [
-              "fill",
-              {
-                "target": "Units Requested",
-                "value": "{units}"
-              }
-            ],
-            [
-              "fill",
-              {
                 "target": "Rendering Provider NPI",
                 "value": "{npi}"
               }
+            ],
+            [
+              "upload",
+              {
+                "target": "Clinical Documents",
+                "files": "{files}"
+              }
+            ],
+            [
+              "dismiss_overlays",
+              {}
             ],
             [
               "click",
@@ -503,7 +507,7 @@
           ]
         }
       ],
-      "expected_steps": 19
+      "expected_steps": 20
     },
     "lexicon:keystone": {
       "portal": "keystone",
@@ -531,10 +535,23 @@
           },
           "actions": [
             [
-              "upload",
+              "wait",
               {
-                "target": "Attachments",
-                "files": "{files}"
+                "ms": 1500
+              }
+            ],
+            [
+              "fill",
+              {
+                "target": "Medicaid ID",
+                "value": "{member_id|mask3}"
+              }
+            ],
+            [
+              "pick_date",
+              {
+                "target": "Member Date of Birth",
+                "iso": "{dob}"
               }
             ],
             [
@@ -583,34 +600,6 @@
               }
             ],
             [
-              "pick_date",
-              {
-                "target": "Member Date of Birth",
-                "iso": "{dob}"
-              }
-            ],
-            [
-              "pick_date",
-              {
-                "target": "Service From",
-                "iso": "{start}"
-              }
-            ],
-            [
-              "pick_date",
-              {
-                "target": "Service Through",
-                "iso": "{end}"
-              }
-            ],
-            [
-              "fill",
-              {
-                "target": "Medicaid ID",
-                "value": "{member_id|mask3}"
-              }
-            ],
-            [
               "fill",
               {
                 "target": "Procedure Codes",
@@ -632,11 +621,36 @@
               }
             ],
             [
+              "pick_date",
+              {
+                "target": "Service From",
+                "iso": "{start}"
+              }
+            ],
+            [
+              "pick_date",
+              {
+                "target": "Service Through",
+                "iso": "{end}"
+              }
+            ],
+            [
               "fill",
               {
                 "target": "Servicing Provider NPI",
                 "value": "{npi}"
               }
+            ],
+            [
+              "upload",
+              {
+                "target": "Attachments",
+                "files": "{files}"
+              }
+            ],
+            [
+              "dismiss_overlays",
+              {}
             ],
             [
               "click",
@@ -665,7 +679,7 @@
           ]
         }
       ],
-      "expected_steps": 18
+      "expected_steps": 20
     },
     "lexicon:lakeshore": {
       "portal": "lakeshore",
@@ -706,6 +720,13 @@
           },
           "actions": [
             [
+              "fill",
+              {
+                "target": "Subscriber number",
+                "value": "{member_id}"
+              }
+            ],
+            [
               "pick_date",
               {
                 "target": "Birthdate (MM/DD/YYYY)",
@@ -720,11 +741,8 @@
               }
             ],
             [
-              "fill",
-              {
-                "target": "Subscriber number",
-                "value": "{member_id}"
-              }
+              "dismiss_overlays",
+              {}
             ],
             [
               "click",
@@ -739,20 +757,6 @@
             "url": "/lakeshore/request/details"
           },
           "actions": [
-            [
-              "upload",
-              {
-                "target": "Supporting documentation",
-                "files": "{files}"
-              }
-            ],
-            [
-              "fill",
-              {
-                "target": "Procedure codes (CPT/HCPCS)",
-                "value": "{cpt_csv}"
-              }
-            ],
             [
               "conditional",
               {
@@ -801,6 +805,13 @@
             [
               "fill",
               {
+                "target": "Procedure codes (CPT/HCPCS)",
+                "value": "{cpt_csv}"
+              }
+            ],
+            [
+              "fill",
+              {
                 "target": "Primary and secondary diagnoses (ICD-10)",
                 "value": "{icd_csv}"
               }
@@ -834,10 +845,21 @@
               }
             ],
             [
+              "upload",
+              {
+                "target": "Supporting documentation",
+                "files": "{files}"
+              }
+            ],
+            [
               "check",
               {
                 "target": "I attest that this information is accurate and complete"
               }
+            ],
+            [
+              "dismiss_overlays",
+              {}
             ],
             [
               "click",
@@ -866,7 +888,7 @@
           ]
         }
       ],
-      "expected_steps": 22
+      "expected_steps": 24
     },
     "claude:northwind": {
       "portal": "northwind",
@@ -1015,6 +1037,10 @@
               }
             ],
             [
+              "dismiss_overlays",
+              {}
+            ],
+            [
               "click",
               {
                 "target": "Submit Request",
@@ -1041,7 +1067,7 @@
           ]
         }
       ],
-      "expected_steps": 19
+      "expected_steps": 20
     },
     "claude:keystone": {
       "portal": "keystone",
@@ -1068,6 +1094,12 @@
             "url": "/keystone/portal"
           },
           "actions": [
+            [
+              "wait",
+              {
+                "ms": 1500
+              }
+            ],
             [
               "fill",
               {
@@ -1177,6 +1209,10 @@
               }
             ],
             [
+              "dismiss_overlays",
+              {}
+            ],
+            [
               "click",
               {
                 "target": "Submit Authorization",
@@ -1203,7 +1239,7 @@
           ]
         }
       ],
-      "expected_steps": 18
+      "expected_steps": 20
     },
     "claude:lakeshore": {
       "portal": "lakeshore",
@@ -1263,6 +1299,10 @@
                 "target": "Patient last name",
                 "value": "{last_name}"
               }
+            ],
+            [
+              "dismiss_overlays",
+              {}
             ],
             [
               "click",
@@ -1378,6 +1418,10 @@
               }
             ],
             [
+              "dismiss_overlays",
+              {}
+            ],
+            [
               "click",
               {
                 "target": "Send to Utilization Review",
@@ -1404,7 +1448,7 @@
           ]
         }
       ],
-      "expected_steps": 22
+      "expected_steps": 24
     }
   },
   "summary:lexicon": {
