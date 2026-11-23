@@ -2,7 +2,7 @@ import streamlit as st
 
 from app.ui import asset_json, proof_cards, setup, store, tiles
 
-setup("Prior auths, cleared before care starts", "Run a request through the whole pipeline, or open any stage.")
+setup("Prior auths, cleared before care starts", "26 weeks of requests through the real pipeline. Click anything.")
 
 m = asset_json("metrics.json") or {}
 ex = (m.get("extraction", {}).get("arms", {}).get("rules", {}) or {}).get("summary", {}).get("all", {})
@@ -12,11 +12,18 @@ abl = m.get("ablations", {})
 cal = m.get("calibration", {})
 c = store().counts()
 
-tiles([
-    (val.get("caught_before_submission", 0), f"denials caught before submission (of {val.get('payor_denials', 0)})", "int", False),
-    (ag.get("verified_submit_rate", 0), "agent submissions verified on payor portals", "pct", False),
-    (ex.get("precision", 0), "precision on fields the extractor fills in", "pct", False),
-] + ([(c["testers"], "testers in the user study", "int", False)] if c["testers"] else []))
+
+# ---------------------------------------------------------------- operations floor
+from app.floor import operations_floor  # noqa: E402
+from authops.sim.floor import build as build_floor  # noqa: E402
+
+
+@st.cache_data(show_spinner="Running 26 weeks of requests through the pipeline")
+def _floor():
+    return build_floor()
+
+
+operations_floor(_floor())
 
 # ---------------------------------------------------------------- live request
 import random  # noqa: E402
@@ -37,7 +44,7 @@ _demo = Path(__file__).resolve().parents[2] / "docs" / "media" / "demo.mp4"
 if _demo.exists():
     with st.expander("▶  Watch the tour", expanded=False):
         st.video(str(_demo))
-st.markdown("### Run a request")
+st.markdown("### Run one request yourself")
 k1, k2, k3 = st.columns([1.2, 1, 1])
 go = k1.button("▶  Run a request", type="primary", width="stretch")
 gap = k2.toggle("Inject a documentation gap", help="Removes the provider signature so you can watch the rules catch it.")
@@ -123,6 +130,12 @@ if go:
             st.warning("Denied. An appeal packet or a corrective resubmission is prepared in Cases → Appeals.")
 
 st.markdown("### Results")
+tiles([
+    (val.get("caught_before_submission", 0), f"denials caught before submission (of {val.get('payor_denials', 0)})", "int", False),
+    (ag.get("verified_submit_rate", 0), "agent submissions verified on payor portals", "pct", False),
+    (ex.get("precision", 0), "precision on fields the extractor fills in", "pct", False),
+] + ([(c["testers"], "testers in the user study", "int", False)] if c["testers"] else []))
+
 cards = []
 if ex:
     n_fields = ex.get("n", 0)

@@ -55,6 +55,7 @@ flowchart LR
 | **86.7%** | requests approved in full on first pass with the unit recommendation (37.9% asking for the clinical need) |
 | **100%** | unit caps and new payor requirements detected, median 0 weeks after the change |
 | **3 / 3** | submissions on a portal nobody configured by hand (auto-drafted playbook) |
+| **96.0%** | fields read correctly from 160 faxes and scans, 0.5% wrong without a human check (91.8% and 1.3% before checksum and format-guided OCR repair) |
 | **99.4%** | benefits-call fields correct with read-back (83.2% without) |
 | **17 / 17** | appeal letters with every citation verified against the chart |
 

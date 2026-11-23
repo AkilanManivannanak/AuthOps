@@ -90,7 +90,10 @@ def test_qa_ramp_lowers_then_raises():
     ramp = QARamp(window=4, step=0.3)
     for _ in range(8):
         ramp.record("x", True, 95, False)
-    assert ramp.state["x"].qa_share < 1.0
+    assert ramp.state["x"].qa_share == 1.0  # 8/8 clean: lower bound 0.68, not enough evidence yet
+    for _ in range(4):
+        ramp.record("x", True, 95, False)
+    assert ramp.state["x"].qa_share < 1.0   # 12/12: lower bound 0.76
     low = ramp.state["x"].qa_share
     for _ in range(4):
         ramp.record("x", True, 95, True)  # a silent error in the window

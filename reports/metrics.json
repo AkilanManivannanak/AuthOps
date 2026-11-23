@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-19 00:29",
+ "generated": "2026-11-22 21:15",
  "llm": true,
  "cases": 80,
  "env": {
@@ -14,43 +14,43 @@
     "summary": {
      "all": {
       "n": 1680,
-      "accuracy": 0.918,
-      "precision": 0.986,
-      "coverage": 0.931,
-      "silent_error": 0.013,
-      "doc_ok": 0.688,
+      "accuracy": 0.958,
+      "precision": 0.995,
+      "coverage": 0.963,
+      "silent_error": 0.005,
+      "doc_ok": 0.756,
       "docs": 160
      },
      "cond:clean": {
       "n": 567,
-      "accuracy": 0.963,
-      "precision": 0.996,
-      "coverage": 0.966,
-      "silent_error": 0.004,
-      "doc_ok": 0.833,
+      "accuracy": 0.982,
+      "precision": 1.0,
+      "coverage": 0.982,
+      "silent_error": 0.0,
+      "doc_ok": 0.852,
       "docs": 54
      },
      "tmpl:tp": {
       "n": 880,
-      "accuracy": 0.93,
-      "precision": 0.992,
-      "coverage": 0.938,
-      "silent_error": 0.008
+      "accuracy": 0.969,
+      "precision": 0.996,
+      "coverage": 0.973,
+      "silent_error": 0.003
      },
      "field:patient_name": {
       "n": 160,
-      "accuracy": 0.912,
-      "precision": 0.936,
-      "coverage": 0.975,
-      "silent_error": 0.062
+      "accuracy": 0.969,
+      "precision": 0.975,
+      "coverage": 0.994,
+      "silent_error": 0.025
      },
      "type:treatment_plan": {
       "n": 880,
-      "accuracy": 0.93,
-      "precision": 0.992,
-      "coverage": 0.938,
-      "silent_error": 0.008,
-      "doc_ok": 0.688,
+      "accuracy": 0.969,
+      "precision": 0.996,
+      "coverage": 0.973,
+      "silent_error": 0.003,
+      "doc_ok": 0.762,
       "docs": 80
      },
      "field:patient_dob": {
@@ -62,17 +62,17 @@
      },
      "field:member_id": {
       "n": 160,
-      "accuracy": 0.869,
+      "accuracy": 0.95,
       "precision": 1.0,
-      "coverage": 0.869,
+      "coverage": 0.95,
       "silent_error": 0.0
      },
      "field:icd10_codes": {
       "n": 80,
-      "accuracy": 0.863,
-      "precision": 0.945,
-      "coverage": 0.912,
-      "silent_error": 0.05
+      "accuracy": 0.938,
+      "precision": 1.0,
+      "coverage": 0.938,
+      "silent_error": 0.0
      },
      "field:cpt_codes": {
       "n": 160,
@@ -104,9 +104,9 @@
      },
      "field:provider_npi": {
       "n": 160,
-      "accuracy": 0.812,
+      "accuracy": 0.969,
       "precision": 1.0,
-      "coverage": 0.812,
+      "coverage": 0.969,
       "silent_error": 0.0
      },
      "field:signature_present": {
@@ -118,31 +118,31 @@
      },
      "field:signature_date": {
       "n": 80,
-      "accuracy": 0.875,
+      "accuracy": 0.988,
       "precision": 1.0,
-      "coverage": 0.875,
+      "coverage": 0.988,
       "silent_error": 0.0
      },
      "tmpl:b": {
       "n": 310,
-      "accuracy": 0.945,
-      "precision": 0.98,
-      "coverage": 0.965,
-      "silent_error": 0.019
+      "accuracy": 0.958,
+      "precision": 0.99,
+      "coverage": 0.968,
+      "silent_error": 0.01
      },
      "field:auth_number": {
       "n": 80,
-      "accuracy": 0.812,
-      "precision": 0.942,
-      "coverage": 0.863,
-      "silent_error": 0.05
+      "accuracy": 0.787,
+      "precision": 1.0,
+      "coverage": 0.787,
+      "silent_error": 0.0
      },
      "type:denial_letter": {
       "n": 240,
-      "accuracy": 0.938,
-      "precision": 0.987,
-      "coverage": 0.95,
-      "silent_error": 0.013,
+      "accuracy": 0.963,
+      "precision": 0.996,
+      "coverage": 0.967,
+      "silent_error": 0.004,
       "doc_ok": 0.792,
       "docs": 24
      },
@@ -155,9 +155,9 @@
      },
      "field:approved_units": {
       "n": 80,
-      "accuracy": 0.875,
+      "accuracy": 0.975,
       "precision": 1.0,
-      "coverage": 0.875,
+      "coverage": 0.975,
       "silent_error": 0.0
      },
      "field:start_date": {
@@ -176,47 +176,47 @@
      },
      "cond:scan": {
       "n": 567,
-      "accuracy": 0.94,
-      "precision": 0.994,
-      "coverage": 0.945,
-      "silent_error": 0.005,
-      "doc_ok": 0.815,
+      "accuracy": 0.968,
+      "precision": 0.998,
+      "coverage": 0.97,
+      "silent_error": 0.002,
+      "doc_ok": 0.833,
       "docs": 54
      },
      "type:approval_letter": {
       "n": 560,
-      "accuracy": 0.891,
-      "precision": 0.977,
-      "coverage": 0.912,
-      "silent_error": 0.021,
-      "doc_ok": 0.643,
+      "accuracy": 0.939,
+      "precision": 0.992,
+      "coverage": 0.946,
+      "silent_error": 0.007,
+      "doc_ok": 0.732,
       "docs": 56
      },
      "cond:fax": {
       "n": 546,
-      "accuracy": 0.848,
-      "precision": 0.965,
-      "coverage": 0.879,
-      "silent_error": 0.031,
-      "doc_ok": 0.404,
+      "accuracy": 0.923,
+      "precision": 0.986,
+      "coverage": 0.936,
+      "silent_error": 0.013,
+      "doc_ok": 0.577,
       "docs": 52
      },
      "tmpl:a": {
       "n": 320,
-      "accuracy": 0.972,
-      "precision": 0.994,
-      "coverage": 0.978,
-      "silent_error": 0.006
+      "accuracy": 0.984,
+      "precision": 0.997,
+      "coverage": 0.988,
+      "silent_error": 0.003
      },
      "tmpl:c": {
       "n": 170,
-      "accuracy": 0.706,
-      "precision": 0.945,
-      "coverage": 0.747,
-      "silent_error": 0.041
+      "accuracy": 0.853,
+      "precision": 0.993,
+      "coverage": 0.859,
+      "silent_error": 0.006
      }
     },
-    "p50_latency_ms": 787,
+    "p50_latency_ms": 825,
     "tokens_in": 0,
     "tokens_out": 0
    },
@@ -224,99 +224,99 @@
     "summary": {
      "all": {
       "n": 1680,
-      "accuracy": 0.959,
+      "accuracy": 0.951,
       "precision": 0.978,
-      "coverage": 0.98,
+      "coverage": 0.973,
       "silent_error": 0.021,
       "doc_ok": 0.787,
       "docs": 160
      },
      "cond:clean": {
       "n": 567,
-      "accuracy": 0.982,
+      "accuracy": 0.981,
       "precision": 0.993,
-      "coverage": 0.989,
+      "coverage": 0.988,
       "silent_error": 0.007,
       "doc_ok": 0.926,
       "docs": 54
      },
      "tmpl:tp": {
       "n": 880,
-      "accuracy": 0.977,
+      "accuracy": 0.964,
       "precision": 0.991,
-      "coverage": 0.986,
+      "coverage": 0.973,
       "silent_error": 0.009
      },
      "field:patient_name": {
       "n": 160,
-      "accuracy": 0.981,
+      "accuracy": 0.975,
       "precision": 0.981,
-      "coverage": 1.0,
+      "coverage": 0.994,
       "silent_error": 0.019
      },
      "type:treatment_plan": {
       "n": 880,
-      "accuracy": 0.977,
+      "accuracy": 0.964,
       "precision": 0.991,
-      "coverage": 0.986,
+      "coverage": 0.973,
       "silent_error": 0.009,
       "doc_ok": 0.863,
       "docs": 80
      },
      "field:patient_dob": {
       "n": 160,
-      "accuracy": 0.981,
+      "accuracy": 0.975,
       "precision": 0.987,
-      "coverage": 0.994,
+      "coverage": 0.988,
       "silent_error": 0.013
      },
      "field:member_id": {
       "n": 160,
-      "accuracy": 0.975,
+      "accuracy": 0.969,
       "precision": 0.975,
-      "coverage": 1.0,
+      "coverage": 0.994,
       "silent_error": 0.025
      },
      "field:icd10_codes": {
       "n": 80,
-      "accuracy": 0.938,
-      "precision": 0.962,
-      "coverage": 0.975,
+      "accuracy": 0.925,
+      "precision": 0.961,
+      "coverage": 0.963,
       "silent_error": 0.037
      },
      "field:cpt_codes": {
       "n": 160,
-      "accuracy": 0.988,
+      "accuracy": 0.981,
       "precision": 0.994,
-      "coverage": 0.994,
+      "coverage": 0.988,
       "silent_error": 0.006
      },
      "field:requested_units": {
       "n": 80,
-      "accuracy": 0.975,
+      "accuracy": 0.963,
       "precision": 1.0,
-      "coverage": 0.975,
+      "coverage": 0.963,
       "silent_error": 0.0
      },
      "field:plan_start": {
       "n": 80,
-      "accuracy": 0.975,
+      "accuracy": 0.963,
       "precision": 1.0,
-      "coverage": 0.975,
+      "coverage": 0.963,
       "silent_error": 0.0
      },
      "field:plan_end": {
       "n": 80,
-      "accuracy": 0.988,
+      "accuracy": 0.963,
       "precision": 1.0,
-      "coverage": 0.988,
+      "coverage": 0.963,
       "silent_error": 0.0
      },
      "field:provider_npi": {
       "n": 160,
-      "accuracy": 0.906,
+      "accuracy": 0.894,
       "precision": 1.0,
-      "coverage": 0.906,
+      "coverage": 0.894,
       "silent_error": 0.0
      },
      "field:signature_present": {
@@ -328,9 +328,9 @@
      },
      "field:signature_date": {
       "n": 80,
-      "accuracy": 0.988,
+      "accuracy": 0.975,
       "precision": 1.0,
-      "coverage": 0.988,
+      "coverage": 0.975,
       "silent_error": 0.0
      },
      "tmpl:b": {
@@ -379,9 +379,9 @@
      },
      "field:end_date": {
       "n": 80,
-      "accuracy": 0.988,
+      "accuracy": 0.975,
       "precision": 1.0,
-      "coverage": 0.988,
+      "coverage": 0.975,
       "silent_error": 0.0
      },
      "cond:scan": {
@@ -390,25 +390,25 @@
       "precision": 0.984,
       "coverage": 0.988,
       "silent_error": 0.016,
-      "doc_ok": 0.815,
+      "doc_ok": 0.833,
       "docs": 54
      },
      "type:approval_letter": {
       "n": 560,
-      "accuracy": 0.927,
+      "accuracy": 0.925,
       "precision": 0.954,
-      "coverage": 0.971,
+      "coverage": 0.97,
       "silent_error": 0.045,
       "doc_ok": 0.661,
       "docs": 56
      },
      "cond:fax": {
       "n": 546,
-      "accuracy": 0.921,
-      "precision": 0.956,
-      "coverage": 0.963,
+      "accuracy": 0.899,
+      "precision": 0.955,
+      "coverage": 0.941,
       "silent_error": 0.042,
-      "doc_ok": 0.615,
+      "doc_ok": 0.596,
       "docs": 52
      },
      "tmpl:a": {
@@ -420,28 +420,28 @@
      },
      "tmpl:c": {
       "n": 170,
-      "accuracy": 0.859,
+      "accuracy": 0.853,
       "precision": 0.918,
-      "coverage": 0.935,
+      "coverage": 0.929,
       "silent_error": 0.076
      }
     },
-    "p50_latency_ms": 4622,
-    "tokens_in": 109369,
-    "tokens_out": 108782
+    "p50_latency_ms": 5065,
+    "tokens_in": 109340,
+    "tokens_out": 108836
    }
   }
  },
  "calibration": {
   "n_train": 949,
   "n_test": 656,
-  "auroc_heuristic": 0.9679,
-  "auroc_learned": 0.9652,
-  "coverage": 0.9375,
-  "silent_error_heuristic": 0.0198,
-  "silent_error_learned": 0.0213,
-  "precision_heuristic": 0.9789,
-  "precision_learned": 0.9772
+  "auroc_heuristic": 0.9515,
+  "auroc_learned": 0.92,
+  "coverage": 0.9649,
+  "silent_error_heuristic": 0.0091,
+  "silent_error_learned": 0.0152,
+  "precision_heuristic": 0.9905,
+  "precision_learned": 0.9842
  },
  "validation": {
   "cases": 80,
@@ -471,39 +471,39 @@
    "runs": 6,
    "verified_submit_rate": 1.0,
    "mean_smoothness": 97.8,
-   "p50_duration_s": 9.81,
+   "p50_duration_s": 11.21,
    "mean_steps": 18,
    "runs_with_major_qa_issue": 0
   },
   "arm:claude-haiku-4-5": {
    "runs": 15,
    "verified_submit_rate": 1.0,
-   "mean_smoothness": 98.1,
-   "p50_duration_s": 16.71,
-   "mean_steps": 20.3,
+   "mean_smoothness": 98.0,
+   "p50_duration_s": 19.98,
+   "mean_steps": 20.5,
    "runs_with_major_qa_issue": 0
   },
   "all": {
    "runs": 34,
    "verified_submit_rate": 1.0,
    "mean_smoothness": 98.0,
-   "p50_duration_s": 2.96,
-   "mean_steps": 20.1,
+   "p50_duration_s": 3.0,
+   "mean_steps": 20.2,
    "runs_with_major_qa_issue": 0
   },
   "portal:summit": {
    "runs": 13,
    "verified_submit_rate": 1.0,
-   "mean_smoothness": 96.8,
-   "p50_duration_s": 4.4,
-   "mean_steps": 25.4,
+   "mean_smoothness": 96.7,
+   "p50_duration_s": 4.42,
+   "mean_steps": 25.7,
    "runs_with_major_qa_issue": 0
   },
   "arm:playbook": {
    "runs": 19,
    "verified_submit_rate": 1.0,
    "mean_smoothness": 98.0,
-   "p50_duration_s": 1.14,
+   "p50_duration_s": 1.16,
    "mean_steps": 20,
    "runs_with_major_qa_issue": 0
   },
@@ -511,7 +511,7 @@
    "runs": 15,
    "verified_submit_rate": 1.0,
    "mean_smoothness": 99.2,
-   "p50_duration_s": 0.74,
+   "p50_duration_s": 0.77,
    "mean_steps": 16.4,
    "runs_with_major_qa_issue": 0
   },
@@ -520,23 +520,23 @@
  },
  "qa_ramp": {
   "keystone": {
-   "final_qa_share": 0.7,
+   "final_qa_share": 1.0,
    "log": [
-    "after 6 runs: success 1.00, smoothness 98, silent errors 0 -> QA share 1.00 -> 0.70"
+    "after 6 runs: success 1.00, smoothness 98, silent errors 0, clean-run lower bound 0.61 -> QA share 1.00 -> 1.00"
    ]
   },
   "summit": {
-   "final_qa_share": 0.4,
+   "final_qa_share": 0.7,
    "log": [
-    "after 6 runs: success 1.00, smoothness 94, silent errors 0 -> QA share 1.00 -> 0.70",
-    "after 12 runs: success 1.00, smoothness 99, silent errors 0 -> QA share 0.70 -> 0.40"
+    "after 6 runs: success 1.00, smoothness 94, silent errors 0, clean-run lower bound 0.61 -> QA share 1.00 -> 1.00",
+    "after 12 runs: success 1.00, smoothness 99, silent errors 0, clean-run lower bound 0.76 -> QA share 1.00 -> 0.70"
    ]
   },
   "northwind": {
-   "final_qa_share": 0.4,
+   "final_qa_share": 0.7,
    "log": [
-    "after 6 runs: success 1.00, smoothness 100, silent errors 0 -> QA share 1.00 -> 0.70",
-    "after 12 runs: success 1.00, smoothness 99, silent errors 0 -> QA share 0.70 -> 0.40"
+    "after 6 runs: success 1.00, smoothness 100, silent errors 0, clean-run lower bound 0.61 -> QA share 1.00 -> 1.00",
+    "after 12 runs: success 1.00, smoothness 99, silent errors 0, clean-run lower bound 0.76 -> QA share 1.00 -> 0.70"
    ]
   }
  },
@@ -589,6 +589,18 @@
     "username": "sfb-ops-c",
     "disabled": true,
     "failures": 2
+   },
+   {
+    "portal": "lakeshore",
+    "username": "LSP-40117",
+    "disabled": false,
+    "failures": 0
+   },
+   {
+    "portal": "lakeshore",
+    "username": "LSP-40118",
+    "disabled": false,
+    "failures": 0
    }
   ]
  },
@@ -630,11 +642,73 @@
    }
   }
  },
+ "stats": {
+  "extraction": {
+   "rules": {
+    "field_acc_ci": [
+     0.948,
+     0.967
+    ],
+    "doc_ok_ci": [
+     0.645,
+     0.783
+    ],
+    "silent_error_ci": [
+     0.0024,
+     0.0094
+    ]
+   },
+   "claude:claude-haiku-4-5": {
+    "field_acc_ci": [
+     0.94,
+     0.961
+    ],
+    "doc_ok_ci": [
+     0.671,
+     0.805
+    ],
+    "silent_error_ci": [
+     0.0155,
+     0.0295
+    ]
+   },
+   "paired": {
+    "arms": [
+     "rules",
+     "claude:claude-haiku-4-5"
+    ],
+    "acc_diff": 0.0071,
+    "ci_doc_bootstrap": [
+     -0.0048,
+     0.0225
+    ],
+    "only_a": 42,
+    "only_b": 30,
+    "mcnemar_p": 0.1945
+   }
+  },
+  "ablations": {
+   "overlay_guard_on": {
+    "on": "8/8",
+    "off": "2/8",
+    "fisher_p": 0.007
+   },
+   "credential_threshold_2": {
+    "on": "9/9",
+    "off": "8/9",
+    "fisher_p": 1.0
+   }
+  },
+  "validation_recall_ci": [
+   0.862,
+   1.0
+  ]
+ },
  "llm_usage": {
-  "calls": 501,
-  "tokens_in": 506175,
-  "tokens_out": 125573,
-  "cost_usd": 1.134
+  "calls": 505,
+  "tokens_in": 512849,
+  "tokens_out": 126270,
+  "cost_usd": 1.1442
  },
  "routing": {
   "portal": 34,

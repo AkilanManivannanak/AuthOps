@@ -23,7 +23,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import Protocol
 
 from authops.docintel.normalize import (
-    DATE_PATTERN, ICD10_RE, find_dates, npi_valid, ocr_fix_digits, parse_date,
+    DATE_PATTERN, find_dates, npi_valid, ocr_fix_digits, parse_date,
 )
 from authops.docintel.ocr import OCRDoc
 from authops.schemas import SCHEMA_FOR, DocType, Extraction, FieldValue
@@ -108,6 +108,114 @@ def _cut(value: str) -> str:
     return re.split(r"\s{2,}|\s(?=(?:DOB|Member ID|Frequency|Date|NPI)\b)", value)[0].strip()
 
 
+# ---------------------------------------------------------------- format-guided OCR repair
+# Each identifier has structure OCR doesn't know about: an NPI carries a Luhn check digit,
+# a member ID is a payor prefix plus 8 digits, an ICD-10 code is letter-digit-alnum[.xxxx].
+# Repairs only touch characters the structure says are wrong, and only digit<->digit swaps
+# are snapped to the in-scope code list, so a real content error (e.g. 'F8A.0') survives
+# for the validator to flag instead of being silently "fixed".
+
+PAYOR_PREFIXES = {"NWH", "KCM", "SFB", "HBL", "PRV"}
+_TO_LETTER = str.maketrans({"8": "B", "0": "O", "1": "I", "5": "S", "$": "S", "6": "G"})
+_TO_DIGIT = str.maketrans({"O": "0", "o": "0", "I": "1", "l": "1", "i": "1", "!": "1", "|": "1",
+                           "S": "5", "s": "5", "$": "5", "B": "8", "g": "8", "a": "8", "Z": "2", "z": "2"})
+
+
+def repair_member_id(lines):
+    for ln in lines:
+        for tok in re.findall(r"[A-Z0-9$]{3}[0-9OoIlSB]{8}\b", ln.replace(" ", " ")):
+            prefix = tok[:3].translate(_TO_LETTER)
+            if prefix in PAYOR_PREFIXES:
+                return prefix + tok[3:].translate(_TO_DIGIT), tok, ln
+    return None, None, None
+
+
+def repair_npi(lines):
+    """Unique Luhn-valid 10-digit token starting 1/2 (NPI rules), preferring provider lines."""
+    hits = []
+    for ln in lines:
+        for tok in re.findall(r"(?<![A-Za-z0-9])[0-9OoIlSB]{10}(?![A-Za-z0-9])", ln):
+            cand = tok.translate(_TO_DIGIT)
+            if cand[0] in "12" and npi_valid(cand):
+                hits.append((bool(re.search(r"(?i)provider|npi|render", ln)), cand, tok, ln))
+    if not hits:
+        return None, None, None
+    labelled = [h for h in hits if h[0]] or hits
+    if len({h[1] for h in labelled}) != 1:
+        return None, None, None  # ambiguous: abstain rather than guess
+    return labelled[0][1], labelled[0][2], labelled[0][3]
+
+
+def _icd_shape(tok: str) -> str | None:
+    tok = re.sub(r"[^A-Za-z0-9$.]", "", tok)
+    if len(tok) < 3:
+        return None
+    head = tok[0].translate(_TO_LETTER).upper()
+    body = tok[1:]
+    d1 = body[0].translate(_TO_DIGIT)
+    rest = body[1:].replace(".", "")
+    if not (head.isalpha() and d1.isdigit() and rest):
+        return None
+    c3 = rest[0].translate(_TO_DIGIT) if rest[0] in "gaBOoIl!" else rest[0]
+    tail = rest[1:].translate(_TO_DIGIT) if rest[1:] and head != "S" else rest[1:]
+    return head + d1 + c3 + ("." + tail if tail else "")
+
+
+_DIGIT_SWAPS = {frozenset(p) for p in ("09", "08", "17", "56", "38", "89", "01")}
+
+
+def repair_icd10(raw: str) -> tuple[list[str], float]:
+    from authops.docintel.normalize import KNOWN_ICD10
+
+    out, pen = [], 1.0
+    raw = raw.rsplit(":", 1)[-1] if re.search(r"(?i)i[ce][do0]-?1[0o]", raw) else raw
+    # OCR drops the dot or turns it into a space: 'M54 50', 'F845'
+    for piece in re.split(r"[,;]", raw):
+        piece = re.sub(r"\b([A-Z$][0-9A-Za-z]{2}) (\d{1,4})\b", r"\1.\2", piece.strip())
+        for tok in piece.split():
+            code = _icd_shape(tok)
+            if not code:
+                continue
+            if "." not in code and len(code) > 3:
+                code = code[:3] + "." + code[3:]
+            if code not in KNOWN_ICD10:
+                near = [k for k in KNOWN_ICD10 if len(k) == len(code) and all(
+                    a == b or frozenset((a, b)) in _DIGIT_SWAPS for a, b in zip(k, code))]
+                if len(near) == 1:
+                    code, pen = near[0], min(pen, 0.9)
+            if code != tok:
+                pen = min(pen, 0.95)
+            out.append(code)
+    return sorted(set(out)), pen
+
+
+def clean_name(name: str) -> str | None:
+    """Drop dot-leader debris and trailing marks; turn 'LAST, FIRST' into 'First Last'."""
+    m = re.search(r"([A-Z][A-Z'\-]+),\s*([A-Z][A-Z'\-]+)\s*$", name)
+    if m:
+        return f"{m.group(2).title()} {m.group(1).title()}"
+    name = re.sub(r"[\s.|,;:]+$", "", name).strip()
+    return name or None
+
+
+def repair_auth_number(raw: str) -> tuple[str | None, float, str | None]:
+    """Auth IDs come in three shapes; return (value, validity, token read)."""
+    toks = [t.strip(".,;:)(") for t in raw.split()]
+    for tok in toks:
+        m = re.fullmatch(r"([A-Z]{3}-A-)([0-9OoIlSB$]{6})", tok)
+        if m:
+            return m.group(1) + m.group(2).translate(_TO_DIGIT), 1.0, tok
+        m = re.fullmatch(r"R([0-9OoIlSB$]{8})", tok)
+        if m:
+            return "R" + m.group(1).translate(_TO_DIGIT), 1.0, tok
+    # free-form 10-char IDs (dot leaders push the value to the end of the row)
+    for tok in reversed(toks):
+        if re.fullmatch(r"[A-Z0-9]{10}", tok):
+            # O/0 and I/1 are both legal in this format, so OCR cannot tell them apart
+            return tok, (0.5 if re.search(r"[O0I1]", tok) else 1.0), tok
+    return (toks[0] if toks else None), 0.3, (toks[0] if toks else None)
+
+
 class RuleExtractor:
     name = "rules"
 
@@ -117,7 +225,7 @@ class RuleExtractor:
         lines = [ln for ln in text.splitlines() if ln.strip()]
         f: dict[str, FieldValue] = {}
 
-        def put(name, value, evidence, validity=1.0):
+        def put(name, value, evidence, validity=1.0, read_as=None):
             if value in (None, "", []):
                 f[name] = FieldValue(value=None, confidence=0.0, abstained=True)
                 return
@@ -129,7 +237,7 @@ class RuleExtractor:
                     if all(tok.strip(".,:;").upper() in ocr.word_conf for tok in cand.replace(",", " ").split()):
                         src = cand
                         break
-            conf = min(1.0, ocr.conf_for(src)) * validity
+            conf = min(1.0, ocr.conf_for(read_as or src)) * validity
             f[name] = FieldValue(value=value, confidence=round(conf, 3), evidence=evidence,
                                  abstained=conf < ABSTAIN_BELOW)
 
@@ -137,18 +245,22 @@ class RuleExtractor:
         name = _cut(raw) if raw else None
         if name and doc_type == DocType.TREATMENT_PLAN:
             name = re.sub(r"(?i)^name\s*:\s*", "", name)
-        put("patient_name", name, ev)
+        name = clean_name(name) if name else None
+        put("patient_name", name, ev, validity=0.5 if name and re.search(r"[0-9|!]", name) else 1.0,
+            read_as=name.upper() if name and ev and name.upper() in ev else None)
 
         raw, ev = _find_label(lines, "patient_dob")
         dob = find_dates(raw)[0] if raw and find_dates(raw) else None
         put("patient_dob", dob.isoformat() if dob else None, ev)
 
         raw, ev = _find_label(lines, "member_id")
-        member = None
+        member, read = None, None
         if raw:
             m2 = re.search(r"([A-Z]{3})([0-9OoIlSB]{8})", raw.replace(" ", ""))
             member = m2.group(1) + ocr_fix_digits(m2.group(2)) if m2 else None
-        put("member_id", member, ev)
+        if member is None:  # label garbled ('Member 1D', 'Subscriber !0'): fall back to the ID's own format
+            member, read, ev = repair_member_id(lines)
+        put("member_id", member, ev, validity=1.0 if read is None else 0.95, read_as=read)
 
         raw, ev = _find_label(lines, "cpt_codes")
         cpts, cpt_pen = correct_cpt(raw) if raw else ([], 1.0)
@@ -157,11 +269,17 @@ class RuleExtractor:
         raw, ev = _find_label(lines, "provider_npi")
         npi_m = re.search(r"\d{10}", ocr_fix_digits(raw.replace(" ", ""))) if raw else None
         npi = npi_m.group(0) if npi_m else None
-        put("provider_npi", npi, ev, validity=1.0 if npi_valid(npi) else 0.4)
+        read = None
+        if not npi_valid(npi):
+            found, read, ev2 = repair_npi(lines)
+            if found:
+                npi, ev = found, ev2
+        put("provider_npi", npi, ev, validity=1.0 if npi_valid(npi) else 0.4, read_as=read)
 
         if doc_type == DocType.TREATMENT_PLAN:
             raw, ev = _find_label(lines, "icd10_codes")
-            put("icd10_codes", sorted(set(ICD10_RE.findall(raw or ""))), ev)
+            codes, icd_pen = repair_icd10(raw or "")
+            put("icd10_codes", codes, ev, validity=icd_pen, read_as=raw.split(":")[-1] if raw else None)
             raw, ev = _find_label(lines, "requested_units")
             units = re.search(r"\d+", ocr_fix_digits(raw.split()[0])) if raw else None
             put("requested_units", int(units.group(0)) if units else None, ev)
@@ -175,11 +293,18 @@ class RuleExtractor:
                                                 confidence=0.9 if sig else 0.0,
                                                 evidence=sig, abstained=sig is None)
             sd = find_dates(sig.split("Date", 1)[-1]) if sig and "Date" in sig else []
+            if sig and not sd:  # the date wraps onto the line before or after the signature
+                k = lines.index(sig)
+                for near in lines[k + 1:k + 2] + lines[max(0, k - 1):k]:
+                    if "Date" in near:
+                        sd, sig = find_dates(near.split("Date", 1)[-1]), sig + " | " + near
+                        if sd:
+                            break
             put("signature_date", sd[0].isoformat() if sd else None, sig)
         else:
             raw, ev = _find_label(lines, "auth_number")
-            auth = raw.split()[0].strip(".") if raw else None
-            put("auth_number", auth, ev)
+            auth, auth_ok, read = repair_auth_number(raw) if raw else (None, 0.0, None)
+            put("auth_number", auth, ev, validity=auth_ok, read_as=read)
             low = text.lower()
             decision = ("denied" if "denied" in low else "partial" if "partially" in low
                         else "approved" if "approved" in low else None)
@@ -187,6 +312,8 @@ class RuleExtractor:
                                        abstained=decision is None)
             raw, ev = _find_label(lines, "approved_units")
             units = re.search(r"\d+", ocr_fix_digits(raw.split()[0])) if raw else None
+            if raw and not units:  # dot-leader rows: 'QTY .. cee ees 186', the number is last
+                units = re.search(r"(\d+)\s*$", raw)
             put("approved_units", int(units.group(0)) if units else None, ev)
             period = next((ln for ln in lines if re.search(
                 r"(?i)effective dates|authorization period", ln)), None)

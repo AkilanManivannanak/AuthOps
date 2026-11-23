@@ -237,3 +237,36 @@ SELECT tool, error_class, COUNT(*) n FROM steps WHERE ok=0 GROUP BY 1,2 ORDER BY
 SELECT r.portal, s.idx, s.tool, s.detail FROM steps s JOIN runs r USING(run_id)
 WHERE r.status!='submitted' AND r.arm='playbook' ORDER BY r.run_id, s.idx;
 ```
+
+
+## Format-guided OCR repair (Nov 2026)
+
+Same 160 documents, same OCR output, rules extractor before and after repair:
+
+| | before | after |
+|---|---|---|
+| field accuracy | 91.8% | 96.0% |
+| documents fully right | 68.8% | 76.2% |
+| silent errors (wrong and not sent to a human) | 1.3% | 0.5% |
+| provider NPI | 81.2% | 96.9% |
+| member ID | 86.3% | 94.4% |
+| ICD-10 | 86.3% | 93.8% (silent 5.0% to 0.0%) |
+| approved units | 88.7% | 98.8% |
+| signature date | 87.5% | 98.8% |
+| auth number | 81.2% | 80.0% (silent 6.2% to 0.0%) |
+
+What it does: an NPI is accepted only if it passes the Luhn check, so a garbled label no longer
+loses it; member IDs are found by their payor-prefix format; ICD-10 tokens are re-shaped by
+position (letter, digit, alnum) and only digit-for-digit OCR swaps are snapped to the in-scope
+list, so a real content error such as `F8A.0` still reaches the validator. Free-form auth
+numbers that contain O/0 or I/1 now go to a human, because that format allows both and OCR
+cannot tell them apart. That is why auth-number accuracy dips slightly while its silent errors
+go to zero. Tests: `tests/test_ocr_repair.py`.
+
+## Rollout statistics
+
+`authops/ops/stats.py` puts an interval or a p-value on every comparison in the run report
+(Wilson intervals, Fisher and McNemar exact tests, document-level paired bootstrap). The QA ramp
+now lowers human review only once the 95% lower bound on clean runs clears 0.75, so a portal
+needs 12 clean runs, not 6 lucky ones. One honest result it surfaced: the credential-threshold
+ablation (9/9 vs 8/9) is not significant (Fisher p = 1.0); the overlay guard (8/8 vs 2/8) is (p = 0.007).

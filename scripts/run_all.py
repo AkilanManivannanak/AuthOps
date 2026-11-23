@@ -103,10 +103,12 @@ def main():
     if use_llm:
         extractors.append(ClaudeExtractor(ClaudeLLM("claude-haiku-4-5", meter)))
     extraction = {"classification_accuracy": round(cls_ok / len(manifest), 3), "arms": {}}
+    arm_rows: dict[str, list[dict]] = {}
     for ex in extractors:
         outs = [ex.extract(d["doc_id"], ocr_cache[d["doc_id"]], DocType(d["doc_type"]), d["pages"])
                 for d in manifest]
         s = score(outs, manifest)
+        arm_rows[ex.name] = s["rows"]
         lat = [o.latency_ms for o in outs]
         extraction["arms"][ex.name] = {
             "summary": s["summary"], "p50_latency_ms": round(stats.median(lat)),
@@ -278,6 +280,7 @@ def main():
     metrics["fhir"] = {"submitted": sum(f["status"] == "submitted" for f in fhir), "n": len(fhir),
                        "p50_s": round(stats.median([f["duration_s"] for f in fhir]), 3) if fhir else None}
     metrics["ablations"] = ablations
+    metrics["stats"] = rollout_stats(metrics, arm_rows)
     metrics["llm_usage"] = {"calls": meter.calls, "tokens_in": meter.tokens_in, "tokens_out": meter.tokens_out,
                             "cost_usd": round(meter.cost_usd, 4)}
     metrics["routing"] = {k: len(v) for k, v in by_channel.items()}
@@ -292,6 +295,47 @@ def main():
         w.writerows(qa_rows)
     write_report(metrics, reports / "REPORT.md")
     print(f"[6/6] wrote {reports / 'REPORT.md'}")
+
+
+def rollout_stats(m: dict, arm_rows: dict) -> dict:
+    """Intervals and significance for every comparison the report makes."""
+    from authops.ops.stats import bootstrap_diff, fisher_exact, mcnemar_exact, wilson
+
+    out: dict = {"extraction": {}, "ablations": {}}
+    for arm, rows in arm_rows.items():
+        k = sum(r["ok"] for r in rows)
+        docs: dict[str, bool] = {}
+        for r in rows:
+            docs[r["doc_id"]] = docs.get(r["doc_id"], True) and r["ok"]
+        silent = sum((not r["ok"]) and not r["abstained"] for r in rows)
+        out["extraction"][arm] = {
+            "field_acc_ci": [round(x, 3) for x in wilson(k, len(rows))],
+            "doc_ok_ci": [round(x, 3) for x in wilson(sum(docs.values()), len(docs))],
+            "silent_error_ci": [round(x, 4) for x in wilson(silent, len(rows))]}
+    if len(arm_rows) >= 2:
+        (a, ra), (b, rb) = list(arm_rows.items())[:2]
+        key = {(r["doc_id"], r["field"]): r["ok"] for r in rb}
+        pairs = [(r["ok"], key[(r["doc_id"], r["field"])], r["doc_id"]) for r in ra
+                 if (r["doc_id"], r["field"]) in key]
+        d, lo, hi = bootstrap_diff([float(x) for x, _, _ in pairs], [float(y) for _, y, _ in pairs],
+                                   groups=[g for _, _, g in pairs])
+        out["extraction"]["paired"] = {
+            "arms": [a, b], "acc_diff": round(d, 4), "ci_doc_bootstrap": [round(lo, 4), round(hi, 4)],
+            "only_a": sum(x and not y for x, y, _ in pairs), "only_b": sum(y and not x for x, y, _ in pairs),
+            "mcnemar_p": round(mcnemar_exact(sum(x and not y for x, y, _ in pairs),
+                                             sum(y and not x for x, y, _ in pairs)), 4)}
+    ab = m.get("ablations", {})
+    for on, off, what in (("overlay_guard_on", "overlay_guard_off", "submitted"),
+                          ("credential_threshold_2", "no_credential_threshold", "submitted")):
+        if on in ab and off in ab:
+            a1, n1, a2, n2 = ab[on][what], ab[on]["n"], ab[off][what], ab[off]["n"]
+            out["ablations"][on] = {"on": f"{a1}/{n1}", "off": f"{a2}/{n2}",
+                                    "fisher_p": round(fisher_exact(a1, n1 - a1, a2, n2 - a2), 4)}
+    v = m.get("validation", {})
+    if v.get("payor_denials"):
+        out["validation_recall_ci"] = [round(x, 3) for x in wilson(v["caught_before_submission"],
+                                                                   v["payor_denials"])]
+    return out
 
 
 def write_report(m: dict, path: Path) -> None:
@@ -360,6 +404,22 @@ def write_report(m: dict, path: Path) -> None:
               f"- FHIR PA API (Da Vinci PAS shape): {f['submitted']}/{f['n']} submitted, p50 {f['p50_s']}s per request",
               f"- Phone agent (IVR, benefits + status): {m['phone']['completed']}/{m['phone']['calls']} calls completed, "
               f"mean {m['phone']['mean_turns']} turns, member-ID repeats after ASR noise: {m['phone']['member_id_repeats']}", ""]
+    st = m.get("stats", {})
+    if st:
+        L += ["## Uncertainty", "", "Small pilots need intervals, so every headline comparison carries one.", ""]
+        for arm, e in st.get("extraction", {}).items():
+            if arm == "paired":
+                L.append(f"- {e['arms'][0]} vs {e['arms'][1]}: field accuracy diff {e['acc_diff']:+.3f} "
+                         f"(95% CI {e['ci_doc_bootstrap'][0]:+.3f} to {e['ci_doc_bootstrap'][1]:+.3f}, documents resampled), "
+                         f"McNemar p={e['mcnemar_p']} ({e['only_a']} fields right only under {e['arms'][0]}, {e['only_b']} only under {e['arms'][1]})")
+            else:
+                L.append(f"- {arm}: field accuracy 95% CI {e['field_acc_ci']}, whole-document CI {e['doc_ok_ci']}, "
+                         f"silent-error CI {e['silent_error_ci']}")
+        for k, a in st.get("ablations", {}).items():
+            L.append(f"- {k}: {a['on']} vs {a['off']} submitted, Fisher exact p={a['fisher_p']}")
+        if "validation_recall_ci" in st:
+            L.append(f"- denial-prevention recall 95% CI {st['validation_recall_ci']}")
+        L.append("")
     u = m["llm_usage"]
     L += ["## 5. LLM usage", "", f"{u['calls']} calls, {u['tokens_in']} input / {u['tokens_out']} output tokens, ~${u['cost_usd']}", ""]
     path.write_text("\n".join(L))
