@@ -2,7 +2,7 @@
 
   app/assets/qa/        40 review items: a document image plus what the extractor produced
   app/assets/replays/   4 recorded browser-agent runs, one screenshot per step
-  app/assets/*.json     metrics, risk-coverage curves, calibrator weights
+  app/assets/*.json     metrics, risk-coverage curves, calibrator weights, the 26-week arch replay
 
 Run after scripts/run_all.py:  python scripts/build_app_assets.py
 """
@@ -124,8 +124,16 @@ def copy_reports() -> None:
             shutil.copy(REPORTS / f, ASSETS / f)
 
 
+def build_floor_asset() -> None:
+    """The 26-week arch replay: real pipeline events, precomputed so the home page opens instantly."""
+    from authops.sim.floor import build
+
+    (ASSETS / "floor.json").write_text(json.dumps(build()))
+
+
 if __name__ == "__main__":
     ASSETS.mkdir(parents=True, exist_ok=True)
     copy_reports()
+    build_floor_asset()
     build_qa_items()
     build_replays()

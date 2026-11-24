@@ -98,23 +98,21 @@ def main() -> None:
                 pg.screenshot(path=str(MEDIA / "_debug.png"), full_page=True)
                 sys.exit("The home page did not show the Run button. See docs/media/_debug.png; page text:\n"
                          + pg.inner_text("body")[:1500])
-            # the care board: let weeks play, scrub past the policy change, open a care pass
+            # the care readiness console: replay the weeks, filter by the flow, open a patient
             try:
                 fl = pg.frame_locator("iframe").first
-                fl.locator("tr.row").first.wait_for(timeout=20_000)
-                time.sleep(6)
-                hist = fl.locator("#hist")
-                box = hist.bounding_box()
-                for f in (0.45, 0.55, 0.65):  # drag the timeline forward
-                    pg.mouse.click(box["x"] + box["width"] * f, box["y"] + 30)
-                    time.sleep(1.2)
-                fl.locator("#ribbon").click()
-                time.sleep(1.5)
-                fl.locator("tr.row").first.click()
+                fl.locator("#play").wait_for(timeout=20_000)
+                fl.locator("#play").click()
+                time.sleep(19)
+                fl.locator(".node[data-k='1|Held: documents'] rect").dispatch_event("click")
+                time.sleep(2.5)
+                fl.locator("tr.r").first.click()
                 time.sleep(3)
-                pg.screenshot(path=str(MEDIA / "board.png"))
+                pg.screenshot(path=str(MEDIA / "console.png"))
+                fl.locator("#notice").dispatch_event("click")
+                time.sleep(3)
             except Exception as e:
-                print("board scene skipped:", e)
+                print("console scene skipped:", e)
             pg.get_by_role("button", name="Run a request").scroll_into_view_if_needed()
             pg.get_by_role("button", name="Run a request").click()
             pg.get_by_text("Rules:", exact=False).first.wait_for(timeout=60_000)

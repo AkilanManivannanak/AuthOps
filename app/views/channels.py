@@ -1,7 +1,6 @@
 import json
 
 import streamlit as st
-import streamlit.components.v1 as components
 
 from app.ui import FOREST, RED, log, pill, setup
 from authops.channels.router import build_pas_bundle, choose_channel
@@ -15,7 +14,7 @@ steps = [("Jan 17, 2024", "CMS-0057-F finalized"), ("Jan 1, 2026", "72h urgent /
          ("Jan 1, 2027", "Prior Authorization, Patient Access, Provider Access, Payer-to-Payer FHIR APIs live")]
 cells = "".join(f"<div class='s' style='animation-delay:{i * 0.25}s'><div class='d'>{d}</div><div>{t}</div></div>"
                 for i, (d, t) in enumerate(steps))
-components.html(f"""<style>body{{margin:0;font-family:Inter,system-ui,sans-serif}} .r{{display:flex;gap:12px}}
+st.iframe(f"""<style>body{{margin:0;font-family:Inter,system-ui,sans-serif}} .r{{display:flex;gap:12px}}
 .s{{flex:1;border-top:4px solid {FOREST};background:#fff;border-radius:12px;padding:12px;opacity:0;animation:in .5s forwards;font-size:.9rem}}
 .d{{font-family:Fraunces,Georgia,serif;font-size:1.4rem;font-weight:300}} @keyframes in{{to{{opacity:1}}}}</style><div class="r">{cells}</div>""",
                 height=130)

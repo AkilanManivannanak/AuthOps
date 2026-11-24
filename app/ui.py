@@ -1,7 +1,7 @@
 """Shared look, components and tester identity for the AuthOps app.
 
-Design language: warm paper background, ink text, forest green for "earned/working",
-brick red for "failed/at risk", serif light display figures, numbers that count up,
+Design language follows Silna's brand: white and cream surfaces, plum ink, violet for "earned/working",
+rose for "failed/at risk", a peach-violet-pink dawn accent, serif light display figures, numbers that count up,
 rings and bars that sweep in once, cards that flip to show how a number was measured.
 """
 from __future__ import annotations
@@ -15,16 +15,16 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "app" / "assets"
 FOREST, GREEN, RED, INK, RULE, PAPER, TAG, AMBER = (
-    "#28543E", "#609D7B", "#B3402F", "#1F2A24", "#E4E1D8", "#FAF8F4", "#F4E27A", "#C98B1E")
+    "#5B2A86", "#8C5FB9", "#C0446A", "#1E0525", "#ECE5D8", "#FDF8F3", "#FFE3D8", "#E0855F")
 
 CSS = f"""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&family=Inter:wght@400;600;700&display=swap');
-html, body, [class*="css"], .stMarkdown, p, li, label, input, textarea, button {{ font-family: 'Inter', system-ui, sans-serif; }}
-h1, h2, h3 {{ font-family: 'Fraunces', Georgia, serif !important; font-weight: 300 !important; letter-spacing: -0.01em; color: {INK}; }}
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&family=DM+Sans:wght@400;500;600;700&display=swap');
+html, body, [class*="css"], .stMarkdown, p, li, label, input, textarea, button {{ font-family: 'DM Sans', system-ui, sans-serif; }}
+h1, h2, h3 {{ font-family: 'Fraunces', Georgia, serif !important; font-weight: 400 !important; letter-spacing: -0.025em; color: {INK}; }}
 h1 {{ font-size: 3rem !important; line-height: 1.05 !important; }}
 .block-container {{ padding-top: 2.2rem; max-width: 1280px; }}
-.ao-sub {{ color: #6C6C6C; font-size: 1.02rem; margin-top: -0.6rem; margin-bottom: 1.4rem; max-width: 760px; }}
+.ao-sub {{ color: #7A6B80; font-size: 1.02rem; margin-top: -0.6rem; margin-bottom: 1.4rem; max-width: 760px; }}
 .ao-tile {{ border: 1px solid {RULE}; background: #fff; border-radius: 18px; padding: 18px 20px; transition: all .18s ease; height: 100%; }}
 .ao-tile:hover {{ transform: translateY(-2px); box-shadow: 0 8px 24px rgba(31,42,36,.10); border-color: {FOREST}; }}
 .ao-tile.hot {{ background: {TAG}; border-color: {INK}; }}
@@ -32,12 +32,12 @@ h1 {{ font-size: 3rem !important; line-height: 1.05 !important; }}
 .ao-lab {{ margin-top: 8px; font-size: .9rem; color: #444; }}
 .ao-pill {{ display:inline-block; border-radius: 999px; padding: 2px 10px; font-size: .78rem; font-weight: 700; }}
 .ao-ok {{ background: {FOREST}; color: {PAPER}; }} .ao-bad {{ background: {RED}; color: #fff; }} .ao-warn {{ background: {AMBER}; color: #fff; }}
-.ao-muted {{ color: #6C6C6C; font-size: .88rem; }}
+.ao-muted {{ color: #7A6B80; font-size: .88rem; }}
 .ao-card {{ border:1px solid {RULE}; background:#fff; border-radius: 16px; padding: 16px 18px; margin-bottom: 10px; }}
 .ao-grid {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-bottom:.6rem; }}
 .ao-rise {{ animation: aoIn .45s ease both; }}
 .ao-big {{ font-family:'Fraunces',Georgia,serif; font-weight:300; font-size:2.1rem; line-height:1.1; }}
-.ao-track {{ height:10px; background:#F1EEE6; border-radius:9px; margin-top:3px; overflow:hidden; }}
+.ao-track {{ height:10px; background:#F7F0EC; border-radius:9px; margin-top:3px; overflow:hidden; }}
 .ao-fill {{ height:100%; width:var(--w); border-radius:9px; animation: aoGrow .9s cubic-bezier(.2,.7,.2,1) both; }}
 @keyframes aoGrow {{ from {{ width:0; }} to {{ width:var(--w); }} }}
 .ao-sweep {{ stroke-dashoffset:var(--to); animation: aoSweep 1.1s cubic-bezier(.2,.7,.2,1) both; }}
@@ -48,8 +48,23 @@ h1 {{ font-size: 3rem !important; line-height: 1.05 !important; }}
 .ao-check {{ display:flex; gap:10px; align-items:flex-start; padding:8px 0; border-bottom:1px solid {RULE}; animation: aoIn .35s ease both; }}
 @keyframes aoIn {{ from {{ opacity:0; transform: translateY(6px); }} to {{ opacity:1; transform:none; }} }}
 div[data-testid="stMetricValue"] {{ font-family: 'Fraunces', Georgia, serif; font-weight: 300; }}
-section[data-testid="stSidebar"] {{ background: #F1EEE6; }}
-.stButton>button {{ border-radius: 999px; font-weight: 600; }}
+section[data-testid="stSidebar"] {{ background: #F7F0EC; }}
+.stButton>button, .stDownloadButton>button, .stFormSubmitButton>button {{ border-radius: 999px; font-weight: 600; padding: .45rem 1.2rem; }}
+.stButton>button[kind="primary"], .stFormSubmitButton>button {{ background: #1E0525; border-color: #1E0525; color: #fff; }}
+.stButton>button[kind="primary"]:hover {{ background: #32073E; border-color: #32073E; }}
+.ao-eyebrow {{ font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: #8E8292; font-weight: 500; }}
+[data-testid="stSidebarNav"] a span {{ font-weight: 500; }}
+[data-testid="stSidebarNav"] a[aria-current="page"] {{ background: #FAE8E8; border-radius: 10px; }}
+hr {{ border-color: #ECE5D8 !important; }}
+div[data-testid="stAlert"] {{ border-radius: 14px; }}
+div[data-testid="stAlertContentInfo"], div[data-testid="stAlertContentSuccess"] {{ color: #1E0525; }}
+div[data-testid="stAlert"]:has([data-testid="stAlertContentInfo"]) > div {{ background: #F5EEFB !important; }}
+div[data-testid="stAlert"]:has([data-testid="stAlertContentSuccess"]) > div {{ background: #EFE7FA !important; }}
+div[data-testid="stAlert"]:has([data-testid="stAlertContentWarning"]) > div {{ background: #FFF1EA !important; }}
+div[data-testid="stAlert"]:has([data-testid="stAlertContentError"]) > div {{ background: #FBEAF1 !important; }}
+div[data-testid="stAlert"] a, div[data-testid="stAlert"] strong {{ color: #5B2A86; }}
+div[data-testid="stExpander"] details {{ border-radius: 14px; border-color: #ECE5D8; }}
+div[data-testid="stPopover"] button {{ border-radius: 999px; }}
 .stTabs [data-baseweb="tab"] {{ font-weight: 600; }}
 </style>
 """
@@ -151,7 +166,7 @@ def _card_front(c: dict) -> str:
                                        f"<div class='ao-track'><div class='ao-fill' style='--w:{v / mx * 100:.1f}%;"
                                        f"background:{colr}'></div></div></div>")
         return (f"<div class='ao-big' style='color:{col}'>{c['headline']}</div>"
-                + bar(c["left_label"], c["left"], "#9A9A9A", False) + bar(c["right_label"], c["right"], col, True))
+                + bar(c["left_label"], c["left"], "#B3A7B8", False) + bar(c["right_label"], c["right"], col, True))
     dots = lambda n, colr: "".join(f"<i style='background:{colr};animation-delay:{j * 35}ms'></i>" for j in range(n))  # noqa: E731
     return (f"<div style='display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center'>"
             f"<div><div class='ao-dots'>{dots(c['left'], RED)}</div><div class='ao-muted'>{c['left_label']} "

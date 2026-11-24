@@ -183,7 +183,7 @@ if rows_all and rc:
     base = alt.Chart(data).mark_line(point=True, strokeWidth=3).encode(
         x=alt.X("coverage:Q", title="share of fields filled automatically", axis=alt.Axis(format="%")),
         y=alt.Y("silent_error:Q", title="wrong values that would reach the payor", axis=alt.Axis(format="%")),
-        color=alt.Color("score:N", scale=alt.Scale(range=["#9A9A9A", FOREST]), legend=alt.Legend(orient="top")))
+        color=alt.Color("score:N", scale=alt.Scale(range=["#B3A7B8", FOREST]), legend=alt.Legend(orient="top")))
     rule = alt.Chart(pd.DataFrame({"c": [cov_now]})).mark_rule(color=RED, strokeDash=[6, 4], size=2).encode(x="c:Q")
     st.altair_chart((base + rule).properties(height=300), width="stretch")
     st.caption(f"Held-out cases. The red line is where your threshold of {thr:.2f} puts the heuristic "

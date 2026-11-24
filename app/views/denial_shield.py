@@ -122,12 +122,12 @@ cv = pd.DataFrame(am.curve(Request(rq.week, rq.payor, rq.specialty, rq.severity,
                                    rq.doc_score, max(units, rec), 1.0)))
 marks = pd.DataFrame([{"units": units, "what": "current request"}, {"units": rec, "what": "recommended"}])
 st.altair_chart(
-    (alt.Chart(cv).mark_line(color="#28543E", strokeWidth=2.5).encode(
+    (alt.Chart(cv).mark_line(color="#5B2A86", strokeWidth=2.5).encode(
         x=alt.X("units:Q", title="units requested"), y=alt.Y("p_full:Q", title="P(full approval)",
                                                               scale=alt.Scale(domain=[0, 1])))
-     + alt.Chart(pd.DataFrame([{"y": target}])).mark_rule(strokeDash=[2, 2], color="#9A9A9A").encode(y="y:Q")
+     + alt.Chart(pd.DataFrame([{"y": target}])).mark_rule(strokeDash=[2, 2], color="#B3A7B8").encode(y="y:Q")
      + alt.Chart(marks).mark_rule(strokeDash=[4, 3]).encode(
-         x="units:Q", color=alt.Color("what:N", scale=alt.Scale(range=["#C98B1E", "#28543E"])), tooltip=["what", "units"])
+         x="units:Q", color=alt.Color("what:N", scale=alt.Scale(range=["#E0855F", "#5B2A86"])), tooltip=["what", "units"])
      ).properties(height=230), width="stretch")
 log("approval_outlook", {"payor": pid, "spec": spec, "units": units, "p": o["p_full"], "rec": rec})
 with st.expander("Backtest on 12 held-out weeks"):
@@ -233,12 +233,12 @@ else:
                 max(1, sum(d.week == w for d in pair))} for w in weeks]
         ytitle = "share denied for this reason"
     df = pd.DataFrame(ser)
-    line = alt.Chart(df).mark_line(point=True, color="#28543E").encode(
+    line = alt.Chart(df).mark_line(point=True, color="#5B2A86").encode(
         x=alt.X("week:Q", scale=alt.Scale(domain=[0, 25])), y=alt.Y("value:Q", title=ytitle))
     marks = pd.DataFrame([{"week": a.week_estimated, "what": "estimated start"},
                           {"week": a.week_detected, "what": "alert"}])
     rule = alt.Chart(marks).mark_rule(strokeDash=[4, 3]).encode(
-        x="week:Q", color=alt.Color("what:N", scale=alt.Scale(range=["#C98B1E", "#B3402F"])), tooltip=["what", "week"])
+        x="week:Q", color=alt.Color("what:N", scale=alt.Scale(range=["#E0855F", "#C0446A"])), tooltip=["what", "week"])
     left.altair_chart((line + rule).properties(height=260), width="stretch")
     right.markdown(f"**{a.payor} · {a.specialty.replace('_', ' ')}**  \n{a.signal}")
     if a.kind == "turnaround":

@@ -13,31 +13,31 @@ st.set_page_config(page_title="AuthOps: prior-auth agent operations", page_icon=
 V = "app/views/"
 pages = {
     "Overview": [
-        st.Page(V + "home.py", title="Command center", icon="🧭", default=True),
-        st.Page(V + "join.py", title="Join the study", icon="🙋"),
+        st.Page(V + "home.py", title="Command center", icon=":material/dashboard:", default=True),
+        st.Page(V + "join.py", title="Join the study", icon=":material/group_add:"),
     ],
     "Work the queue": [
-        st.Page(V + "document_lab.py", title="Document Lab", icon="📄"),
-        st.Page(V + "denial_shield.py", title="Denial Shield", icon="🛡️"),
-        st.Page(V + "agent_theater.py", title="Agent Theater", icon="🤖"),
-        st.Page(V + "qa_console.py", title="QA Console", icon="✅"),
+        st.Page(V + "document_lab.py", title="Document Lab", icon=":material/description:"),
+        st.Page(V + "denial_shield.py", title="Denial Shield", icon=":material/verified_user:"),
+        st.Page(V + "agent_theater.py", title="Agent Theater", icon=":material/smart_toy:"),
+        st.Page(V + "qa_console.py", title="QA Console", icon=":material/fact_check:"),
     ],
     "Care readiness": [
-        st.Page(V + "long_charts.py", title="Long-chart validation", icon="📚"),
-        st.Page(V + "coverage_monitor.py", title="Coverage Monitor", icon="📡"),
-        st.Page(V + "benefits_cost.py", title="Benefits and cost", icon="💵"),
-        st.Page(V + "cases_api.py", title="Cases and API", icon="🗂️"),
+        st.Page(V + "long_charts.py", title="Long-chart validation", icon=":material/library_books:"),
+        st.Page(V + "coverage_monitor.py", title="Coverage Monitor", icon=":material/monitor_heart:"),
+        st.Page(V + "benefits_cost.py", title="Benefits and cost", icon=":material/payments:"),
+        st.Page(V + "cases_api.py", title="Cases and API", icon=":material/folder_open:"),
     ],
     "Operate and improve": [
-        st.Page(V + "autonomy_ramp.py", title="Autonomy Ramp", icon="📈"),
-        st.Page(V + "playbook_studio.py", title="Playbook Studio", icon="📝"),
-        st.Page(V + "config_lab.py", title="Config Lab", icon="🧪"),
-        st.Page(V + "phone_agent.py", title="Phone Agent", icon="📞"),
-        st.Page(V + "channels.py", title="FHIR and channels", icon="🔀"),
+        st.Page(V + "autonomy_ramp.py", title="Autonomy Ramp", icon=":material/trending_up:"),
+        st.Page(V + "playbook_studio.py", title="Playbook Studio", icon=":material/edit_note:"),
+        st.Page(V + "config_lab.py", title="Config Lab", icon=":material/science:"),
+        st.Page(V + "phone_agent.py", title="Phone Agent", icon=":material/call:"),
+        st.Page(V + "channels.py", title="FHIR and channels", icon=":material/hub:"),
     ],
     "Evidence": [
-        st.Page(V + "study.py", title="Study and evidence", icon="📊"),
-        st.Page(V + "method.py", title="Method and limits", icon="🔍"),
+        st.Page(V + "study.py", title="Study and evidence", icon=":material/insights:"),
+        st.Page(V + "method.py", title="Method and limits", icon=":material/search:"),
     ],
 }
 nav = st.navigation(pages)

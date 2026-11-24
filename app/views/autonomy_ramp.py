@@ -2,7 +2,6 @@ import json
 import random
 
 import streamlit as st
-import streamlit.components.v1 as components
 
 from app.ui import FOREST, RED, log, setup
 from authops.ops.experiments import QARamp
@@ -54,15 +53,15 @@ rev_g, rev_f = sum(s["reviews"]), round(fixed * per_day * 60)
 log("ramp_sim", {"base": base, "fault": fault, "day": fault_day, "fixed": fixed, "gated_errors": tot_g, "fixed_errors": tot_f})
 
 html = f"""
-<style>body{{margin:0;font-family:Inter,system-ui,sans-serif;color:#1F2A24}} .k{{display:flex;gap:26px;margin:4px 0 10px}}
-.k div{{font-family:Fraunces,Georgia,serif;font-weight:300;font-size:2.2rem}} .k span{{display:block;font-family:Inter;font-size:.8rem;color:#6C6C6C}}
-button{{border:0;border-radius:999px;padding:7px 18px;font-weight:700;background:#1F2A24;color:#FAF8F4;cursor:pointer}}</style>
+<style>body{{margin:0;font-family:Inter,system-ui,sans-serif;color:#1E0525}} .k{{display:flex;gap:26px;margin:4px 0 10px}}
+.k div{{font-family:Fraunces,Georgia,serif;font-weight:300;font-size:2.2rem}} .k span{{display:block;font-family:Inter;font-size:.8rem;color:#7A6B80}}
+button{{border:0;border-radius:999px;padding:7px 18px;font-weight:700;background:#1E0525;color:#FDF8F3;cursor:pointer}}</style>
 <div class="k"><div id="a" style="color:{FOREST}">0<span>wrong submissions reaching payors, with the gate</span></div>
 <div id="b" style="color:{RED}">0<span>with a fixed {round(fixed * 100)}% QA share</span></div>
 <div id="c">0<span>human reviews used by the gate (fixed: {rev_f:,})</span></div></div>
-<div style="font-size:.8rem;color:#6C6C6C">Human QA share</div><svg id="s1" viewBox="0 0 900 140" width="100%"></svg>
-<div style="font-size:.8rem;color:#6C6C6C;margin-top:4px">Wrong submissions reaching payors per day:
-<b style="color:{FOREST}">with the gate</b> vs <b style="color:#B3402F">fixed QA share</b></div>
+<div style="font-size:.8rem;color:#7A6B80">Human QA share</div><svg id="s1" viewBox="0 0 900 140" width="100%"></svg>
+<div style="font-size:.8rem;color:#7A6B80;margin-top:4px">Wrong submissions reaching payors per day:
+<b style="color:{FOREST}">with the gate</b> vs <b style="color:#C0446A">fixed QA share</b></div>
 <svg id="s2" viewBox="0 0 900 170" width="100%"></svg><button id="pl">Replay</button>
 <script>
 const S={json.dumps(s)}, W=900,L=40,R=50, n=S.days.length, FD={fault_day - 1};
@@ -70,24 +69,24 @@ const maxE=Math.max(1,...S.fixed,...S.gated), NS='http://www.w3.org/2000/svg';
 const x=i=>L+i/(n-1)*(W-L-R);
 function el(sv,t,a){{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);sv.appendChild(e);return e;}}
 function panel(sv,H,series,maxv,fmt,k){{ sv.innerHTML=''; const T=8,B=22, y=v=>T+(1-v/maxv)*(H-T-B);
-  el(sv,'rect',{{x:x(FD),y:T,width:W-R-x(FD),height:H-T-B,fill:'#B3402F',opacity:.06}});
-  for(let g=0;g<=2;g++){{const v=maxv*g/2; el(sv,'line',{{x1:L,x2:W-R,y1:y(v),y2:y(v),stroke:'#E4E1D8'}});
-    el(sv,'text',{{x:W-R+6,y:y(v)+4,'font-size':11,fill:'#6C6C6C'}}).textContent=fmt(v);}}
+  el(sv,'rect',{{x:x(FD),y:T,width:W-R-x(FD),height:H-T-B,fill:'#C0446A',opacity:.06}});
+  for(let g=0;g<=2;g++){{const v=maxv*g/2; el(sv,'line',{{x1:L,x2:W-R,y1:y(v),y2:y(v),stroke:'#ECE5D8'}});
+    el(sv,'text',{{x:W-R+6,y:y(v)+4,'font-size':11,fill:'#7A6B80'}}).textContent=fmt(v);}}
   series.forEach(([arr,col,dash,w])=>el(sv,'path',{{d:arr.slice(0,k).map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+','+y(v).toFixed(1)).join(''),
     fill:'none',stroke:col,'stroke-width':w,'stroke-dasharray':dash}}));
-  el(sv,'text',{{x:x(FD)+5,y:T+12,'font-size':11,fill:'#B3402F'}}).textContent='portal changed';
-  el(sv,'text',{{x:L,y:H-6,'font-size':11,fill:'#6C6C6C'}}).textContent='day 1';
-  el(sv,'text',{{x:W-R-36,y:H-6,'font-size':11,fill:'#6C6C6C'}}).textContent='day 60';}}
+  el(sv,'text',{{x:x(FD)+5,y:T+12,'font-size':11,fill:'#C0446A'}}).textContent='portal changed';
+  el(sv,'text',{{x:L,y:H-6,'font-size':11,fill:'#7A6B80'}}).textContent='day 1';
+  el(sv,'text',{{x:W-R-36,y:H-6,'font-size':11,fill:'#7A6B80'}}).textContent='day 60';}}
 function draw(k){{
-  panel(document.getElementById('s1'),140,[[S.share,'#1F2A24','',3]],1,v=>Math.round(v*100)+'%',k);
-  panel(document.getElementById('s2'),170,[[S.fixed,'#B3402F','5 4',2],[S.gated,'{FOREST}','',2.5]],maxE,v=>Math.round(v),k);
+  panel(document.getElementById('s1'),140,[[S.share,'#1E0525','',3]],1,v=>Math.round(v*100)+'%',k);
+  panel(document.getElementById('s2'),170,[[S.fixed,'#C0446A','5 4',2],[S.gated,'{FOREST}','',2.5]],maxE,v=>Math.round(v),k);
   const sum=a=>a.slice(0,k).reduce((s,v)=>s+v,0);
   document.getElementById('a').firstChild.nodeValue=sum(S.gated); document.getElementById('b').firstChild.nodeValue=sum(S.fixed);
   document.getElementById('c').firstChild.nodeValue=sum(S.reviews).toLocaleString();}}
 function play(){{let k=0;const id=setInterval(()=>{{k++;draw(k);if(k>=n)clearInterval(id);}},70);}}
 document.getElementById('pl').onclick=play; play();
 </script>"""
-components.html(html, height=520)
+st.iframe(html, height=520)
 
 st.markdown(f"""**Read it:** over 60 days the gate let **{tot_g}** wrong submissions through while using **{rev_g:,}** human
 reviews. A fixed {fixed:.0%} QA share let **{tot_f}** through using about **{rev_f:,}** reviews. The trade-off to look for:

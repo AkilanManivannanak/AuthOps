@@ -4,7 +4,6 @@ import time
 
 import pandas as pd
 import streamlit as st
-import streamlit.components.v1 as components
 
 from app.sandbox import browser_available, sandbox, start_agent_run
 from app.ui import ASSETS, FOREST, RED, Timer, log, pill, require_tester, setup, store
@@ -29,13 +28,13 @@ def player(run: dict, folder) -> None:
         frames.append({"img": b64, "tool": s["tool"], "icon": TOOL_ICON.get(s["tool"], "•"), "ok": s["ok"],
                        "err": s.get("error_class", ""), "detail": s.get("detail", "")[:120], "kind": s.get("kind", "tool")})
     html = f"""
-    <style>body{{margin:0;font-family:Inter,system-ui,sans-serif;color:#1F2A24}}
-    .wrap{{display:grid;grid-template-columns:1.6fr 1fr;gap:14px}} .shot{{border:1px solid #E4E1D8;border-radius:14px;overflow:hidden;background:#fff}}
-    .shot img{{width:100%;display:block}} .tl{{max-height:470px;overflow:auto;border:1px solid #E4E1D8;border-radius:14px;background:#fff;padding:6px}}
+    <style>body{{margin:0;font-family:Inter,system-ui,sans-serif;color:#1E0525}}
+    .wrap{{display:grid;grid-template-columns:1.6fr 1fr;gap:14px}} .shot{{border:1px solid #ECE5D8;border-radius:14px;overflow:hidden;background:#fff}}
+    .shot img{{width:100%;display:block}} .tl{{max-height:470px;overflow:auto;border:1px solid #ECE5D8;border-radius:14px;background:#fff;padding:6px}}
     .row{{display:flex;gap:8px;padding:6px 8px;border-radius:10px;font-size:.84rem;cursor:pointer;opacity:.35;transition:all .25s}}
-    .row.seen{{opacity:1}} .row.cur{{background:#F1EEE6;box-shadow:inset 3px 0 0 {FOREST}}} .row.bad.seen{{color:{RED}}} .row.guard .t{{font-style:italic}}
-    .ctl{{display:flex;gap:10px;align-items:center;margin-top:10px}} button{{border:0;border-radius:999px;padding:7px 16px;font-weight:700;background:#1F2A24;color:#FAF8F4;cursor:pointer}}
-    input[type=range]{{flex:1;accent-color:{FOREST}}} .cap{{font-size:.8rem;color:#6C6C6C}}</style>
+    .row.seen{{opacity:1}} .row.cur{{background:#F7F0EC;box-shadow:inset 3px 0 0 {FOREST}}} .row.bad.seen{{color:{RED}}} .row.guard .t{{font-style:italic}}
+    .ctl{{display:flex;gap:10px;align-items:center;margin-top:10px}} button{{border:0;border-radius:999px;padding:7px 16px;font-weight:700;background:#1E0525;color:#FDF8F3;cursor:pointer}}
+    input[type=range]{{flex:1;accent-color:{FOREST}}} .cap{{font-size:.8rem;color:#7A6B80}}</style>
     <div class="wrap"><div class="shot"><img id="img"/></div><div class="tl" id="tl"></div></div>
     <div class="ctl"><button id="pp">Pause</button><input id="sl" type="range" min="0" max="{len(frames) - 1}" value="0"/>
     <span class="cap" id="cap"></span></div>
@@ -51,7 +50,7 @@ def player(run: dict, folder) -> None:
     sl.oninput=()=>{{i=+sl.value; show();}}; document.getElementById('pp').onclick=e=>{{playing=!playing; e.target.textContent=playing?'Pause':'Play';}};
     setInterval(()=>{{ if(playing && i<F.length-1){{i++; show();}} }}, 900); show();
     </script>"""
-    components.html(html, height=540)
+    st.iframe(html, height=540)
 
 
 tab_live, tab_replay = st.tabs(["Run it live", "Recorded runs"])

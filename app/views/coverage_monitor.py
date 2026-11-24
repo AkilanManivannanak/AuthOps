@@ -23,7 +23,7 @@ if mon:
             rows.append({"policy": pol, "cause": cause.replace("_", " "), "denied visits": v})
     chart = alt.Chart(pd.DataFrame(rows)).mark_bar().encode(
         x=alt.X("denied visits:Q"), y=alt.Y("policy:N", sort=["reactive", "scheduled", "proactive"]),
-        color=alt.Color("cause:N", scale=alt.Scale(range=[RED, "#C98B1E", "#609D7B", "#1F2A24"])),
+        color=alt.Color("cause:N", scale=alt.Scale(range=[RED, "#E0855F", "#8C5FB9", "#1E0525"])),
         tooltip=["policy", "cause", "denied visits"]).properties(height=170)
     st.markdown("### Why visits get denied under each policy (mean of 5 seeds, 200 patients)")
     st.altair_chart(chart, width="stretch")

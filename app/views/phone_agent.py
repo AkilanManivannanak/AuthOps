@@ -2,7 +2,6 @@ import json
 import random
 
 import streamlit as st
-import streamlit.components.v1 as components
 
 from app.ui import FOREST, log, setup
 from authops.phone.ivr import PhoneAgent, correct_asr, normalize_for_speech, run_call
@@ -34,13 +33,13 @@ with tab_watch:
     bubbles = [{"k": e.kind, "t": e.text} for e in res.events]
     html = f"""<style>body{{margin:0;font-family:Inter,system-ui,sans-serif}} .c{{display:flex;flex-direction:column;gap:8px;max-width:760px}}
     .b{{padding:10px 14px;border-radius:16px;max-width:75%;opacity:0;transform:translateY(6px);transition:all .35s;font-size:.92rem;line-height:1.4}}
-    .b.on{{opacity:1;transform:none}} .heard{{background:#F1EEE6;align-self:flex-start}} .said{{background:{FOREST};color:#FAF8F4;align-self:flex-end}}
-    .dtmf{{align-self:flex-end;background:#1F2A24;color:#FAF8F4;font-family:monospace}} .who{{font-size:.7rem;opacity:.7;margin-bottom:2px}}</style>
+    .b.on{{opacity:1;transform:none}} .heard{{background:#F7F0EC;align-self:flex-start}} .said{{background:{FOREST};color:#FDF8F3;align-self:flex-end}}
+    .dtmf{{align-self:flex-end;background:#1E0525;color:#FDF8F3;font-family:monospace}} .who{{font-size:.7rem;opacity:.7;margin-bottom:2px}}</style>
     <div class="c" id="c"></div><script>const B={json.dumps(bubbles)};const c=document.getElementById('c');
     B.forEach((b,i)=>{{const d=document.createElement('div');d.className='b '+b.k;
       d.innerHTML='<div class="who">'+(b.k==='heard'?'payor line':b.k==='dtmf'?'keypad (silent)':'agent')+'</div>'+(b.k==='dtmf'?'pressed '+b.t:b.t);
       c.appendChild(d);setTimeout(()=>d.classList.add('on'),i*650);}});</script>"""
-    components.html(html, height=90 * len(bubbles) + 40, scrolling=True)
+    st.iframe(html, height=90 * len(bubbles) + 40)
     st.markdown(f"**Outcome:** {res.status} · extracted {res.answer} · {res.turns} turns")
 
 with tab_play:

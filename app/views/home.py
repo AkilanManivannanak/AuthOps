@@ -20,7 +20,7 @@ from authops.sim.floor import build as build_floor  # noqa: E402
 
 @st.cache_data(show_spinner="Running 26 weeks of requests through the pipeline")
 def _floor():
-    return build_floor()
+    return asset_json("floor.json") or build_floor()  # precomputed by scripts/build_app_assets.py
 
 
 operations_floor(_floor())
