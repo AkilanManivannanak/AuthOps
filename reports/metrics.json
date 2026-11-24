@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-22 21:15",
+ "generated": "2026-11-23 23:51",
  "llm": true,
  "cases": 80,
  "env": {
@@ -216,7 +216,7 @@
       "silent_error": 0.006
      }
     },
-    "p50_latency_ms": 825,
+    "p50_latency_ms": 761,
     "tokens_in": 0,
     "tokens_out": 0
    },
@@ -224,27 +224,27 @@
     "summary": {
      "all": {
       "n": 1680,
-      "accuracy": 0.951,
+      "accuracy": 0.953,
       "precision": 0.978,
-      "coverage": 0.973,
+      "coverage": 0.974,
       "silent_error": 0.021,
       "doc_ok": 0.787,
       "docs": 160
      },
      "cond:clean": {
       "n": 567,
-      "accuracy": 0.981,
+      "accuracy": 0.982,
       "precision": 0.993,
-      "coverage": 0.988,
+      "coverage": 0.989,
       "silent_error": 0.007,
       "doc_ok": 0.926,
       "docs": 54
      },
      "tmpl:tp": {
       "n": 880,
-      "accuracy": 0.964,
+      "accuracy": 0.966,
       "precision": 0.991,
-      "coverage": 0.973,
+      "coverage": 0.975,
       "silent_error": 0.009
      },
      "field:patient_name": {
@@ -256,9 +256,9 @@
      },
      "type:treatment_plan": {
       "n": 880,
-      "accuracy": 0.964,
+      "accuracy": 0.966,
       "precision": 0.991,
-      "coverage": 0.973,
+      "coverage": 0.975,
       "silent_error": 0.009,
       "doc_ok": 0.863,
       "docs": 80
@@ -307,16 +307,16 @@
      },
      "field:plan_end": {
       "n": 80,
-      "accuracy": 0.963,
+      "accuracy": 0.975,
       "precision": 1.0,
-      "coverage": 0.963,
+      "coverage": 0.975,
       "silent_error": 0.0
      },
      "field:provider_npi": {
       "n": 160,
-      "accuracy": 0.894,
+      "accuracy": 0.9,
       "precision": 1.0,
-      "coverage": 0.894,
+      "coverage": 0.9,
       "silent_error": 0.0
      },
      "field:signature_present": {
@@ -379,34 +379,34 @@
      },
      "field:end_date": {
       "n": 80,
-      "accuracy": 0.975,
+      "accuracy": 0.988,
       "precision": 1.0,
-      "coverage": 0.975,
+      "coverage": 0.988,
       "silent_error": 0.0
      },
      "cond:scan": {
       "n": 567,
-      "accuracy": 0.972,
+      "accuracy": 0.974,
       "precision": 0.984,
-      "coverage": 0.988,
+      "coverage": 0.989,
       "silent_error": 0.016,
       "doc_ok": 0.833,
       "docs": 54
      },
      "type:approval_letter": {
       "n": 560,
-      "accuracy": 0.925,
+      "accuracy": 0.927,
       "precision": 0.954,
-      "coverage": 0.97,
+      "coverage": 0.971,
       "silent_error": 0.045,
       "doc_ok": 0.661,
       "docs": 56
      },
      "cond:fax": {
       "n": 546,
-      "accuracy": 0.899,
+      "accuracy": 0.901,
       "precision": 0.955,
-      "coverage": 0.941,
+      "coverage": 0.943,
       "silent_error": 0.042,
       "doc_ok": 0.596,
       "docs": 52
@@ -420,15 +420,15 @@
      },
      "tmpl:c": {
       "n": 170,
-      "accuracy": 0.853,
+      "accuracy": 0.859,
       "precision": 0.918,
-      "coverage": 0.929,
+      "coverage": 0.935,
       "silent_error": 0.076
      }
     },
-    "p50_latency_ms": 5065,
-    "tokens_in": 109340,
-    "tokens_out": 108836
+    "p50_latency_ms": 4579,
+    "tokens_in": 109334,
+    "tokens_out": 108790
    }
   }
  },
@@ -471,7 +471,7 @@
    "runs": 6,
    "verified_submit_rate": 1.0,
    "mean_smoothness": 97.8,
-   "p50_duration_s": 11.21,
+   "p50_duration_s": 10.67,
    "mean_steps": 18,
    "runs_with_major_qa_issue": 0
   },
@@ -479,7 +479,7 @@
    "runs": 15,
    "verified_submit_rate": 1.0,
    "mean_smoothness": 98.0,
-   "p50_duration_s": 19.98,
+   "p50_duration_s": 18.35,
    "mean_steps": 20.5,
    "runs_with_major_qa_issue": 0
   },
@@ -487,7 +487,7 @@
    "runs": 34,
    "verified_submit_rate": 1.0,
    "mean_smoothness": 98.0,
-   "p50_duration_s": 3.0,
+   "p50_duration_s": 3.04,
    "mean_steps": 20.2,
    "runs_with_major_qa_issue": 0
   },
@@ -495,7 +495,7 @@
    "runs": 13,
    "verified_submit_rate": 1.0,
    "mean_smoothness": 96.7,
-   "p50_duration_s": 4.42,
+   "p50_duration_s": 4.45,
    "mean_steps": 25.7,
    "runs_with_major_qa_issue": 0
   },
@@ -503,7 +503,7 @@
    "runs": 19,
    "verified_submit_rate": 1.0,
    "mean_smoothness": 98.0,
-   "p50_duration_s": 1.16,
+   "p50_duration_s": 1.19,
    "mean_steps": 20,
    "runs_with_major_qa_issue": 0
   },
@@ -511,7 +511,7 @@
    "runs": 15,
    "verified_submit_rate": 1.0,
    "mean_smoothness": 99.2,
-   "p50_duration_s": 0.77,
+   "p50_duration_s": 0.76,
    "mean_steps": 16.4,
    "runs_with_major_qa_issue": 0
   },
@@ -660,12 +660,12 @@
    },
    "claude:claude-haiku-4-5": {
     "field_acc_ci": [
-     0.94,
-     0.961
+     0.942,
+     0.962
     ],
     "doc_ok_ci": [
-     0.671,
-     0.805
+     0.678,
+     0.811
     ],
     "silent_error_ci": [
      0.0155,
@@ -677,14 +677,14 @@
      "rules",
      "claude:claude-haiku-4-5"
     ],
-    "acc_diff": 0.0071,
+    "acc_diff": 0.0054,
     "ci_doc_bootstrap": [
-     -0.0048,
-     0.0225
+     -0.0065,
+     0.0208
     ],
-    "only_a": 42,
-    "only_b": 30,
-    "mcnemar_p": 0.1945
+    "only_a": 41,
+    "only_b": 32,
+    "mcnemar_p": 0.3492
    }
   },
   "ablations": {
@@ -706,9 +706,9 @@
  },
  "llm_usage": {
   "calls": 505,
-  "tokens_in": 512849,
-  "tokens_out": 126270,
-  "cost_usd": 1.1442
+  "tokens_in": 512824,
+  "tokens_out": 126042,
+  "cost_usd": 1.143
  },
  "routing": {
   "portal": 34,

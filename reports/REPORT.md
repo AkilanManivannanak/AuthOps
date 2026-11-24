@@ -1,6 +1,6 @@
 # AuthOps evaluation report
 
-Generated 2026-11-22 21:15. 80 synthetic cases, fictional payors, no real PHI. LLM arms: on. Environment: Tesseract 5.5.4, Python 3.12.12, Darwin.
+Generated 2026-11-23 23:51. 80 synthetic cases, fictional payors, no real PHI. LLM arms: on. Environment: Tesseract 5.5.4, Python 3.12.12, Darwin.
 
 ## 1. Document extraction
 
@@ -8,8 +8,8 @@ Document type classification accuracy: 96.3%
 
 | Extractor | Field accuracy | Precision when answered | Coverage | Silent error | Docs fully correct | p50 latency |
 |---|---|---|---|---|---|---|
-| rules | 95.8% | 99.5% | 96.3% | 0.5% | 75.6% | 825 ms |
-| claude:claude-haiku-4-5 | 95.1% | 97.8% | 97.3% | 2.1% | 78.7% | 5065 ms |
+| rules | 95.8% | 99.5% | 96.3% | 0.5% | 75.6% | 761 ms |
+| claude:claude-haiku-4-5 | 95.3% | 97.8% | 97.4% | 2.1% | 78.7% | 4579 ms |
 
 By image condition and template (first extractor):
 
@@ -62,12 +62,12 @@ Routing of ready cases: {'portal': 34, 'fhir': 10, 'phone': 12}; held for docume
 
 | Slice | Runs | Verified submit rate | Mean smoothness | p50 duration | Mean steps | Runs with major QA issue |
 |---|---|---|---|---|---|---|
-| portal:keystone | 6 | 100.0% | 97.8 | 11.21s | 18 | 0 |
-| arm:claude-haiku-4-5 | 15 | 100.0% | 98.0 | 19.98s | 20.5 | 0 |
-| all | 34 | 100.0% | 98.0 | 3.0s | 20.2 | 0 |
-| portal:summit | 13 | 100.0% | 96.7 | 4.42s | 25.7 | 0 |
-| arm:playbook | 19 | 100.0% | 98.0 | 1.16s | 20 | 0 |
-| portal:northwind | 15 | 100.0% | 99.2 | 0.77s | 16.4 | 0 |
+| portal:keystone | 6 | 100.0% | 97.8 | 10.67s | 18 | 0 |
+| arm:claude-haiku-4-5 | 15 | 100.0% | 98.0 | 18.35s | 20.5 | 0 |
+| all | 34 | 100.0% | 98.0 | 3.04s | 20.2 | 0 |
+| portal:summit | 13 | 100.0% | 96.7 | 4.45s | 25.7 | 0 |
+| arm:playbook | 19 | 100.0% | 98.0 | 1.19s | 20 | 0 |
+| portal:northwind | 15 | 100.0% | 99.2 | 0.76s | 16.4 | 0 |
 
 Error classes: {}
 Silent errors (auto-submitted with a major issue): 0
@@ -104,12 +104,12 @@ Credentials disabled by the pool: [('sfb-ops-c', 'auth_invalid')]
 Small pilots need intervals, so every headline comparison carries one.
 
 - rules: field accuracy 95% CI [0.948, 0.967], whole-document CI [0.645, 0.783], silent-error CI [0.0024, 0.0094]
-- claude:claude-haiku-4-5: field accuracy 95% CI [0.94, 0.961], whole-document CI [0.671, 0.805], silent-error CI [0.0155, 0.0295]
-- rules vs claude:claude-haiku-4-5: field accuracy diff +0.007 (95% CI -0.005 to +0.022, documents resampled), McNemar p=0.1945 (42 fields right only under rules, 30 only under claude:claude-haiku-4-5)
+- claude:claude-haiku-4-5: field accuracy 95% CI [0.942, 0.962], whole-document CI [0.678, 0.811], silent-error CI [0.0155, 0.0295]
+- rules vs claude:claude-haiku-4-5: field accuracy diff +0.005 (95% CI -0.006 to +0.021, documents resampled), McNemar p=0.3492 (41 fields right only under rules, 32 only under claude:claude-haiku-4-5)
 - overlay_guard_on: 8/8 vs 2/8 submitted, Fisher exact p=0.007
 - credential_threshold_2: 9/9 vs 8/9 submitted, Fisher exact p=1.0
 - denial-prevention recall 95% CI [0.862, 1.0]
 
 ## 5. LLM usage
 
-505 calls, 512849 input / 126270 output tokens, ~$1.1442
+505 calls, 512824 input / 126042 output tokens, ~$1.143

@@ -221,9 +221,9 @@
   "fields": [
    {
     "field": "auth_number",
-    "value": "58AMDN70KG",
-    "conf": 0.88,
-    "auto_verdict": "correct"
+    "value": null,
+    "conf": 0.44,
+    "auto_verdict": "missing"
    },
    {
     "field": "decision",
@@ -233,7 +233,7 @@
    },
    {
     "field": "patient_name",
-    "value": "RAHMAN, KAI",
+    "value": "Kai Rahman",
     "conf": 0.935,
     "auto_verdict": "correct"
    },
@@ -260,9 +260,9 @@
    },
    {
     "field": "approved_units",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": 21,
+    "conf": 0.94,
+    "auto_verdict": "correct"
    },
    {
     "field": "start_date",
@@ -278,9 +278,9 @@
    },
    {
     "field": "provider_npi",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": "1147104974",
+    "conf": 0.96,
+    "auto_verdict": "correct"
    }
   ]
  },
@@ -365,7 +365,7 @@
    {
     "field": "auth_number",
     "value": null,
-    "conf": 0.12,
+    "conf": 0.135,
     "auto_verdict": "missing"
    },
    {
@@ -376,9 +376,9 @@
    },
    {
     "field": "patient_name",
-    "value": "0.0.0... FUJIMOTO, CALEB",
-    "conf": 0.57,
-    "auto_verdict": "wrong"
+    "value": "Caleb Fujimoto",
+    "conf": 0.855,
+    "auto_verdict": "correct"
    },
    {
     "field": "patient_dob",
@@ -506,7 +506,7 @@
    {
     "field": "auth_number",
     "value": null,
-    "conf": 0.25,
+    "conf": 0.18,
     "auto_verdict": "missing"
    },
    {
@@ -517,7 +517,7 @@
    },
    {
     "field": "patient_name",
-    "value": "OKAFOR, INES",
+    "value": "Ines Okafor",
     "conf": 0.935,
     "auto_verdict": "correct"
    },
@@ -659,7 +659,7 @@
    },
    {
     "field": "patient_name",
-    "value": "OSEI, NOAH",
+    "value": "Noah Osei",
     "conf": 0.935,
     "auto_verdict": "correct"
    },
@@ -686,9 +686,9 @@
    },
    {
     "field": "approved_units",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": 21,
+    "conf": 0.94,
+    "auto_verdict": "correct"
    },
    {
     "field": "start_date",
@@ -704,9 +704,9 @@
    },
    {
     "field": "provider_npi",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": "1651676128",
+    "conf": 0.96,
+    "auto_verdict": "correct"
    }
   ]
  },
@@ -815,9 +815,9 @@
    },
    {
     "field": "member_id",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": "HBL33131984",
+    "conf": 0.864,
+    "auto_verdict": "correct"
    },
    {
     "field": "cpt_codes",
@@ -1150,7 +1150,7 @@
    {
     "field": "auth_number",
     "value": null,
-    "conf": 0.05,
+    "conf": 0.025,
     "auto_verdict": "missing"
    },
    {
@@ -1161,7 +1161,7 @@
    },
    {
     "field": "patient_name",
-    "value": "LINDQVIST, LEAH",
+    "value": "Leah Lindqvist",
     "conf": 0.96,
     "auto_verdict": "correct"
    },
@@ -1188,9 +1188,9 @@
    },
    {
     "field": "approved_units",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": 22,
+    "conf": 0.95,
+    "auto_verdict": "correct"
    },
    {
     "field": "start_date",
@@ -1206,9 +1206,9 @@
    },
    {
     "field": "provider_npi",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": "1400088385",
+    "conf": 0.96,
+    "auto_verdict": "correct"
    }
   ]
  },
@@ -1221,9 +1221,9 @@
   "fields": [
    {
     "field": "auth_number",
-    "value": "RS0023191",
+    "value": "R50023191",
     "conf": 0.89,
-    "auto_verdict": "wrong"
+    "auto_verdict": "correct"
    },
    {
     "field": "decision",
@@ -1233,9 +1233,9 @@
    },
    {
     "field": "patient_name",
-    "value": "Zara Ose1",
-    "conf": 0.82,
-    "auto_verdict": "wrong"
+    "value": null,
+    "conf": 0.41,
+    "auto_verdict": "missing"
    },
    {
     "field": "patient_dob",
@@ -1304,7 +1304,7 @@
    },
    {
     "field": "patient_name",
-    "value": "BRENNAN, LUCAS",
+    "value": "Lucas Brennan",
     "conf": 0.96,
     "auto_verdict": "correct"
    },
@@ -1330,9 +1330,9 @@
    },
    {
     "field": "approved_units",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": 34,
+    "conf": 0.96,
+    "auto_verdict": "correct"
    },
    {
     "field": "start_date",
@@ -1348,9 +1348,9 @@
    },
    {
     "field": "provider_npi",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": "1205617487",
+    "conf": 0.96,
+    "auto_verdict": "correct"
    }
   ]
  },
@@ -1566,9 +1566,9 @@
    },
    {
     "field": "provider_npi",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": "1948757491",
+    "conf": 0.93,
+    "auto_verdict": "correct"
    },
    {
     "field": "signature_present",
@@ -1770,11 +1770,9 @@
    },
    {
     "field": "icd10_codes",
-    "value": [
-     "F84.0"
-    ],
-    "conf": 0.9,
-    "auto_verdict": "wrong"
+    "value": null,
+    "conf": 0.484,
+    "auto_verdict": "missing"
    },
    {
     "field": "cpt_codes",
@@ -2004,17 +2002,14 @@
    {
     "field": "member_id",
     "value": null,
-    "conf": 0.0,
+    "conf": 0.465,
     "auto_verdict": "missing"
    },
    {
     "field": "icd10_codes",
-    "value": [
-     "M17.11",
-     "M54"
-    ],
-    "conf": 0.61,
-    "auto_verdict": "wrong"
+    "value": null,
+    "conf": 0.533,
+    "auto_verdict": "missing"
    },
    {
     "field": "cpt_codes",
@@ -2202,9 +2197,9 @@
    },
    {
     "field": "provider_npi",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": "1205617487",
+    "conf": 0.96,
+    "auto_verdict": "correct"
    },
    {
     "field": "signature_present",
@@ -2247,9 +2242,11 @@
    },
    {
     "field": "icd10_codes",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": [
+     "F88"
+    ],
+    "conf": 0.589,
+    "auto_verdict": "correct"
    },
    {
     "field": "cpt_codes",
@@ -2489,7 +2486,7 @@
      "M17.11",
      "M25.561"
     ],
-    "conf": 0.87,
+    "conf": 0.827,
     "auto_verdict": "correct"
    },
    {
@@ -2520,9 +2517,9 @@
    },
    {
     "field": "provider_npi",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": "1581535493",
+    "conf": 0.96,
+    "auto_verdict": "correct"
    },
    {
     "field": "signature_present",
@@ -2532,9 +2529,9 @@
    },
    {
     "field": "signature_date",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": "2026-11-15",
+    "conf": 0.93,
+    "auto_verdict": "correct"
    }
   ]
  },
@@ -2725,7 +2722,7 @@
    {
     "field": "icd10_codes",
     "value": null,
-    "conf": 0.0,
+    "conf": 0.342,
     "auto_verdict": "missing"
    },
    {
@@ -2795,9 +2792,9 @@
    },
    {
     "field": "member_id",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": "SFB11168389",
+    "conf": 0.817,
+    "auto_verdict": "correct"
    },
    {
     "field": "icd10_codes",
@@ -2835,9 +2832,9 @@
    },
    {
     "field": "provider_npi",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": "1293557595",
+    "conf": 0.96,
+    "auto_verdict": "correct"
    },
    {
     "field": "signature_present",
@@ -2996,9 +2993,9 @@
    },
    {
     "field": "provider_npi",
-    "value": null,
-    "conf": 0.0,
-    "auto_verdict": "missing"
+    "value": "1616828129",
+    "conf": 0.96,
+    "auto_verdict": "correct"
    },
    {
     "field": "signature_present",

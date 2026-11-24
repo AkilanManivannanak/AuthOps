@@ -67,8 +67,8 @@
   },
   {
    "coverage": 0.668,
-   "silent_error": 0.0046,
-   "precision": 0.9932
+   "silent_error": 0.003,
+   "precision": 0.9954
   },
   {
    "coverage": 0.715,
@@ -87,23 +87,23 @@
   },
   {
    "coverage": 0.858,
-   "silent_error": 0.0076,
-   "precision": 0.9911
+   "silent_error": 0.0046,
+   "precision": 0.9947
   },
   {
    "coverage": 0.905,
-   "silent_error": 0.0122,
-   "precision": 0.9865
+   "silent_error": 0.0076,
+   "precision": 0.9916
   },
   {
    "coverage": 0.953,
-   "silent_error": 0.0351,
-   "precision": 0.9632
+   "silent_error": 0.0076,
+   "precision": 0.992
   },
   {
    "coverage": 1.0,
-   "silent_error": 0.0823,
-   "precision": 0.9177
+   "silent_error": 0.0442,
+   "precision": 0.9558
   }
  ],
  "learned": [
@@ -129,8 +129,8 @@
   },
   {
    "coverage": 0.24,
-   "silent_error": 0.0,
-   "precision": 1.0
+   "silent_error": 0.0015,
+   "precision": 0.9936
   },
   {
    "coverage": 0.287,
@@ -144,38 +144,38 @@
   },
   {
    "coverage": 0.383,
-   "silent_error": 0.0015,
-   "precision": 0.996
+   "silent_error": 0.003,
+   "precision": 0.992
   },
   {
    "coverage": 0.43,
-   "silent_error": 0.0015,
-   "precision": 0.9965
+   "silent_error": 0.0046,
+   "precision": 0.9894
   },
   {
    "coverage": 0.477,
-   "silent_error": 0.0015,
-   "precision": 0.9968
+   "silent_error": 0.0046,
+   "precision": 0.9904
   },
   {
    "coverage": 0.525,
-   "silent_error": 0.0015,
-   "precision": 0.9971
+   "silent_error": 0.0046,
+   "precision": 0.9913
   },
   {
    "coverage": 0.573,
-   "silent_error": 0.0015,
-   "precision": 0.9973
+   "silent_error": 0.0046,
+   "precision": 0.992
   },
   {
    "coverage": 0.62,
-   "silent_error": 0.0015,
-   "precision": 0.9975
+   "silent_error": 0.0046,
+   "precision": 0.9926
   },
   {
    "coverage": 0.668,
-   "silent_error": 0.003,
-   "precision": 0.9954
+   "silent_error": 0.0046,
+   "precision": 0.9932
   },
   {
    "coverage": 0.715,
@@ -184,33 +184,33 @@
   },
   {
    "coverage": 0.763,
-   "silent_error": 0.0061,
-   "precision": 0.992
+   "silent_error": 0.0046,
+   "precision": 0.994
   },
   {
    "coverage": 0.81,
-   "silent_error": 0.0061,
-   "precision": 0.9925
+   "silent_error": 0.0046,
+   "precision": 0.9944
   },
   {
    "coverage": 0.858,
-   "silent_error": 0.0091,
-   "precision": 0.9893
+   "silent_error": 0.0046,
+   "precision": 0.9947
   },
   {
    "coverage": 0.905,
-   "silent_error": 0.0152,
-   "precision": 0.9832
+   "silent_error": 0.0076,
+   "precision": 0.9916
   },
   {
    "coverage": 0.953,
-   "silent_error": 0.0351,
-   "precision": 0.9632
+   "silent_error": 0.0152,
+   "precision": 0.984
   },
   {
    "coverage": 1.0,
-   "silent_error": 0.0823,
-   "precision": 0.9177
+   "silent_error": 0.0442,
+   "precision": 0.9558
   }
  ]
 }
