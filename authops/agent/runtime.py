@@ -20,6 +20,7 @@ from dataclasses import dataclass, field
 
 from authops.agent.credentials import CredentialPool
 from authops.agent.tools import ToolError, ToolResult, Tools
+from authops.agent.validator import check as validate_turn
 from authops.ops.scoring import smoothness
 from authops.ops.store import Store
 
@@ -66,7 +67,7 @@ def classify_page(obs) -> str:
 class AgentRuntime:
     def __init__(self, browser, base_url: str, pool: CredentialPool, store: Store,
                  max_turns: int = MAX_TURNS, wall_clock_s: float = WALL_CLOCK_S,
-                 overlay_guard: bool = True):
+                 overlay_guard: bool = True, validate_turns: bool = True):
         self.browser = browser
         self.base_url = base_url
         self.pool = pool
@@ -74,6 +75,7 @@ class AgentRuntime:
         self.max_turns = max_turns
         self.wall_clock_s = wall_clock_s
         self.overlay_guard = overlay_guard  # ablation switch
+        self.validate_turns = validate_turns  # ablation switch
 
     def run(self, case: dict, portal: str, policy, files: list[str], arm: str = "default",
             qa_routed: bool = False, on_step=None) -> RunResult:
@@ -84,7 +86,8 @@ class AgentRuntime:
         bump = lambda k, n=1: c.__setitem__(k, c.get(k, 0) + n)  # noqa: E731
         self.store.start_run(run_id, case_id=case["case_id"], portal=portal, channel="portal", arm=arm,
                              policy=policy.name, model=policy.model or "", status="running",
-                             qa_routed=int(qa_routed))
+                             qa_routed=int(qa_routed),
+                             tenant=str(case.get("provider", {}).get("tax_id") or "default"))
         cred = self.pool.lease(portal)
         if cred is None:
             return self._end(res, "needs_human", "no_credential", "all credentials disabled or leased", 0, policy)
@@ -201,6 +204,22 @@ class AgentRuntime:
                         return self._verify_and_finish(res, tools, case, step, policy, t0, c)
                     err = classify_page(obs) or "playbook_gap"
                     return self._finish(res, status, err, note, step, policy, t0, c)
+
+                # ---------------- turn validator: a second check before anything touches the portal
+                if self.validate_turns:
+                    from authops.agent.policy import case_values
+
+                    flags = validate_turn(obs, act, case, case_values(case, files), history, self.base_url,
+                                          playbook=getattr(policy, "spec", None) or getattr(policy, "playbook", None))
+                    block = [f for f in flags if f.blocking]
+                    for f in flags:
+                        bump("validator_block" if f.blocking else "validator_warn")
+                    if block:
+                        persist("validator", tool, args, ToolResult(False, "; ".join(f"{f.kind}: {f.detail}" for f in block),
+                                                                    "validator_block"), 0)
+                        continue
+                    for f in flags:
+                        persist("validator", tool, dict(args, flag=f.kind), ToolResult(True, f.detail, f.kind), 0)
 
                 # ---------------- execute with one guarded retry
                 r = self._execute(tools, tool, args)

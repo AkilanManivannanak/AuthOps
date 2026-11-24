@@ -9,7 +9,8 @@ from app.ui import Timer, checklist, log, note, pill, require_tester, setup, sto
 from authops.docintel.normalize import KNOWN_ICD10, SPECIALTY_CPT
 from authops.llm import ClaudeLLM, llm_available
 from authops.synth.generate import PAYOR_BY_ID, PAYORS, generate_cases, payor_decision
-from authops.validation.rules import NLRule, load_requirements, validate_case
+from authops.validation.engine import compile_rule
+from authops.validation.rules import NLRule, load_requirements, validate_case, validate_with_graph
 
 TODAY = date(2026, 11, 17)
 setup("Denial Shield", "Build a request, see its approval odds, and catch payor rule changes as they happen.")
@@ -58,6 +59,16 @@ with out:
     st.markdown(f"#### Rules check &nbsp; {verdict}", unsafe_allow_html=True)
     checklist([("ok" if r.passed else "bad" if r.passed is False else "warn",
                 r.rule.replace("_", " "), r.message or "passes") for r in rep.results])
+    g = validate_with_graph(case, TODAY, req)
+    st.markdown(" → ".join(f"<span class='ao-pill' style='background:#F5EEFB;color:#5B2A86'>{n}</span>"
+                           for n in g["path"]), unsafe_allow_html=True)
+    if g["passed"] is None:
+        st.caption("A plain-English rule on this path needs a model to decide, so this request would go to a person.")
+    with st.popover("Write a rule"):
+        q = st.text_input("Plain-English rule", "Does the plan state measurable functional goals?")
+        st.caption("Compiled to the schema the model must fill. `answer` accepts only a true boolean, and a "
+                   "true needs quotes that are found in the document.")
+        st.json(compile_rule(q).model_json_schema(), expanded=False)
 
     if st.button("Send to the payor (simulated)", type="primary", width="stretch"):
         decision, approved, reason = payor_decision(case, random.Random(hash((pid, spec, units))))

@@ -90,13 +90,12 @@ class NLRule:
         text = ctx.get("documents_text", "")
         if self.llm is None or not text:
             return RuleResult(self.name, None, "LLM rules need ANTHROPIC_API_KEY and document text", "custom")
-        r = self.llm.complete(
-            f"Answer with exactly one word, YES or NO.\nQuestion: {self.question}\n\n"
-            f"Document:\n<<<\n{text[:12000]}\n>>>", max_tokens=5)
-        ans = r.text.strip().upper().rstrip(".")
-        if ans not in ("YES", "NO"):  # forced cast: anything else is not a pass
-            return RuleResult(self.name, None, f"non-boolean answer: {ans[:30]}", "custom")
-        return RuleResult(self.name, ans == "YES", "" if ans == "YES" else self.question, "custom")
+        from authops.validation.engine import decide
+
+        v = decide(self.question, text[:24000], self.llm)   # typed schema, strict bool, quoted evidence
+        if v.passed is None:
+            return RuleResult(self.name, None, v.reason, "custom")
+        return RuleResult(self.name, v.passed, "" if v.passed else self.question, "custom")
 
 
 @dataclass
@@ -144,3 +143,31 @@ def validate_case(case: Case, today: date, req: dict | None = None, llm=None,
             continue
         rep.results.append(rule.run(case, ctx))
     return rep
+
+
+# ---------------------------------------------------------------- graph-driven validation
+
+GRAPH_PATH = Path(__file__).resolve().parents[2] / "configs" / "validation_graph.yaml"
+
+
+def validate_with_graph(case: Case, today: date, req: dict | None = None, llm=None, documents_text: str = "",
+                        doc_type: str = "treatment_plan", graph_path: Path = GRAPH_PATH) -> dict:
+    """Walk the configuration process for this document and evaluate the combined configuration.
+    Returns the path taken, every rule result and the three-valued outcome."""
+    from authops.validation.engine import evaluate_expr, graph_from_yaml, path_config, rule_names, walk
+
+    req = req or load_requirements()
+    root = graph_from_yaml(yaml.safe_load(graph_path.read_text()))
+    doc = {"doc_type": doc_type, "payor": case.payor.payor_id, "specialty": case.specialty}
+    path = walk(root, doc) if root.admits(doc) else []
+    expr = path_config(path)
+    ctx = {"today": today, "documents_text": documents_text}
+    spec = req["payors"].get(case.payor.payor_id, {}).get("specialties", {}).get(case.specialty, {})
+    named = {**DEFAULT_RULES, "school_schedule_attached": SCHOOL_RULE,
+             "units_within_payor_limit": _units_rule(spec.get("max_units_per_request", 10**9))}
+    results: dict[str, RuleResult] = {}
+    for n in sorted(rule_names(expr)):
+        rule = NLRule(n.removeprefix("custom: "), llm) if n.startswith("custom: ") else named[n]
+        results[n] = rule.run(case, ctx)
+    outcome = evaluate_expr(expr, {k: r.passed for k, r in results.items()})
+    return {"path": [p.name for p in path], "config": expr, "results": results, "passed": outcome}

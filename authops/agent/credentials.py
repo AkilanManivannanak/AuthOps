@@ -63,3 +63,38 @@ class CredentialPool:
     def status(self) -> list[dict]:
         return [{"portal": c.portal, "username": c.username, "disabled": c.disabled,
                  "failures": c.consecutive_failures} for lst in self.pool.values() for c in lst]
+
+
+class EmailOtpLock:
+    """Serialize email one-time codes per inbox.
+
+    Several credentials often share one inbox. If two agents log in at once, each can read the
+    other's code. A lease on the inbox makes code retrieval one-at-a-time; a lease expires after
+    `ttl_s` (5 minutes) so a crashed agent cannot block the inbox forever."""
+
+    def __init__(self, ttl_s: float = 300.0, clock=None):
+        import time as _time
+
+        self.ttl_s = ttl_s
+        self.clock = clock or _time.monotonic
+        self._lock = threading.Lock()
+        self._held: dict[str, tuple[str, float]] = {}   # inbox -> (holder, expires_at)
+
+    def acquire(self, inbox: str, holder: str) -> bool:
+        with self._lock:
+            now = self.clock()
+            cur = self._held.get(inbox)
+            if cur and cur[1] > now and cur[0] != holder:
+                return False
+            self._held[inbox] = (holder, now + self.ttl_s)
+            return True
+
+    def release(self, inbox: str, holder: str) -> None:
+        with self._lock:
+            if self._held.get(inbox, ("", 0))[0] == holder:
+                del self._held[inbox]
+
+    def holder(self, inbox: str) -> str | None:
+        with self._lock:
+            cur = self._held.get(inbox)
+            return cur[0] if cur and cur[1] > self.clock() else None

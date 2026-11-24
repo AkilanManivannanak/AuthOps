@@ -1,0 +1,26 @@
+# Configuration process for pre-submission validation.
+# Each node may carry a configuration (rules combined with all / any / not) and gates on the
+# document. A document walks one path from the root; the configurations on that path are ANDed.
+name: all treatment plans
+gates: {doc_type: treatment_plan}
+config: {all: [signature_present, plan_not_expired, dates_ordered, icd10_billable, cpt_matches_specialty,
+               npi_valid, member_id_matches_payor, units_within_payor_limit]}
+children:
+  - name: Keystone Community Medicaid
+    gates: {payor: KCM}
+    children:
+      - name: Keystone ABA
+        gates: {specialty: aba}
+        # school-age ABA hours: a school schedule, or a plan that says the child is not in school
+        config: {any: [school_schedule_attached,
+                       "custom: Does the plan state that the patient is not enrolled in school?"]}
+      - name: Keystone PT
+        gates: {specialty: physical_therapy}
+  - name: Northwind Health Plan
+    gates: {payor: NWH}
+    children:
+      - name: Northwind PT
+        gates: {specialty: physical_therapy}
+        config: {all: ["custom: Does the treatment plan state measurable functional goals?"]}
+  - name: other payors
+    gates: {}

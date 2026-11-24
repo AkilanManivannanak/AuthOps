@@ -16,6 +16,8 @@ PENALTIES = {
     "extra_step": 1,       # each step beyond the playbook's expected count
     "timeout": 30,
     "verification_mismatch": 40,
+    "validator_block": 12,  # turn validator stopped an action (phantom element, unsourced value, off-domain)
+    "validator_warn": 3,    # stated reason and action disagree
 }
 
 

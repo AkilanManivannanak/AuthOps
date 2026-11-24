@@ -163,7 +163,12 @@ def parse_answer(heard: str, purpose: str) -> dict:
     return out
 
 
-def run_call(case: dict, purpose: str, records: dict, seed: int = 0, max_turns: int = 12) -> CallResult:
+def run_call(case: dict, purpose: str, records: dict, seed: int = 0, max_turns: int = 12,
+             interrupt_rate: float = 0.0) -> CallResult:
+    """`interrupt_rate`: chance the other side talks over the agent mid-reply. Only chunks whose
+    play mark came back are logged as said; the rest are logged as dropped."""
+    from authops.phone.stream import Playback
+
     rng = random.Random(seed)
     line = PayorLine(records, rng)
     agent = PhoneAgent(case, purpose)
@@ -178,7 +183,16 @@ def run_call(case: dict, purpose: str, records: dict, seed: int = 0, max_turns: 
         if dtmf:
             res.events.append(CallEvent(t, "dtmf", dtmf))  # sent silently, never announced
         if said:
-            res.events.append(CallEvent(t, "said", said))
+            pb = Playback()
+            pb.say(said)
+            while pb.queue:
+                if len(pb.heard) >= 1 and rng.random() < interrupt_rate:
+                    pb.interrupt()
+                    break
+                pb.mark()
+            res.events.append(CallEvent(t, "said", pb.transcript()))
+            if pb.dropped:
+                res.events.append(CallEvent(t, "system", "interrupted; not heard: " + " ".join(pb.dropped)))
         if said and said.startswith("No, that's everything"):
             res.status = "completed" if all(v is not None for v in res.answer.values()) else "needs_human"
             res.turns = t + 1

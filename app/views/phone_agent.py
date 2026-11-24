@@ -20,7 +20,7 @@ def phone_cases():
 
 
 cases, records = phone_cases()
-tab_watch, tab_play, tab_norm = st.tabs(["Watch a call", "You are the payor rep", "Speech normalization"])
+tab_watch, tab_play, tab_norm, tab_stream = st.tabs(["Watch a call", "You are the payor rep", "Speech normalization", "Streaming"])
 
 with tab_watch:
     a, b, c = st.columns([1.3, 1, 1])
@@ -71,3 +71,44 @@ with tab_norm:
     st.info(normalize_for_speech(txt))
     st.caption("IDs are read digit by digit, dates are spoken, and DOB and NPI are expanded, so a rep can type them "
                "correctly. A fluent wrong answer can delay a patient's care.")
+
+
+with tab_stream:
+    import altair as alt
+    import pandas as pd
+
+    from authops.phone.stream import Budget, Playback, latency_report, speakable_chunks
+
+    reply = normalize_for_speech(
+        f"Thanks for holding. The member ID is {cases[0]['patient']['member_id']}, and the date of birth is "
+        f"{cases[0]['patient']['dob']}. I'm calling to check the status of a prior authorization. "
+        "Could you tell me if it has been approved?")
+    chunks = speakable_chunks(reply)
+    left, right = st.columns([1.1, 1])
+    with left:
+        st.markdown("**Chunks sent to speech as they arrive**")
+        cut = st.slider("Rep talks over the agent after chunk", 1, len(chunks), len(chunks))
+        pb = Playback()
+        pb.say(reply)
+        for _ in range(cut):
+            pb.mark()
+        if cut < len(chunks):
+            pb.interrupt()
+        for i, ch in enumerate(chunks):
+            heard = i < cut
+            st.markdown(f"<div class='ao-card' style='opacity:{1 if heard else .35}'>"
+                        f"<span class='ao-pill' style='background:{'#EFE7FA' if heard else '#FBEAF1'};"
+                        f"color:{'#5B2A86' if heard else '#A8355F'}'>{'heard' if heard else 'dropped'}</span> {ch}</div>",
+                        unsafe_allow_html=True)
+    with right:
+        st.markdown("**Time to first audio**")
+        llm_rate = st.slider("Model speed (tokens/s)", 20, 120, 60, 10)
+        rep = latency_report([reply], Budget(llm_tokens_per_s=llm_rate))
+        df = pd.DataFrame([{"mode": m, "stat": k, "ms": rep[m][k]} for m in ("full_response", "streaming")
+                           for k in ("p50_ms", "p95_ms")])
+        st.altair_chart(alt.Chart(df).mark_bar(cornerRadius=4).encode(
+            x=alt.X("ms:Q", title="ms"), y=alt.Y("mode:N", title=None), color=alt.Color(
+                "stat:N", scale=alt.Scale(range=["#8C5FB9", "#E0855F"]), legend=alt.Legend(orient="top", title=None)),
+            yOffset="stat:N").properties(height=180), width="stretch")
+        st.caption("Simulated from stated stage timings (speech-to-text, model first token, token rate, "
+                   "text-to-speech first byte), not measured on a vendor.")

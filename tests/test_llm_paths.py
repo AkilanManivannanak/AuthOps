@@ -60,6 +60,11 @@ def test_claude_extractor_caps_ungrounded_evidence():
 
 def test_nl_rule_strict_boolean_cast():
     case = generate_cases(1, seed=2)[0]
-    assert NLRule("q?", FakeLLM("YES")).run(case, {"documents_text": "t"}).passed is True
-    assert NLRule("q?", FakeLLM("NO")).run(case, {"documents_text": "t"}).passed is False
-    assert NLRule("q?", FakeLLM("Probably yes")).run(case, {"documents_text": "t"}).passed is None
+    doc = {"documents_text": "Goal 1: Knee flexion. Baseline: 60 degrees. Target: 110 degrees by week 12."}
+    q = "Does each goal have a measurable baseline?"
+    yes = '{"answer": true, "evidence": ["Baseline: 60 degrees. Target: 110 degrees"]}'
+    assert NLRule(q, FakeLLM(yes)).run(case, doc).passed is True
+    assert NLRule(q, FakeLLM('{"answer": false, "evidence": []}')).run(case, doc).passed is False
+    # a bare word, a string "yes", or a YES with nothing quoted from the document never passes
+    for reply in ("YES", "Probably yes", '{"answer": "yes"}', '{"answer": true, "evidence": []}'):
+        assert NLRule(q, FakeLLM(reply)).run(case, doc).passed is None

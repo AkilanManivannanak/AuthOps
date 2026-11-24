@@ -35,6 +35,13 @@ class Store:
         Path(path).parent.mkdir(parents=True, exist_ok=True)
         self.db = sqlite3.connect(str(path), check_same_thread=False)
         self.db.executescript(SCHEMA)
+        cols = {r[1] for r in self.db.execute("PRAGMA table_info(runs)")}
+        if "tenant" not in cols:   # every run belongs to one healthcare provider
+            self.db.execute("ALTER TABLE runs ADD COLUMN tenant TEXT DEFAULT 'default'")
+            self.db.commit()
+
+    def for_tenant(self, tenant: str) -> "TenantView":
+        return TenantView(self, tenant)
 
     def start_run(self, run_id: str, **kw) -> None:
         self.db.execute("INSERT OR REPLACE INTO runs (run_id, started) VALUES (?, ?)", (run_id, time.time()))
@@ -67,3 +74,25 @@ class Store:
         cur = self.db.execute(sql, params)
         names = [d[0] for d in cur.description]
         return [dict(zip(names, row)) for row in cur.fetchall()]
+
+
+class TenantView:
+    """Read access scoped to one provider. There is no raw SQL here on purpose: every read goes
+    through a query that filters on the tenant, the same guarantee Postgres row-level security
+    gives in production (see sql/rls_postgres.sql)."""
+
+    def __init__(self, store: Store, tenant: str):
+        self.store, self.tenant = store, tenant
+
+    def runs(self, **where) -> list[dict]:
+        allowed = {"status", "portal", "case_id", "error_class"}
+        bad = set(where) - allowed
+        if bad:
+            raise ValueError(f"unsupported filter: {sorted(bad)}")
+        sql = "SELECT * FROM runs WHERE tenant=?" + "".join(f" AND {k}=?" for k in where)
+        return self.store.query(sql + " ORDER BY started", (self.tenant, *where.values()))
+
+    def steps(self, run_id: str) -> list[dict]:
+        return self.store.query(
+            "SELECT s.* FROM steps s JOIN runs r ON r.run_id = s.run_id WHERE s.run_id=? AND r.tenant=? "
+            "ORDER BY s.idx", (run_id, self.tenant))
