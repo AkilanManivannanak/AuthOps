@@ -1,0 +1,18 @@
+{
+ "validator_off": {
+  "cases": 20,
+  "corrupted_fills": 44,
+  "submitted": 17,
+  "submitted_with_wrong_data": 4,
+  "verified": 11,
+  "blocked_actions": 0
+ },
+ "validator_on": {
+  "cases": 20,
+  "corrupted_fills": 28,
+  "submitted": 4,
+  "submitted_with_wrong_data": 0,
+  "verified": 4,
+  "blocked_actions": 28
+ }
+}

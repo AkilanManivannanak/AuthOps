@@ -119,7 +119,8 @@ def build_replays() -> None:
 
 
 def copy_reports() -> None:
-    for f in ["metrics.json", "risk_coverage.json", "calibrator.json", "agent_runs.json", "REPORT.md", "extraction_rows.json"]:
+    for f in ["metrics.json", "risk_coverage.json", "calibrator.json", "agent_runs.json", "REPORT.md", "extraction_rows.json",
+              "turn_validator_northwind_0.25.json"]:
         if (REPORTS / f).exists():
             shutil.copy(REPORTS / f, ASSETS / f)
 
@@ -129,6 +130,9 @@ def build_floor_asset() -> None:
     from authops.sim.floor import build
 
     (ASSETS / "floor.json").write_text(json.dumps(build()))
+    from authops.sim.trust import build as build_trust
+
+    (ASSETS / "trust.json").write_text(json.dumps(build_trust(), separators=(",", ":")))
 
 
 if __name__ == "__main__":

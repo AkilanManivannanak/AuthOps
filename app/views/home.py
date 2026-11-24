@@ -1,6 +1,7 @@
 import streamlit as st
 
-from app.ui import asset_json, proof_cards, setup, store, tiles
+from app.proofwall import proof_wall
+from app.ui import asset_json, setup, store, tiles
 
 setup("Prior auths, cleared before care starts", "26 weeks of requests through the real pipeline. Click anything.")
 
@@ -24,6 +25,19 @@ def _floor():
 
 
 operations_floor(_floor())
+
+# ---------------------------------------------------------------- earned autonomy
+from app.trust import trust_replay  # noqa: E402
+from authops.sim.trust import build as build_trust  # noqa: E402
+
+
+@st.cache_data(show_spinner="Replaying 60 days of agent runs")
+def _trust():
+    return asset_json("trust.json") or build_trust()
+
+
+st.markdown("### Sending on its own, only where it has earned it")
+trust_replay(_trust())
 
 # ---------------------------------------------------------------- live request
 import random  # noqa: E402
@@ -129,7 +143,7 @@ if go:
         else:
             st.warning("Denied. An appeal packet or a corrective resubmission is prepared in Cases → Appeals.")
 
-st.markdown("### Results")
+st.markdown("### Measured, with the method on the back")
 tiles([
     (val.get("caught_before_submission", 0), f"denials caught before submission (of {val.get('payor_denials', 0)})", "int", False),
     (ag.get("verified_submit_rate", 0), "agent submissions verified on payor portals", "pct", False),
@@ -187,8 +201,17 @@ if m.get("fhir"):
                   "note": "CMS-0057-F channel",
                   "method": "Cases for the payor with a FHIR Prior Authorization API are sent as a Da Vinci PAS-shaped Bundle "
                             "instead of through a browser. Payors must offer this API from January 1, 2027."})
+tv = asset_json("turn_validator_northwind_0.25.json")
+if tv:
+    off, on = tv["validator_off"], tv["validator_on"]
+    cards.insert(1, {"title": "Turn validator", "kind": "dots", "left_label": "validator off",
+                     "left": off["submitted_with_wrong_data"], "right_label": "validator on",
+                     "right": on["submitted_with_wrong_data"],
+                     "method": f"{off['cases']} Northwind cases with a policy that corrupts 25% of the values it types. "
+                               f"The validator blocked {on['blocked_actions']} of {on['corrupted_fills']} corrupted values; "
+                               "blocked cases went to a person instead of the payor. No blocks in 40 clean runs."})
 if cards:
-    proof_cards(cards)
+    proof_wall(cards)
 else:
     st.warning("No metrics found. Run `python scripts/run_all.py` then `python scripts/build_app_assets.py`.")
 
