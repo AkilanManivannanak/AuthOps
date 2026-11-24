@@ -32,28 +32,23 @@ if not queue_left:
 
 item = queue_left[0]
 timer = Timer(f"qa_{item['item_id']}")
-left, right = st.columns([1.05, 1])
-with left:
-    st.image(str(ASSETS / "qa" / item["image"]), width="stretch")
-    st.caption(f"{item['doc_type'].replace('_', ' ')} · {item['condition']} image · item {item['item_id']}")
-with right:
-    st.markdown("#### What the AI extracted")
-    verdicts = {}
-    with st.form(f"qa_{item['item_id']}"):
-        for f in item["fields"]:
-            label = f["field"].replace("_", " ")
-            val = f["value"]
-            shown = "(left blank)" if val is None else (", ".join(val) if isinstance(val, list) else str(val))
-            opts = (["correct", "wrong"] if val is not None else ["absent", "missing"])
-            help_txt = ("correct: matches the page · wrong: differs from the page" if val is not None else
-                        "absent: the page has no such value · missing: the page shows it, the AI should have filled it")
-            verdicts[f["field"]] = st.radio(f"**{label}**: `{shown}`", opts, horizontal=True, index=None,
-                                            key=f"v_{item['item_id']}_{f['field']}", help=help_txt)
-        comment = st.text_input("Comment (optional)")
-        submitted = st.form_submit_button("Submit review", type="primary", width="stretch", disabled=t is None)
-    if submitted:
-        if any(v is None for v in verdicts.values()):
-            st.error("Give every field a verdict.")
+from app.widgets.deck import review_deck  # noqa: E402
+
+fields = [{"field": f["field"], "label": f["field"].replace("_", " "), "conf": float(f.get("conf") or 0),
+           "value": None if f["value"] is None else (", ".join(f["value"]) if isinstance(f["value"], list) else str(f["value"]))}
+          for f in item["fields"]]
+sub = review_deck(ASSETS / "qa" / item["image"], fields,
+                  f"{item['doc_type'].replace('_', ' ')} · {item['condition']} image", can_save=t is not None,
+                  key=f"deck_{item['item_id']}")
+if sub:
+    verdicts, comment = sub.get("verdicts", {}), sub.get("comment", "")
+    if len(verdicts) < len(item["fields"]):
+        st.error("Give every field a verdict.")
+    else:
+        right_n = sum((verdicts[f["field"]] in ("correct", "absent")) == (f["auto_verdict"] in ("correct", "absent"))
+                      for f in item["fields"])
+        if t is None:
+            st.info(f"{right_n} of {len(item['fields'])} of your verdicts match ground truth. Join the study to have them count.")
         else:
             secs = timer.seconds
             for f in item["fields"]:
@@ -63,8 +58,6 @@ with right:
             log("qa_review", {"item": item["item_id"], "seconds": secs})
             if len(done_ids) + 1 >= 5:
                 store().task(tester_id=t["id"], task="qa_review", success=1, seconds=secs, detail=f"{len(done_ids) + 1} items")
-            right_n = sum((verdicts[f["field"]] in ("correct", "absent")) == (f["auto_verdict"] in ("correct", "absent"))
-                          for f in item["fields"])
             st.toast(f"Saved. {right_n}/{len(item['fields'])} verdicts match ground truth.")
             st.rerun()
 

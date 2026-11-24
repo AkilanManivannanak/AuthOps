@@ -16,7 +16,7 @@ HTML = r"""
 label .row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:6px}
 label .row b{color:var(--ink);font-variant-numeric:tabular-nums}
 input[type=range]{width:100%}#fault{accent-color:var(--rose)}#audit{accent-color:var(--violet)}
-.btn{border:0;background:var(--ink);color:#fff;font:600 13px 'DM Sans';padding:10px 20px;border-radius:999px;cursor:pointer}
+.btn{border:0;background:var(--ink);color:#fff;font:600 13px 'DM Sans',system-ui,sans-serif;padding:10px 20px;border-radius:999px;cursor:pointer}
 .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--sand)}.btn:hover{transform:translateY(-1px)}
 .duo{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
 .big{border-radius:16px;padding:14px 16px;color:#fff}.big span{font-size:12px;opacity:.85}
@@ -28,7 +28,7 @@ svg{width:100%;display:block;margin-top:10px}
 .lane{background:#fff;border:1px solid var(--sand);border-radius:18px;padding:16px 18px;transition:transform .2s,box-shadow .2s}
 .lane:hover{transform:translateY(-2px);box-shadow:0 14px 28px -22px rgba(30,5,37,.5)}
 .lh{display:flex;justify-content:space-between;align-items:center;gap:8px}.lh b{font-size:15px;text-transform:capitalize}
-.tag{font:700 11px 'DM Sans';padding:3px 10px;border-radius:999px;white-space:nowrap;transition:all .3s}
+.tag{font:700 11px 'DM Sans',system-ui,sans-serif;padding:3px 10px;border-radius:999px;white-space:nowrap;transition:all .3s}
 .track{height:9px;background:var(--cream);border-radius:9px;margin-top:14px;overflow:hidden}
 .fill{height:100%;border-radius:9px;transition:width .25s ease,background .3s}
 .lt{font-size:12.5px;color:#4A3A50;margin-top:8px;min-height:34px}

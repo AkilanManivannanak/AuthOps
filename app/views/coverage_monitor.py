@@ -7,6 +7,15 @@ from authops.monitor.panel import PAYOR_TURNAROUND, forecast, make_panel, simula
 
 setup("Coverage Monitor", "Catch lapsed coverage and expiring authorizations between visits.")
 
+from app.widgets.coverage import coverage_board  # noqa: E402
+from authops.monitor.panel import SPECIALTY  # noqa: E402
+
+st.markdown("### Who needs a reauthorization, and when")
+cb1, cb2 = st.columns([1, 3])
+board_buffer = cb1.slider("Safety buffer (days)", 0, 21, 7, key="board_buffer")
+coverage_board(make_panel(160, 5), SPECIALTY, {k: v[1] for k, v in PAYOR_TURNAROUND.items()}, board_buffer,
+               key=f"cov_{board_buffer}")
+
 m = asset_json("care_readiness.json") or {}
 mon = m.get("monitor", {})
 if mon:

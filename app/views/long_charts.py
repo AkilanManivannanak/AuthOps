@@ -47,32 +47,22 @@ if da:
                "not a denial.")
 
 st.markdown("### Try a chart yourself")
-c1, c2 = st.columns([1, 2])
+c1, c2, c3 = st.columns([1, 1, 2])
 n_pages = c1.select_slider("Chart length (pages)", [12, 30, 60, 100, 150], value=100)
-idx = c1.number_input("Chart number", 0, 500, 7)
+idx = c2.number_input("Chart number", 0, 500, 7)
 chart = make_chart(int(idx), n_pages, seed=97)
 results = [offline_oneshot(chart), offline_agent(chart)]
 log("long_chart", {"pages": n_pages, "idx": int(idx)})
-detail = []
-for rule, text in RULES.items():
-    row = {"rule": rule, "requirement": text, "answer key": "pass" if chart.truth[rule] else "FAIL",
-           "deciding pages": ", ".join(map(str, chart.key_pages[rule]))}
-    for r in results:
-        f = r.findings[rule]
-        row[LABEL[r.arm]] = f.verdict + (f" (p{', '.join(map(str, f.pages))})" if f.pages else "")
-    detail.append(row)
-c2.dataframe(pd.DataFrame(detail), hide_index=True, width="stretch", height=330)
-c1.caption(f"{chart.n_pages} pages, {len(chart.handwritten)} handwritten-style scans, specialty "
-           f"{chart.specialty.replace('_', ' ')}. Rules this chart fails: "
-           f"{', '.join(k for k, v in chart.truth.items() if not v) or 'none'}.")
-c1.metric("Single pass, rules right", f"{sum((f.verdict == 'pass') == chart.truth[k] for k, f in results[0].findings.items())}/8")
-c1.metric("Document finder, rules right", f"{sum((f.verdict == 'pass') == chart.truth[k] for k, f in results[1].findings.items())}/8")
+from app.widgets.chartread import chart_read  # noqa: E402
 
-page = st.number_input("Read a page", 1, chart.n_pages, chart.key_pages["R1_signature"][0])
-keyset = {p for ps in chart.key_pages.values() for p in ps}
-st.markdown(f"**Page {page}** {'· deciding page' if page in keyset else ''}"
-            f"{' · handwritten scan' if page in chart.handwritten else ''}")
-st.code(chart.pages[page - 1], language=None)
+rules = [{"name": k.split("_", 1)[1].replace("_", " "), "text": t, "truth": bool(chart.truth[k]),
+          "key": list(chart.key_pages[k]),
+          "arms": [{"v": r.findings[k].verdict, "p": list(r.findings[k].pages)} for r in results]}
+         for k, t in RULES.items()]
+c3.caption(f"Rules this chart fails: {', '.join(k for k, v in chart.truth.items() if not v) or 'none'}. "
+           "Click a rule to light the pages that decide it; click any page to read it.")
+chart_read(chart.pages, sorted(chart.handwritten), chart.specialty.replace("_", " "),
+           [LABEL[r.arm] for r in results], rules, key=f"cr_{n_pages}_{int(idx)}")
 
 with st.expander("How the charts are built and scored"):
     st.markdown(

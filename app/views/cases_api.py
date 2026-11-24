@@ -78,18 +78,18 @@ with tab_appeal:
     chart = charts[d.chart_id]
     pk = build_packet(chart, d)
     log("appeal_view", {"denial": d.denial_id, "action": pk.action})
-    left, right = st.columns([1, 1.25])
-    left.markdown("**Denial letter**")
-    left.code(d.letter, language=None)
-    label = {"appeal": ("Appeal: the chart meets the requirement", "ok"),
-             "corrective_resubmission": ("Corrective resubmission: the chart does not meet it", "bad"),
-             "specialist_review": ("Specialist review: evidence unclear", "warn")}[pk.action]
-    right.markdown(f"**Triage** &nbsp; <span class='ao-pill ao-{label[1]}'>{label[0]}</span>", unsafe_allow_html=True)
-    for f in pk.evidence:
-        right.markdown(f"Evidence on chart page{'s' if len(f.pages) > 1 else ''} "
-                       f"{', '.join(map(str, f.pages))}: _{f.quote[:240]}_")
-        with right.expander("Show the cited page"):
-            st.code(chart.pages[f.pages[0] - 1] if f.pages else "(none)", language=None)
+    from app.widgets.evidence import evidence_view  # noqa: E402
+    from authops.docagent.validators import _found  # noqa: E402
+
+    hits = [{"pages": list(f.pages), "quote": f.quote[:400],
+             "ok": bool(f.pages) and any(_found(f.quote[:120], chart.pages[p - 1]) for p in f.pages if 1 <= p <= chart.n_pages)}
+            for f in pk.evidence]
+    why = {"appeal": "The chart already meets the requirement the payor says is missing, so this is an appeal.",
+           "corrective_resubmission": "The chart does not meet the requirement, so fixing and resubmitting beats appealing.",
+           "specialist_review": "The evidence is unclear, so a specialist decides before anything is sent."}[pk.action]
+    evidence_view(pk.action, d.reason, why, chart.pages, hits, key=f"ev_{d.denial_id}")
+    with st.expander("Denial letter"):
+        st.code(d.letter, language=None)
     if pk.action == "appeal":
         draft = st.text_area("Draft appeal (edit before signing)", pk.letter, height=320, key=f"appeal_{d.denial_id}")
         ok = verify_letter(chart, draft)

@@ -31,6 +31,14 @@ except Exception as e:
     st.error(f"The plan is not valid YAML: {e}")
     valid = False
 
+if valid:
+    import hashlib  # noqa: E402
+
+    from app.widgets.planmap import plan_map  # noqa: E402
+
+    st.markdown("#### The path the agent walks")
+    plan_map(spec, yaml.safe_load(yml), key=f"pm_{portal}_{hashlib.md5(edited.encode()).hexdigest()[:8]}")
+
 n = st.slider("Backtest on how many sandbox cases", 1, 5, 2)
 if st.button("Backtest this plan", type="primary", disabled=not (valid and browser_available())):
     log("backtest", {"portal": portal, "edited": edited != yml, "n": n})

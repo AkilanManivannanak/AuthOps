@@ -20,7 +20,7 @@ HTML = r"""
 .t{font-weight:700;font-size:15px}.hint{font-size:11.5px;color:var(--muted)}.bk .hint{color:#C9B8D3}
 .bk p{font-size:13px;line-height:1.5;margin:0;color:#E9DDF0}
 .pct{font:400 38px Fraunces,Georgia,serif;font-variant-numeric:tabular-nums;line-height:1}
-.sub{font-size:12.5px;color:var(--muted)}.pill{display:inline-block;font:700 11px 'DM Sans';padding:3px 9px;border-radius:999px;background:#EFE7FA;color:#5B2A86;margin-top:6px}
+.sub{font-size:12.5px;color:var(--muted)}.pill{display:inline-block;font:700 11px 'DM Sans',system-ui,sans-serif;padding:3px 9px;border-radius:999px;background:#EFE7FA;color:#5B2A86;margin-top:6px}
 .bar{height:12px;background:var(--cream);border-radius:9px;margin-top:4px;overflow:hidden}.bar i{display:block;height:100%;border-radius:9px;width:0;transition:width .9s cubic-bezier(.2,.7,.2,1)}
 .row{display:flex;justify-content:space-between;font-size:12.5px;margin-top:8px}
 .dots{display:flex;flex-wrap:wrap;gap:4px;max-width:8.5rem}.dots i{width:11px;height:11px;border-radius:50%;transform:scale(0);transition:transform .3s ease}

@@ -95,7 +95,6 @@ note("Probability that the payor approves this request in full at a given unit c
            "of past decisions. Asking for more than the payor will fund usually ends in a partial approval weeks "
            "later; the recommendation is the largest request that clears your target probability.")
 
-import altair as alt  # noqa: E402
 
 from authops.intel.approval import ApprovalModel, Request, history_from, simulate  # noqa: E402
 from authops.intel.approval import evaluate as approval_evaluate  # noqa: E402
@@ -124,22 +123,23 @@ rq = Request(52, pid if pid in ("NWH", "KCM", "SFB", "HBL", "PRV") else "NWH", s
 o = am.outlook(rq, units)
 rec = am.recommend(rq, target)
 r_o = am.outlook(rq, rec)
-m1, m2, m3 = st.columns(3)
-m1.metric(f"P(full) at {units} units", f"{o['p_full']:.0%}")
-m2.metric("Recommended request", f"{rec} units", f"{rec - units:+d} vs current", delta_color="off")
-m3.metric("Expected units approved", f"{r_o['expected_units']:.0f}", f"{r_o['expected_units'] - o['expected_units']:+.0f} vs current",
-          delta_color="off")
-cv = pd.DataFrame(am.curve(Request(rq.week, rq.payor, rq.specialty, rq.severity, rq.utilization, rq.first_auth,
-                                   rq.doc_score, max(units, rec), 1.0)))
-marks = pd.DataFrame([{"units": units, "what": "current request"}, {"units": rec, "what": "recommended"}])
-st.altair_chart(
-    (alt.Chart(cv).mark_line(color="#5B2A86", strokeWidth=2.5).encode(
-        x=alt.X("units:Q", title="units requested"), y=alt.Y("p_full:Q", title="P(full approval)",
-                                                              scale=alt.Scale(domain=[0, 1])))
-     + alt.Chart(pd.DataFrame([{"y": target}])).mark_rule(strokeDash=[2, 2], color="#B3A7B8").encode(y="y:Q")
-     + alt.Chart(marks).mark_rule(strokeDash=[4, 3]).encode(
-         x="units:Q", color=alt.Color("what:N", scale=alt.Scale(range=["#E0855F", "#5B2A86"])), tooltip=["what", "units"])
-     ).properties(height=230), width="stretch")
+from app.widgets.outlook import approval_outlook  # noqa: E402
+
+
+@st.cache_resource(show_spinner=False)
+def _approval_history():
+    return history_from(simulate(), random.Random(8))
+
+
+creq = Request(rq.week, rq.payor, rq.specialty, rq.severity, rq.utilization, rq.first_auth, rq.doc_score,
+               max(units, rec), 1.0)
+pts = []
+for c in am.curve(creq, points=48):
+    oo = am.outlook(rq, c["units"])
+    pts.append({"units": c["units"], "p": c["p_full"], "exp": oo["expected_units"]})
+dots = [{"q": q, "a": a, "o": oc, "w": h.week, "s": round(h.severity, 2)} for h, q, oc, a in _approval_history()
+        if h.payor == rq.payor and h.specialty == spec and abs(h.severity - sev) <= 0.15][:160]
+approval_outlook(pts, dots, units, rec, target, key=f"ol_{rq.payor}_{spec}_{units}_{sev}_{used}_{first}_{target}")
 log("approval_outlook", {"payor": pid, "spec": spec, "units": units, "p": o["p_full"], "rec": rec})
 with st.expander("Backtest on 12 held-out weeks"):
     ev = _approval_eval(target)

@@ -36,30 +36,16 @@ i = st.slider("Call", 0, len(calls) - 1, 3)
 call = calls[i]
 naive, careful = extract_naive(call), extract_careful(call)
 log("bv_call", {"i": i})
-rows = []
-for f, q, heard in call.turns:
-    t = getattr(call.truth, f)
-    rows.append({"field": f, "rep said (as heard)": heard, "truth": str(t),
-                 "first number": f"{naive[f]} {'✓' if naive[f] == t else '✗'}",
-                 "careful": f"{careful[f]} {'✓' if careful[f] == t else '✗'}"})
-st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch", height=460)
+from app.widgets.benefits import call_player, cost_calculator  # noqa: E402
+
+turns = [{"field": f, "q": q, "heard": heard, "truth": str(getattr(call.truth, f)), "naive": str(naive[f]),
+          "careful": str(careful[f]), "n_ok": naive[f] == getattr(call.truth, f),
+          "c_ok": careful[f] == getattr(call.truth, f)} for f, q, heard in call.turns]
 e_t, e_n, e_c = (estimate(x, 150, 12) for x in (call.truth, naive, careful))
-c1, c2, c3 = st.columns(3)
-c1.metric("True 12-visit cost", f"${e_t['patient_total']}" if e_t["patient_total"] is not None else "carve-out")
-c2.metric("Quoted from first number", f"${e_n['patient_total']}" if e_n["patient_total"] is not None else "carve-out")
-c3.metric("Quoted from careful parser", f"${e_c['patient_total']}" if e_c["patient_total"] is not None else "carve-out")
+call_player(turns, [f"${e['patient_total']:,.2f}" if e["patient_total"] is not None else "carve-out" for e in (e_t, e_n, e_c)],
+            key=f"call_{i}")
 
 st.markdown("### Patient cost calculator")
-with st.form("est"):
-    a, b, c, d = st.columns(4)
-    vals = dict(deductible=a.number_input("Deductible", 0, 20000, 1500), deductible_met=b.number_input("Deductible met", 0, 20000, 500),
-                coinsurance_pct=c.number_input("Coinsurance %", 0, 100, 20), copay=d.number_input("Copay per visit", 0, 500, 0),
-                oop_max=a.number_input("Out-of-pocket max", 0, 50000, 5000), oop_met=b.number_input("OOP met", 0, 50000, 800),
-                visit_limit=c.number_input("Visit limit (0 = none)", 0, 400, 30) or None,
-                visits_used=d.number_input("Visits used", 0, 400, 12))
-    allowed = a.number_input("Allowed amount per visit", 1.0, 5000.0, 150.0)
-    visits = b.number_input("Planned visits", 1, 520, 24)
-    if st.form_submit_button("Estimate"):
-        r = estimate(vals | {"plan_active": True, "in_network": True, "carve_out_vendor": None}, allowed, int(visits))
-        st.success(f"Patient responsibility: ${r['patient_total']:,.2f}" + (f" · {r['note']}" if r["note"] else ""))
-        log("estimate", {"visits": int(visits)})
+st.caption("Move any term. Each bar is one visit, split into what the patient and the plan pay, using the same "
+           "rules as the estimator the agent quotes from.")
+cost_calculator()

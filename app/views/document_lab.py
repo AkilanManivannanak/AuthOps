@@ -5,7 +5,6 @@ from pathlib import Path
 import altair as alt
 import pandas as pd
 import streamlit as st
-from PIL import Image, ImageDraw
 
 from app.ui import ASSETS, FOREST, RED, AMBER, Timer, asset_json, log, require_tester, setup, store
 from authops.docintel.calibrate import load_scorer
@@ -80,12 +79,11 @@ with st.spinner("Reading the page..."):
     res = read_doc(tuple(pages), doc_type)
 timer = Timer("doc")
 
-left, right = st.columns([1.05, 1])
-thr = right.slider("Abstain below this confidence", 0.30, 0.95, 0.55, 0.05,
+thr = st.slider("Abstain below this confidence", 0.30, 0.95, 0.55, 0.05,
                    help="Fields below the threshold are left blank and routed to a person instead of guessed.")
 scorer = load_scorer(ASSETS / "calibrator.json") if (ASSETS / "calibrator.json").exists() else None
 
-rows, boxes = [], []
+rows, boxes, wb_fields = [], [], []
 for name, fv in res["fields"].items():
     if name == "denial_reason":
         continue
@@ -108,22 +106,23 @@ for name, fv in res["fields"].items():
         hits = [w for w in res["words"] if w[0].strip(",.:").upper() in toks and len(w[0]) > 1]
         for w in hits[:6]:
             boxes.append((w[2], w[3], status))
+    fb = [w[2] for w in res["words"] if w[3] == 0 and v not in (None, "", []) and w[0].strip(",.:").upper() in toks
+          and len(w[0]) > 1][:6] if v not in (None, "", []) else []
+    why = ("Read with high confidence; filled in automatically." if status == "sure" else
+           "Filled in, but confidence is low enough that a person should look." if status == "unsure" else
+           "Below the threshold, so it was left blank and routed to a person instead of guessed.")
+    wb_fields.append({"label": name.replace("_", " "), "value": None if shown is None else
+                      (", ".join(shown) if isinstance(shown, list) else str(shown)), "conf": float(conf),
+                      "status": status, "why": why, "boxes": fb})
 
-with left:
-    show_boxes = st.toggle("Highlight what the AI read", value=True)
-    img = Image.open(pages[0]).convert("RGB")
-    if show_boxes:
-        dr = ImageDraw.Draw(img, "RGBA")
-        col = {"sure": (40, 84, 62), "unsure": (201, 139, 30), "abstained": (179, 64, 47)}
-        for (x, y, w, h), pi, status in boxes:
-            if pi == 0:
-                c = col[status]
-                dr.rectangle([x - 4, y - 3, x + w + 4, y + h + 3], outline=c + (255,), width=4, fill=c + (45,))
-    st.image(img, width="stretch")
-    st.caption(f"Read in {res['latency_ms'] / 1000:.1f}s · mean OCR confidence {res['ocr_mean']:.0f} · "
-               f"classified as **{res['doc_type'].replace('_', ' ')}**")
+from app.widgets.workbench import workbench  # noqa: E402
 
-with right:
+n_s = sum(f["status"] == "sure" for f in wb_fields)
+workbench(pages[0], [w[2] for w in res["words"] if w[3] == 0], wb_fields,
+          f"{n_s} sure · {len(wb_fields) - n_s} for a person · {res['doc_type'].replace('_', ' ')} · read in "
+          f"{res['latency_ms'] / 1000:.1f}s", key=f"wb_{doc_id}_{thr}")
+st.markdown("#### Correct what it got wrong")
+with st.container():
     df = pd.DataFrame(rows)
     colors = {"sure": FOREST, "unsure": AMBER, "abstained": RED}
     k1, k2, k3 = st.columns(3)
