@@ -115,10 +115,21 @@ def session_id() -> str:
     return st.session_state.sid
 
 
+def who_am_i() -> tuple[str, str]:
+    """(who, role) for usage rows: an account id, a tester id, or the session for guests."""
+    a = st.session_state.get("acct") or {}
+    t = tester()
+    who = ("acct:" + a["id"]) if a and not a.get("guest") else ("tester:" + t["id"]) if t else ""
+    return who, a.get("role") or ""
+
+
 def log(action: str, payload: dict | None = None, page: str | None = None) -> None:
     try:
         t = tester()
-        store().event(session_id(), t["id"] if t else None, page or st.session_state.get("page", ""), action, payload)
+        pg = page or st.session_state.get("page", "")
+        store().event(session_id(), t["id"] if t else None, pg, action, payload)
+        who, role = who_am_i()
+        store().use(session_id(), who, role, pg, action)
     except Exception:
         pass  # logging must never break the app
 

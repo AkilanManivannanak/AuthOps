@@ -63,6 +63,17 @@ accounts = Table("accounts", meta,
                  Column("role", String(20)), Column("workspace", Text), Column("created_at", Float),
                  Column("updated_at", Float))
 
+# Real usage of the app by role, and people's verdicts on AI answers. Read by authops/analytics/queries/*.sql.
+usage = Table("usage", meta,
+              Column("id", Integer, primary_key=True, autoincrement=True), Column("ts", Float),
+              Column("day", String(10)), Column("session_id", String(32)), Column("who", String(40)),
+              Column("role", String(20)), Column("page", String(60)), Column("action", String(60)))
+feedback = Table("feedback", meta,
+                 Column("id", Integer, primary_key=True, autoincrement=True), Column("ts", Float),
+                 Column("day", String(10)), Column("session_id", String(32)), Column("who", String(40)),
+                 Column("role", String(20)), Column("kind", String(20)), Column("verdict", String(10)),
+                 Column("what", String(80)), Column("layer", String(10)), Column("comment", Text))
+
 
 def _url() -> str:
     url = os.environ.get("DATABASE_URL")
@@ -120,6 +131,20 @@ class UserStore:
     def event(self, session_id, tester_id, page, action, payload=None):
         self._ins(events, session_id=session_id, tester_id=tester_id, ts=time.time(), page=page, action=action,
                   payload=json.dumps(payload or {}, default=str)[:4000])
+
+    def use(self, session_id: str, who: str, role: str, page: str, action: str) -> None:
+        now = time.time()
+        self._ins(usage, ts=now, day=time.strftime("%Y-%m-%d", time.gmtime(now)), session_id=session_id,
+                  who=(who or "")[:40], role=(role or "")[:20], page=(page or "")[:60], action=action[:60])
+
+    def feedback(self, session_id: str, who: str, role: str, kind: str, verdict: str, what: str = "",
+                 layer: str = "", comment: str = "") -> None:
+        if verdict not in ("right", "wrong"):
+            raise ValueError("verdict must be right or wrong")
+        now = time.time()
+        self._ins(feedback, ts=now, day=time.strftime("%Y-%m-%d", time.gmtime(now)), session_id=session_id,
+                  who=(who or "")[:40], role=(role or "")[:20], kind=kind[:20], verdict=verdict,
+                  what=(what or "")[:80], layer=(layer or "")[:10], comment=(comment or "")[:2000])
 
     def doc_label(self, **row):
         self._ins(doc_labels, ts=time.time(), **row)

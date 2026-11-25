@@ -3,8 +3,8 @@
 **Prior-authorization operations, end to end: read the documents, catch denials before they happen, submit through any channel, and keep rules and playbooks current on their own.**
 
 [![Live app](https://img.shields.io/badge/live%20app-open-28543E?style=for-the-badge)](https://akilan-silna-pa-agent.streamlit.app)
-![tests](https://img.shields.io/badge/tests-103%20passing-28543E?style=for-the-badge)
-![UI checks](https://img.shields.io/badge/UI%20checks-58%2F58-28543E?style=for-the-badge)
+![tests](https://img.shields.io/badge/tests-109%20passing-28543E?style=for-the-badge)
+![UI checks](https://img.shields.io/badge/UI%20checks-69%2F69-28543E?style=for-the-badge)
 ![data](https://img.shields.io/badge/data-synthetic%20only-9A9A9A?style=for-the-badge)
 
 ![AuthOps demo](docs/media/demo.gif)
@@ -43,10 +43,11 @@ flowchart LR
 |---|---|
 | 📄 **Reads documents** | OCR + field extraction with confidence; abstains when unsure. Long charts (12-150 pages) checked by a background agent that cites every page |
 | 🛡️ **Prevents denials** | Payor rules block gaps before submission; an approval model recommends how many units to request |
-| 🤖 **Submits anywhere** | Browser agent on four sandbox portals (pop-ups, iframes, MFA, lockouts), FHIR prior-auth API, phone IVR |
+| 🤖 **Submits anywhere** | Browser agent on four sandbox portals (pop-ups, iframes, MFA, lockouts), FHIR prior-auth API (Da Vinci PAS shape), HIPAA X12 278 request and response with clearinghouse envelope checks, phone IVR |
 | 📡 **Stays current** | Detects unannounced payor rule changes from the decision stream; heals playbooks when a portal is redesigned |
 | ⚖️ **Handles denials** | Triage: appeal with verified citations, corrective resubmission, or specialist review |
 | 📈 **Earns autonomy** | Human QA share drops only while results hold; prompt changes pass a regression gate |
+| 🧮 **Measures real use** | Every visit, tool used and "Was this right?" rating is stored; eight plain SQL reports (funnel, use by role, AI answers rated right, what people said was wrong, review-queue field errors) run on SQLite or Postgres and show on the AI Ops desk |
 
 <p>
 <img src="docs/media/signin.png" width="49%" alt="Sign-in page with the preview for patients, clinics and operations"/>
@@ -55,6 +56,8 @@ flowchart LR
 <img src="docs/media/readiness.png" width="49%" alt="Readiness check with the approval outlook"/>
 <img src="docs/media/runway.png" width="49%" alt="Authorizations by days of care left, with payor rule changes"/>
 <img src="docs/media/letter.png" width="49%" alt="An insurance letter explained for a patient"/>
+<img src="docs/media/x12.png" width="49%" alt="The same request as an X12 278, checked and answered by the test payor"/>
+<img src="docs/media/usage.png" width="49%" alt="Usage and quality: SQL reports over real use and ratings of AI answers"/>
 </p>
 
 ## Results
@@ -70,7 +73,7 @@ flowchart LR
 | **99.4%** | benefits-call fields correct with read-back (83.2% without) |
 | **17 / 17** | appeal letters with every citation verified against the chart |
 
-All numbers come from synthetic data and are reproducible. Methods, every table and the limits: **[docs/RESULTS.md](docs/RESULTS.md)** · design: **[docs/DESIGN.md](docs/DESIGN.md)**.
+All numbers come from synthetic data and are reproducible. Methods, every table and the limits: **[docs/RESULTS.md](docs/RESULTS.md)** · design: **[docs/DESIGN.md](docs/DESIGN.md)** · operating it (new payor, new portal, error triage, review ramp, incidents, metric definitions): **[docs/RUNBOOK.md](docs/RUNBOOK.md)**.
 
 ## Run it
 
@@ -80,7 +83,11 @@ python scripts/run_all.py          # full pipeline, writes reports/
 streamlit run streamlit_app.py     # the app
 ```
 
-`pytest -q` runs 103 tests, including real-browser runs on every sandbox portal.
+`pytest -q` runs 109 tests, including real-browser runs on every sandbox portal.
+
+```bash
+python -m authops.analytics.reports            # the usage and AI-quality reports, from authops/analytics/queries/*.sql
+```
 
 ## Testing
 
@@ -88,9 +95,9 @@ Tested at three levels, from code up to the full user journey:
 
 | Level | What is checked | Result |
 |---|---|---|
-| Code | `ruff` lint and `pytest`: extraction, payor rules, approval model, workspace actions, document reader, portal agents in a real browser | 103 / 103 pass |
+| Code | `ruff` lint and `pytest`: extraction, payor rules, approval model, workspace actions, document reader, X12 278 build/parse/validate, SQL reports, portal agents in a real browser | 109 / 109 pass |
 | Pages | Every page and every tool on it, for each role (patient, clinic, operations): loads without errors, plain professional wording, load time | 35 / 35 views clean, slowest 4.1 s |
-| Journeys | Recorded browser runs of real use, with each check shown on screen as it runs | 58 / 58 checks pass |
+| Journeys | Recorded browser runs of real use, with each check shown on screen as it runs | 69 / 69 checks pass |
 
 The recorded journeys:
 
@@ -99,10 +106,11 @@ The recorded journeys:
 3. **Clinic team:** fix a request from the board, apply the recommended amount, send it; start a reauthorization; approve a payor rule. Every action shows up on the other pages (for example "need you today" 8 → 7, "waiting on a payor" 3 → 4).
 4. **Operations:** the review queue first, then every AI Ops desk tab and every prior-authorization tool.
 5. **Phone (390 px):** sign-in, the dashboard and the menu, with no sideways scrolling.
+6. **Standards and quality:** a request goes out as an X12 278 that passes the envelope check; approvals and denials come back and are read correctly; a person marks a letter reading wrong, and the rating appears in the SQL reports on the AI Ops desk.
 
 ![Recorded UI test run, 8x speed](docs/media/ui_test_run.gif)
 
-The run above is played at 8x speed. Full-length video: [docs/media/ui_test_run.mp4](docs/media/ui_test_run.mp4) (6 min 25 s, download to watch).
+The run above (journeys 1 to 5) is played at 8x speed. Full-length video: [docs/media/ui_test_run.mp4](docs/media/ui_test_run.mp4) (6 min 25 s, download to watch).
 
 Run the journeys yourself against a running app (each one records a video into `tests_ui/runs/`):
 

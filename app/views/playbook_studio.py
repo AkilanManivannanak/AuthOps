@@ -66,7 +66,7 @@ if st.button("Backtest this plan", type="primary", disabled=not (valid and brows
         st.info("Your edit broke something. Real AI Ops work is exactly this loop: change, backtest in a test environment, "
                 "ship only what holds. Revert by switching portals and back.")
 elif not browser_available():
-    st.caption("Backtests need a browser on the server; see Agent Theater for recorded runs.")
+    st.caption("Backtests need a browser on the server; see Watch the browser agent for recorded runs.")
 
 # ---------------------------------------------------------------- portal release watch
 st.divider()

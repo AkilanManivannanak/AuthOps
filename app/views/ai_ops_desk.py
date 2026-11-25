@@ -10,6 +10,7 @@ TOOLS = {
     "Prompt changes": ("app/views/config_lab.py", "Every prompt change runs the regression gate before it ships."),
     "Autonomy": ("app/views/autonomy_ramp.py", "Human review drops only while results hold, and comes back when a portal changes."),
     "Long charts": ("app/views/long_charts.py", "Check a 12 to 150 page chart against the payor's rules, page by page."),
+    "Usage and quality": ("app/views/usage.py", "Real use of this app and where people said the AI was wrong. Every number is a SQL query you can read."),
 }
 pick = switch(TOOLS, "desk")
 path, purpose = TOOLS[pick]

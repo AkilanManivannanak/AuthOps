@@ -47,10 +47,37 @@ if ch == "fhir":
         except Exception as e:
             st.error(f"Test unavailable: {e}")
 elif ch == "portal":
-    st.markdown("No API yet, so the browser agent submits through the portal. See **Agent Theater**.")
+    st.markdown("No API yet, so the browser agent submits through the portal. See **Watch the browser agent**.")
 else:
-    st.markdown("No portal and no API: benefits and status are checked by phone. See **Phone Agent**.")
-st.markdown(f"<p class='ao-muted'>The bundle is a teaching subset of the PAS IG, not a conformant implementation. "
+    st.markdown("No portal and no API: benefits and status are checked by phone. See **Benefit checks**.")
+st.markdown(f"<p class='ao-muted'>The bundle and the 278 cover a working subset of each implementation guide, not a certified implementation. "
             f"<span style='color:{RED}'>Drugs are out of scope</span> of the CMS-0057-F PA API.</p>", unsafe_allow_html=True)
+st.markdown("#### The same request as an X12 278")
+st.caption("Clearinghouses and many payors still exchange prior authorizations as HIPAA X12 278 files "
+           "(005010X217). The request is built, checked the way a clearinghouse checks it, and answered by the test payor.")
+from authops.channels.x12 import build_278_request, build_278_response, parse_278_response, validate_x12  # noqa: E402
+
+x = build_278_request(case, ctrl=101)
+errs = validate_x12(x)
+c1, c2 = st.columns(2)
+with c1:
+    st.markdown(pill("Envelope valid", "ok") if not errs else pill(f"{len(errs)} envelope errors", "bad"),
+                unsafe_allow_html=True)
+    st.code(x.replace("~", "~\n"), language=None)
+with c2:
+    dec = st.radio("Test payor answers", ["approved", "partial", "denied", "pended"], horizontal=True, key="x12_dec")
+    units = int(case["requested_units"])
+    resp = build_278_response(x, dec, units if dec == "approved" else max(1, units * 2 // 3) if dec == "partial" else None,
+                              auth="" if dec in ("denied", "pended") else f"{pid}-{abs(hash(x)) % 10**7:07d}",
+                              reason={"denied": "NME", "pended": "AN"}.get(dec, ""))
+    r = parse_278_response(resp)
+    st.markdown(f"**Read back:** {r['decision']} (HCR {r['action_code']})"
+                + (f" · authorization **{r['auth_number']}**" if r["auth_number"] else "")
+                + (f" · **{r['approved_quantity']}** approved" if r["approved_quantity"] else "")
+                + (f" · {r['start']} to {r['end']}" if r["start"] else "")
+                + (f" · reason code {r['reason_code']}" if r["reason_code"] else ""))
+    st.code(resp.replace("~", "~\n"), language=None)
+    log("x12", {"payor": pid, "decision": dec})
+
 with st.expander("Raw case"):
     st.code(json.dumps(case, indent=1)[:3000], language="json")

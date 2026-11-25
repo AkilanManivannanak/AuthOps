@@ -57,6 +57,38 @@ if sample:
 elif up is not None and st.session_state.get("doc", {}).get("name") != up.name + str(up.size):
     st.session_state.doc = {"pages": [str(p) for p in to_pages(up.getvalue(), up.name)], "name": up.name + str(up.size)}
 
+PARTS = {"letter": ["the decision", "the deadline", "the dates", "the amount approved", "the next steps", "something else"],
+         "plan": ["a missing item it flagged", "something it missed", "the codes", "the dates", "something else"]}
+
+
+def _feedback(mode: str, res: dict, key) -> None:
+    """Was this right? Stored with the layer that answered, read by the AI Ops desk usage reports."""
+    done = st.session_state.setdefault("fb_done", set())
+    k = f"{mode}|{abs(hash(key))}"
+    if k in done:
+        st.caption("Thanks. Your answer goes into the error review on the AI Ops desk.")
+        return
+    st.markdown("<div class='ao-eyebrow' style='margin-top:.6rem'>Was this right?</div>", unsafe_allow_html=True)
+    v = st.segmented_control("Was this right?", ["Yes", "Not quite"], key=f"fbv_{k}", label_visibility="collapsed")
+    if not v:
+        return
+    what, note = "", ""
+    if v == "Not quite":
+        what = st.selectbox("What was off?", PARTS[mode], key=f"fbw_{k}")
+        note = st.text_input("What should it have said? (optional)", key=f"fbn_{k}")
+    if st.button("Send", key=f"fbs_{k}"):
+        from app.ui import store, who_am_i, session_id
+        who, role = who_am_i()
+        try:
+            store().feedback(session_id(), who, role, mode, "right" if v == "Yes" else "wrong", what=what,
+                             layer="ai" if res.get("layer") == "AI" else "rules", comment=note)
+        except Exception:
+            pass
+        log("feedback", {"mode": mode, "verdict": v})
+        done.add(k)
+        st.rerun()
+
+
 doc = st.session_state.get("doc")
 if not doc:
     st.markdown("""<div class='ao-card' style='text-align:center;padding:48px 20px;margin-top:10px'>
@@ -105,6 +137,7 @@ left.image(str(pages[0]), width="stretch")
 with right:
     if mode in ("letter", "plan"):
         assist_view(mode, res, key=f"av_{abs(hash(key))}")
+        _feedback(mode, res, key)
     else:
         f = res["letter"]
         st.markdown("#### What the reader pulled off the page")
