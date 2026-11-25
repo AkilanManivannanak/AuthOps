@@ -326,12 +326,13 @@ def suggestions(ws: dict, today: date, limit: int = 3) -> list[dict]:
         elif s["label"] == "New document":
             rank.append((5, {"title": f"Read {p['name']}'s plan", "body": "A new treatment plan arrived.", "page": "prior_authorizations",
                              "pid": p["id"], "cta": "Read it"}))
+    ops = ws["role"] == "ops"   # an operations person's own work comes before the clinic's queue
     if not ws.get("rules"):
-        rank.append((2.5, {"title": "Approve a payor rule change", "body": "Keystone started limiting physical therapy "
+        rank.append((-0.5 if ops else 2.5, {"title": "Approve a payor rule change", "body": "Keystone started limiting physical therapy "
                            "to 20 visits. Approve it so open requests are held before they are denied.",
                            "page": "insurance_monitoring", "cta": "Review it"}))
-    if ws["role"] == "ops" and ws.get("reviews", 0) < 5:
-        rank.append((1.5, {"title": "Review what the AI read", "body": "Spot-check extracted fields; your verdicts decide "
+    if ops and ws.get("reviews", 0) < 5:
+        rank.append((-1, {"title": "Review what the AI read", "body": "Spot-check extracted fields; your verdicts decide "
                            "how much the agents can send on their own.", "page": "ai_ops_desk", "cta": "Start reviewing",
                            "params": {"desk": "Review"}}))
     rank.sort(key=lambda x: x[0])

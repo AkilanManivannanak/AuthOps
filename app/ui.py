@@ -7,6 +7,7 @@ rings and bars that sweep in once, cards that flip to show how a number was meas
 from __future__ import annotations
 
 import json
+import re
 import time
 from pathlib import Path
 
@@ -262,3 +263,16 @@ def rule_label(rule: str) -> str:
     out = [words.get(w, w) for w in rule.split("_")]
     out[0] = out[0] if out[0].isupper() or "-" in out[0] else out[0].capitalize()
     return " ".join(out)
+
+
+_PUBLIC = [(r"claude:claude-[a-z0-9.\-]+", "AI model"), (r"arm:claude-[a-z0-9.\-]+", "arm: AI agent"),
+           (r"claude-[a-z0-9.\-]+", "AI model"), (r"\bClaude\b", "AI"), (r"\bclaude\b", "AI"),
+           (r"\bAnthropic\b", "AI provider"), (r"synthetic", "generated"), (r"Synthetic", "Generated"),
+           (r"fictional", "sample"), (r"Fictional", "Sample"), (r"no real PHI", "no real patient data")]
+
+
+def public(text: str) -> str:
+    """Report text as visitors see it: plain professional wording, no vendor or model names."""
+    for a, b in _PUBLIC:
+        text = re.sub(a, b, text)
+    return text

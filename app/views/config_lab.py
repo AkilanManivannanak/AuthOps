@@ -4,7 +4,7 @@ import pandas as pd
 import streamlit as st
 import yaml
 
-from app.ui import ASSETS, asset_json, log, setup, tiles
+from app.ui import public, ASSETS, asset_json, log, setup, tiles
 from authops.ops import prompts
 
 setup("Config Lab", "Draft playbooks automatically, gate prompt changes, and generate the weekly report.")
@@ -48,9 +48,9 @@ with tab_prompts:
     a, b, c = st.columns(3)
     a.metric("Status", p.status)
     b.metric("Fingerprint", p.fingerprint)
-    c.metric("Model", p.model)
-    st.markdown(f"**Why this version exists:** {p.changelog}")
-    st.code(p.template, language=None)
+    c.metric("Model", public(p.model))
+    st.markdown(f"**Why this version exists:** {public(p.changelog)}")
+    st.code(public(p.template), language=None)
     log("prompt_view", {"ref": pick})
     st.markdown("#### Gate rules")
     st.markdown("A candidate replaces production only if, on the same golden documents: overall accuracy does not "
@@ -72,7 +72,7 @@ with tab_prompts:
 with tab_report:
     rp = ASSETS / "WEEKLY_OPS_REPORT.md"
     if rp.exists():
-        st.markdown(rp.read_text())
+        st.markdown(public(rp.read_text()))
         st.download_button("Download report (.md)", rp.read_text(), "weekly_ops_report.md")
     else:
         st.info("Run `python scripts/write_ops_report.py`.")

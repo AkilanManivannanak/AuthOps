@@ -1,6 +1,6 @@
 import streamlit as st
 
-from app.ui import ROOT, asset_json, setup
+from app.ui import public, ROOT, asset_json, setup
 
 setup("Method and limits", "How every number in this app was produced, and what it does not prove.")
 
@@ -45,4 +45,4 @@ with timestamps. Agreement is Cohen's kappa over reviewer pairs on shared fields
 rep = ROOT / "app" / "assets" / "REPORT.md"
 if rep.exists():
     with st.expander("Full evaluation report"):
-        st.markdown(rep.read_text())
+        st.markdown(public(rep.read_text()))

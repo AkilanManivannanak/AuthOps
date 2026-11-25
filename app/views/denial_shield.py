@@ -67,6 +67,10 @@ def _approval_model():
 
 @st.cache_data(show_spinner=False)
 def _approval_eval(target: float):
+    from app.ui import asset_json
+    saved = asset_json("approval_eval.json")   # precomputed at the default target; others are computed once
+    if saved and abs(target - 0.8) < 1e-9:
+        return saved
     return approval_evaluate(target=target)
 
 

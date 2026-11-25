@@ -51,3 +51,11 @@ def test_suggestions_put_lapsing_care_first_and_follow_state():
 def test_patient_workspace_suggests_reading_a_letter_first():
     w = W.new_workspace("patient", "Mamata", today=T)
     assert W.suggestions(w, T)[0]["page"] == "try_it"
+
+
+def test_operations_people_see_their_own_work_first():
+    from datetime import date
+    from authops import workspace as W
+    w = W.new_workspace("ops", "Ops", seed=3, today=date(2026, 11, 25))
+    top = W.suggestions(w, date(2026, 11, 25), 3)
+    assert top[0]["title"] == "Review what the AI read" and top[1]["title"] == "Approve a payor rule change"

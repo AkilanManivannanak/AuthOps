@@ -126,6 +126,25 @@ CSS = """<style>
 </style>"""
 
 
+def _landing_stats() -> list[tuple[str, str]]:
+    """Three measured numbers for the sign-in page, read from the same files the evaluation page uses."""
+    from app.ui import asset_json
+    out = []
+    ex = ((asset_json("metrics.json") or {}).get("extraction", {}).get("arms", {}).get("rules", {})
+          .get("summary", {}).get("all", {}))
+    if ex:
+        out.append((f"{ex['accuracy']:.0%}", "of fields on letters and plans read right"))
+    ap = asset_json("approval_eval.json")
+    if ap:
+        v = next((p["first_pass_full"] for p in ap["policies"] if p["policy"].startswith("model")), None)
+        if v:
+            out.append((f"{v:.0%}", "of requests approved in full the first time"))
+    mon = (asset_json("care_readiness.json") or {}).get("monitor", {})
+    if mon:
+        out.append((f"{mon['proactive']['denied_dollars_cut_vs_reactive'][1]:.0%}", "fewer denied dollars than finding out late"))
+    return out
+
+
 def gate() -> None:
     """Sign in, then pick a role. Stops the page until both are done."""
     if "_entry" not in st.session_state:   # remember the page asked for, to return to it after signing in
@@ -154,6 +173,9 @@ def gate() -> None:
         left.markdown("<div class='ao-eyebrow'>AuthOps</div><div class='lp-hero'>Care, <em>cleared</em> before it starts.</div>"
                       "<div class='lp-sub'>Prior authorizations, benefit checks and coverage, handled in one place. "
                       "Sign in to pick up where you left off.</div>", unsafe_allow_html=True)
+        with left:
+            from app.widgets.showcase import showcase
+            showcase(_landing_stats())
         with right:
             t1, t2 = st.tabs(["Sign in", "Create account"])
             with t1, st.form("signin"):
