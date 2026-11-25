@@ -6,7 +6,7 @@ import altair as alt
 import pandas as pd
 import streamlit as st
 
-from app.ui import ASSETS, FOREST, RED, AMBER, Timer, asset_json, log, require_tester, setup, store
+from app.ui import ASSETS, FOREST, RED, Timer, asset_json, log, require_tester, setup, store
 from authops.docintel.calibrate import load_scorer
 from authops.docintel.evaluate import values_match
 from authops.docintel.extract import RuleExtractor, classify_doc
@@ -81,6 +81,11 @@ timer = Timer("doc")
 
 thr = st.slider("Abstain below this confidence", 0.30, 0.95, 0.55, 0.05,
                    help="Fields below the threshold are left blank and routed to a person instead of guessed.")
+_ra = asset_json("extraction_rows.json")
+if _ra:
+    _auto = [r for r in _ra if r["pred"] not in (None, "", []) and r["conf"] >= thr]
+    st.caption(f"At {thr:.2f}, {len(_auto) / len(_ra):.0%} of fields fill themselves and "
+               f"{sum(not r['ok'] for r in _auto) / len(_ra):.1%} are wrong; the rest go to a person.")
 scorer = load_scorer(ASSETS / "calibrator.json") if (ASSETS / "calibrator.json").exists() else None
 
 rows, boxes, wb_fields = [], [], []
@@ -124,18 +129,11 @@ workbench(pages[0], [w[2] for w in res["words"] if w[3] == 0], wb_fields,
 st.markdown("#### Correct what it got wrong")
 with st.container():
     df = pd.DataFrame(rows)
-    colors = {"sure": FOREST, "unsure": AMBER, "abstained": RED}
-    k1, k2, k3 = st.columns(3)
-    for col, s in zip((k1, k2, k3), ("sure", "unsure", "abstained")):
-        col.markdown(f"<div class='ao-tile'><div class='ao-fig' style='color:{colors[s]};font-size:2.2rem'>"
-                     f"{(df.Status == s).sum()}</div><div class='ao-lab'>{s}</div></div>", unsafe_allow_html=True)
     edited = st.data_editor(
         df.drop(columns=["_key"]), hide_index=True, width="stretch", key=f"ed_{doc_id}_{thr}",
         disabled=["Field", "AI value", "Confidence", "Learned conf", "Status"],
+        column_order=["Field", "AI value", "Your value"],
         column_config={"Field": st.column_config.TextColumn(width="small"),
-                       "Confidence": st.column_config.ProgressColumn("Conf", min_value=0, max_value=1, format="%.2f", width="small"),
-                       "Learned conf": st.column_config.ProgressColumn("Learned", min_value=0, max_value=1, format="%.2f", width="small"),
-                       "Status": st.column_config.TextColumn(width="small"),
                        "Your value": st.column_config.TextColumn("Your value ✎", width="medium",
                                                                  help="Fix anything wrong. Fill blanks if the page has the value.")})
     if st.button("Submit my review", type="primary", width="stretch", disabled=truth is None and not t):
@@ -171,20 +169,20 @@ with st.container():
             if you_ok > ai_ok:
                 st.success(f"You caught {you_ok - ai_ok} field(s) the AI got wrong or left blank. That is the human-in-the-loop value.")
 
-st.markdown("### Where to set the threshold")
 rows_all = asset_json("extraction_rows.json")
 rc = asset_json("risk_coverage.json")
 if rows_all and rc:
-    answered = [r for r in rows_all if r["pred"] not in (None, "", [])]
-    cov_now = sum(r["conf"] >= thr for r in answered) / len(rows_all)
-    data = pd.DataFrame([dict(x, score="heuristic") for x in rc["heuristic"]] +
-                        [dict(x, score="learned calibrator") for x in rc["learned"]])
-    base = alt.Chart(data).mark_line(point=True, strokeWidth=3).encode(
-        x=alt.X("coverage:Q", title="share of fields filled automatically", axis=alt.Axis(format="%")),
-        y=alt.Y("silent_error:Q", title="wrong values that would reach the payor", axis=alt.Axis(format="%")),
-        color=alt.Color("score:N", scale=alt.Scale(range=["#B3A7B8", FOREST]), legend=alt.Legend(orient="top")))
-    rule = alt.Chart(pd.DataFrame({"c": [cov_now]})).mark_rule(color=RED, strokeDash=[6, 4], size=2).encode(x="c:Q")
-    st.altair_chart((base + rule).properties(height=300), width="stretch")
-    st.caption(f"Held-out cases. The red line is where your threshold of {thr:.2f} puts the heuristic "
-               f"(about {cov_now:.0%} of fields filled). Lower thresholds fill more fields and let more errors through; "
-               "on these documents the learned calibrator tracks the heuristic closely and does not beat it yet.")
+    with st.expander("How we know: where to set the threshold"):
+        answered = [r for r in rows_all if r["pred"] not in (None, "", [])]
+        cov_now = sum(r["conf"] >= thr for r in answered) / len(rows_all)
+        data = pd.DataFrame([dict(x, score="heuristic") for x in rc["heuristic"]] +
+                            [dict(x, score="learned calibrator") for x in rc["learned"]])
+        base = alt.Chart(data).mark_line(point=True, strokeWidth=3).encode(
+            x=alt.X("coverage:Q", title="share of fields filled automatically", axis=alt.Axis(format="%")),
+            y=alt.Y("silent_error:Q", title="wrong values that would reach the payor", axis=alt.Axis(format="%")),
+            color=alt.Color("score:N", scale=alt.Scale(range=["#B3A7B8", FOREST]), legend=alt.Legend(orient="top")))
+        rule = alt.Chart(pd.DataFrame({"c": [cov_now]})).mark_rule(color=RED, strokeDash=[6, 4], size=2).encode(x="c:Q")
+        st.altair_chart((base + rule).properties(height=300), width="stretch")
+        st.caption(f"Held-out cases. The red line is where your threshold of {thr:.2f} puts the heuristic "
+                   f"(about {cov_now:.0%} of fields filled). Lower thresholds fill more fields and let more errors through; "
+                   "on these documents the learned calibrator tracks the heuristic closely and does not beat it yet.")

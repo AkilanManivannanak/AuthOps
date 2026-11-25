@@ -135,9 +135,17 @@ def build_floor_asset() -> None:
     (ASSETS / "trust.json").write_text(json.dumps(build_trust(), separators=(",", ":")))
 
 
+def build_approval_asset() -> None:
+    """Approval-outlook backtest on held-out weeks: the figure the measured page and the README quote."""
+    from authops.intel.approval import evaluate
+
+    (ASSETS / "approval_eval.json").write_text(json.dumps(evaluate(target=0.8), indent=1))
+
+
 if __name__ == "__main__":
     ASSETS.mkdir(parents=True, exist_ok=True)
     copy_reports()
+    build_approval_asset()
     build_floor_asset()
     build_qa_items()
     build_replays()

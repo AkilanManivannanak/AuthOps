@@ -1,7 +1,8 @@
 """Shared CSS for the components, in Silna's palette."""
+from app.tokens import css_vars
+
 BASE_CSS = """
-:host{--ink:#1E0525;--plum:#32073E;--violet:#5B2A86;--lilac:#8C5FB9;--peach:#FFB49D;--pink:#FFCDFF;--rose:#C0446A;
- --sand:#ECE5D8;--line:#F0EAE2;--cream:#FDF8F3;--blush:#FAE8E8;--muted:#8E8292;--soft:#6E5C76}
+""" + css_vars(":host") + """
 *{box-sizing:border-box}
 .root{font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);font-size:14px}
 .serif{font-family:Fraunces,Georgia,serif;font-weight:400;letter-spacing:-.02em}

@@ -9,7 +9,7 @@ from authops.ops import prompts
 
 setup("Config Lab", "Draft playbooks automatically, gate prompt changes, and generate the weekly report.")
 
-tab_auto, tab_prompts, tab_report = st.tabs(["Auto-drafted playbooks", "Prompt registry and gate", "Weekly ops report"])
+tab_prompts, tab_auto, tab_report = st.tabs(["Prompt versions and the gate", "Playbooks drafted for a new portal", "Weekly ops report"])
 
 with tab_auto:
     ac = asset_json("autoconfig.json") or {}
@@ -19,11 +19,11 @@ with tab_auto:
                (s["hand_field_recall"], "of hand-written field mappings reproduced", "pct", False),
                (s["wrong_mappings"], "wrong field mappings", "int", s["wrong_mappings"] > 0),
                (int(s["held_out_lakeshore"].split("/")[0]), "of 3 walks on Lakeshore, the held-out portal", "int", False)])
-        df = pd.DataFrame([{"portal": r["portal"], "specialty": r["specialty"].replace("_", " "),
-                            "reached confirmation": "yes" if r["reached"] else "no",
-                            "matches hand playbook": "-" if r["hand_recall"] is None else f"{r['hand_recall']:.0%}",
-                            "left for a person": "; ".join(r["flagged_for_person"]) or "",
-                            "where it stopped": "" if r["reached"] else r["stopped"]}
+        df = pd.DataFrame([{"Portal": r["portal"].title(), "Service": r["specialty"].replace("_", " "),
+                            "Reached confirmation": "yes" if r["reached"] else "no",
+                            "Matches the hand-written playbook": "-" if r["hand_recall"] is None else f"{r['hand_recall']:.0%}",
+                            "Left for a person": "; ".join(r["flagged_for_person"]) or "",
+                            "Where it stopped": "" if r["reached"] else r["stopped"]}
                            for r in ac["rows"] if r["mapper"] == "lexicon"])
         st.dataframe(df, hide_index=True, width="stretch")
         if "summary:claude" in ac:
@@ -34,7 +34,8 @@ with tab_auto:
         st.caption("Generated from one sandbox walk; the browser agent submits with it in "
                    "tests/test_e2e_portals.py::test_drafted_playbook_submits.")
         if "lexicon:lakeshore" in ac.get("drafts", {}):
-            st.code(yaml.safe_dump(ac["drafts"]["lexicon:lakeshore"], sort_keys=False, width=100), language="yaml")
+            with st.expander("Show it as code"):
+                st.code(yaml.safe_dump(ac["drafts"]["lexicon:lakeshore"], sort_keys=False, width=100), language="yaml")
         st.caption("The Lakeshore portal and the label lexicon share an author; the Claude mapper uses no lexicon "
                    "and is the stricter test of unfamiliar labels.")
     else:

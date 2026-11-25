@@ -1,0 +1,83 @@
+{
+ "train_requests": 4800,
+ "test_requests": 1439,
+ "auc": 0.97,
+ "brier": 0.068,
+ "base_rate_full": 0.379,
+ "policies": [
+  {
+   "policy": "ask for clinical need",
+   "first_pass_full": 0.379,
+   "partial_rate": 0.621,
+   "units_approved_first_pass": 143871,
+   "units_left_on_table": 0
+  },
+  {
+   "policy": "fixed 15% haircut",
+   "first_pass_full": 0.68,
+   "partial_rate": 0.32,
+   "units_approved_first_pass": 134442,
+   "units_left_on_table": 9429
+  },
+  {
+   "policy": "model, target P(full) >= 80%",
+   "first_pass_full": 0.867,
+   "partial_rate": 0.133,
+   "units_approved_first_pass": 137172,
+   "units_left_on_table": 6699
+  }
+ ],
+ "calibration": [
+  {
+   "predicted": 0.015,
+   "observed": 0.016,
+   "n": 691
+  },
+  {
+   "predicted": 0.145,
+   "observed": 0.233,
+   "n": 90
+  },
+  {
+   "predicted": 0.254,
+   "observed": 0.34,
+   "n": 50
+  },
+  {
+   "predicted": 0.35,
+   "observed": 0.303,
+   "n": 33
+  },
+  {
+   "predicted": 0.454,
+   "observed": 0.242,
+   "n": 33
+  },
+  {
+   "predicted": 0.548,
+   "observed": 0.516,
+   "n": 31
+  },
+  {
+   "predicted": 0.656,
+   "observed": 0.6,
+   "n": 30
+  },
+  {
+   "predicted": 0.747,
+   "observed": 0.717,
+   "n": 53
+  },
+  {
+   "predicted": 0.856,
+   "observed": 0.844,
+   "n": 64
+  },
+  {
+   "predicted": 0.969,
+   "observed": 0.97,
+   "n": 364
+  }
+ ],
+ "target": 0.8
+}

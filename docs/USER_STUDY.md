@@ -1,7 +1,7 @@
 # Real-user study protocol
 
 The point of the study is simple: every usage claim about AuthOps must be backed by rows a person
-actually created, with timestamps. The app computes every number on the **Study and evidence** page
+actually created, with timestamps. The app computes every number on the owner-only **Study** page (`/study?owner=1`)
 from those rows. Nothing is seeded.
 
 ## 1. Before inviting anyone
@@ -29,7 +29,7 @@ Hi [name], I built a prior-authorization AI operations tool and I'm running a sh
 It takes about 20 minutes, all data is synthetic (no real patients), and you can stop anytime.
 You'll review documents the AI read, grade its extractions, run a browser agent against sandbox
 insurance portals, and fill a 10-question usability survey.
-Link: [app URL]  ->  start at "Join the study".
+Link: [app URL]/join?owner=1  (the study pages are hidden from ordinary visitors).
 Your reviews are used only in aggregate (counts, agreement rates, averages). Thanks!
 ```
 

@@ -8,18 +8,21 @@ from authops.ops.experiments import QARamp
 
 setup("Autonomy Ramp", "Human review drops only while results hold. Plant a regression and watch the gate react.")
 
-c1, c2, c3, c4 = st.columns(4)
-base = c1.slider("Agent error rate when healthy", 0.0, 0.10, 0.02, 0.005, format="%.3f")
-fault = c2.slider("Error rate after the portal changes", 0.05, 0.6, 0.25, 0.01)
-fault_day = c3.slider("Portal changes on day", 10, 50, 30)
-fixed = c4.slider("Comparison: fixed QA share", 0.0, 1.0, 0.10, 0.05)
-d1, d2, d3 = st.columns([1, 1, 2])
-per_day = d1.slider("Submissions per day", 10, 100, 40, 10)
-window = d2.slider("Gate window (runs)", 10, 60, 20, 5)
-if "ramp_seed" not in st.session_state:
-    st.session_state.ramp_seed = 1
-if d3.button("Roll again (new random day-to-day noise)"):
-    st.session_state.ramp_seed += 1
+fault_day = st.slider("The portal changes on day", 10, 50, 30,
+                      help="From this day the agent makes many more mistakes, as it would after a portal redesign.")
+with st.expander("More settings"):
+    c1, c2, c3 = st.columns(3)
+    base = c1.slider("Agent error rate when healthy", 0.0, 0.10, 0.02, 0.005, format="%.3f")
+    fault = c2.slider("Error rate after the portal changes", 0.05, 0.6, 0.25, 0.01)
+    fixed = c3.slider("Comparison: fixed QA share", 0.0, 1.0, 0.10, 0.05)
+    d1, d2, d3 = st.columns(3)
+    per_day = d1.slider("Submissions per day", 10, 100, 40, 10)
+    window = d2.slider("Gate window (runs)", 10, 60, 20, 5)
+    if "ramp_seed" not in st.session_state:
+        st.session_state.ramp_seed = 1
+    if d3.button("Roll again (new day-to-day noise)"):
+        st.session_state.ramp_seed += 1
+st.session_state.setdefault("ramp_seed", 1)
 
 
 def simulate(seed):

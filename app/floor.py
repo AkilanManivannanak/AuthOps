@@ -10,11 +10,12 @@ import json
 
 import streamlit as st
 
+from app.tokens import css_vars
+
 HTML = r"""
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#1E0525;--plum:#32073E;--violet:#5B2A86;--lilac:#8C5FB9;--peach:#FFB49D;--pink:#FFCDFF;--rose:#D36E97;
- --sand:#ECE5D8;--line:#F0EAE2;--cream:#FDF8F3;--blush:#FAE8E8;--muted:#8E8292;--soft:#6E5C76}
+__ROOTVARS__
 *{box-sizing:border-box}html,body{margin:0;background:transparent;font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);font-size:14px}
 .wrap{position:relative;background:#fff;border:1px solid var(--sand);border-radius:20px;overflow:hidden}
 .eyebrow{font:500 11px 'DM Sans',system-ui,sans-serif;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
@@ -73,7 +74,7 @@ svg text{font-family:'DM Sans',sans-serif}
 .chip{font:500 12px 'DM Sans',system-ui,sans-serif;border:1px solid var(--sand);background:#fff;color:var(--ink);border-radius:999px;padding:5px 11px;cursor:pointer}
 .chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .chip.filter{background:#F7F1FB;border-color:#E3D6F2;color:var(--violet)}
-.search{margin-left:auto;border:1px solid var(--sand);border-radius:999px;padding:7px 12px;font:13px 'DM Sans',system-ui,sans-serif;min-width:200px;outline:none}
+.search{margin-left:auto;border:1px solid var(--sand);border-radius:999px;padding:7px 12px;font:13px 'DM Sans',system-ui,sans-serif;min-width:150px;max-width:220px;flex:1;outline:none}
 .search:focus{border-color:var(--lilac)}
 .tbl{max-height:330px;overflow:auto;border-top:1px solid var(--line)}
 table{width:100%;border-collapse:collapse}
@@ -100,6 +101,13 @@ tr.r{cursor:pointer;transition:background .12s}tr.r:hover{background:var(--cream
 .ev.stop:before{border-color:#E0855F;background:#E0855F}.ev.bad:before{border-color:var(--rose);background:var(--rose)}.ev.ok:before{background:var(--lilac)}
 .ev b{display:block;font-weight:600;font-size:13px}.ev span{font-size:12px;color:var(--soft)}
 .why{margin-top:6px;background:var(--cream);border-radius:12px;padding:12px 14px;font-size:12.5px;line-height:1.5}
+.qwrap{position:relative}
+.act{display:none;margin:0 22px 12px;background:#fff;border:1px solid var(--sand);border-radius:14px;padding:12px 16px 12px 18px;position:relative;
+ box-shadow:0 14px 30px -22px rgba(30,5,37,.5);align-items:center;gap:16px}
+.act.show{display:flex;animation:fi .45s ease}.act:before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:3px;background:var(--rose)}
+.act .t{font:600 10.5px 'DM Sans',system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--rose)}
+.act p{margin:3px 0 0;font-size:13px;line-height:1.45;flex:1}.act .x{cursor:pointer;color:var(--muted);padding:4px}
+.act .btn{flex:none}
 #tip{position:fixed;pointer-events:none;background:#fff;border:1px solid var(--sand);border-radius:10px;padding:7px 10px;font-size:12px;
  box-shadow:0 10px 24px -14px rgba(30,5,37,.4);display:none;z-index:9;white-space:nowrap}
 </style>
@@ -109,12 +117,13 @@ tr.r{cursor:pointer;transition:background .12s}tr.r:hover{background:var(--cream
   <div class="time"><button class="btn" id="play">Replay 26 weeks</button><input type="range" id="slider" min="1" max="26" step="1" value="26"><div class="wkl" id="wkl">Week 26</div></div>
  </div>
  <div class="kpis" id="kpis"></div>
- <div class="grid">
+ <div class="qwrap"><div class="qbar"><h3>All patients</h3><span id="stchips"></span><span id="chips"></span><input class="search" id="q" placeholder="Search patients, payors, reasons"></div>
+ <div class="act" id="act"></div>
+ <div class="tbl"><table><thead><tr id="thead"></tr></thead><tbody id="rows"></tbody></table></div></div>
+ <div class="grid" style="border-top:1px solid var(--line)">
   <div class="pane"><div class="ph"><h3>Readiness flow</h3><span class="clear" id="clearFlow">Clear selection</span></div><div style="overflow-x:auto" class="stage3d" id="stage"><svg id="flow" width="100%" height="340" style="min-width:560px"></svg></div></div>
   <div class="pane"><div class="ph"><h3>Payors</h3><span class="eyebrow">First-pass approval</span></div><div id="payors"></div><div class="notice" id="notice"></div></div>
  </div>
- <div class="qbar"><h3>Patient queue</h3><span id="chips"></span><input class="search" id="q" placeholder="Search patients, payors, reasons"></div>
- <div class="tbl"><table><thead><tr id="thead"></tr></thead><tbody id="rows"></tbody></table></div>
  <div class="drawer" id="drawer"></div>
 </div>
 <div id="tip"></div>
@@ -131,14 +140,15 @@ E.forEach(e=>{e.c=e.outcome==="approved"?"clear":e.outcome==="partial"?"partial"
  e.hold=e.outcome==="caught"?(why(e.reason)[2]==="rule"?"Held: payor rule":"Held: documents"):"Ready to submit";
  e.dec=e.c==="clear"?"Approved in full":e.c==="partial"?"Partially approved":e.c==="denied"?"Denied":null;
  e.wk=e.week+1;e.status=e.c==="clear"?"Clear for care":e.c==="partial"?"Partial approval":e.c==="denied"?"Denied · "+(e.next==="appeal"?"appeal":"resubmit"):"Held · "+why(e.reason)[1]});
-let week=26, playing=null, F={node:null,payor:null,kpi:null,spec:"all",q:""}, sortK="wk", sortDir=-1, sel=null;
+let week=26, playing=null, actOff=false, F={node:null,payor:null,kpi:null,spec:"all",q:"",st:"all"}, sortK="wk", sortDir=-1, sel=null;
 const $=id=>document.getElementById(id), tip=$("tip");
 const showTip=(ev,h)=>{tip.innerHTML=h;tip.style.display="block";tip.style.left=(ev.clientX+14)+"px";tip.style.top=(ev.clientY+12)+"px"},hideTip=()=>tip.style.display="none";
 const inTime=e=>e.wk<=week;
 const passNode=e=>{const n=F.node;if(!n)return true;const [st,v]=n;return st===0?e.src===v:st===1?e.hold===v:st===2?(e.outcome!=="caught"&&CH[e.channel]===v):e.dec===v};
 const KPIF={clear:e=>e.c==="clear"||e.c==="partial",held:e=>e.c==="held"||e.c==="rule",rule:e=>e.c==="rule",fp:e=>e.outcome!=="caught"};
 const base=e=>inTime(e)&&(F.spec==="all"||e.spec===F.spec);
-const filt=e=>base(e)&&passNode(e)&&(!F.payor||e.payor===F.payor)&&(!F.kpi||KPIF[F.kpi](e))&&
+const STF={all:()=>true,clear:e=>e.c==="clear"||e.c==="partial",held:e=>e.c==="held"||e.c==="rule",denied:e=>e.c==="denied"};
+const filt=e=>base(e)&&STF[F.st](e)&&passNode(e)&&(!F.payor||e.payor===F.payor)&&(!F.kpi||KPIF[F.kpi](e))&&
  (!F.q||(e.name+" "+e.payor_name+" "+e.status+" "+e.id).toLowerCase().includes(F.q));
 // ---------------------------------------------------------------- header + kpis
 function drawHead(){const L=E.filter(e=>base(e)&&(!F.payor||e.payor===F.payor));const clr=L.filter(KPIF.clear).length;
@@ -159,7 +169,7 @@ function countTo(el,v,suf){const from=+(el.dataset.v||0);el.dataset.v=v;if(from=
 const STAGES=[["Intake",["Fax","EHR","Upload"]],["Readiness check",["Ready to submit","Held: documents","Held: payor rule"]],
  ["Channel",["Portal agent","FHIR API","Phone agent"]],["Payor decision",["Approved in full","Partially approved","Denied"]]];
 const NCOL={"Fax":"#F2A98F","EHR":"#E99A85","Upload":"#DE8C83","Ready to submit":"#A57BD0","Held: documents":"#EE9A7C","Held: payor rule":"#32073E",
- "Portal agent":"#9A6FC8","FHIR API":"#8C5FB9","Phone agent":"#7E52AE","Approved in full":"#5B2A86","Partially approved":"#B99BE0","Denied":"#D36E97"};
+ "Portal agent":"#9A6FC8","FHIR API":"#8C5FB9","Phone agent":"#7E52AE","Approved in full":"#5B2A86","Partially approved":"#B99BE0","Denied":"#C0446A"};
 const key=(e,s)=>s===0?e.src:s===1?e.hold:s===2?(e.outcome==="caught"?null:CH[e.channel]):e.dec;
 function drawFlow(){const svg=$("flow"),Wd=svg.clientWidth||700,H=340,top=26,bot=8,nw=12,gap=10;
  const L=E.filter(e=>base(e)&&(!F.payor||e.payor===F.payor)&&(!F.kpi||KPIF[F.kpi](e)));const tot=Math.max(1,L.length);
@@ -183,7 +193,7 @@ function drawFlow(){const svg=$("flow"),Wd=svg.clientWidth||700,H=340,top=26,bot
     :`<text class="nlab" x="${n.x+nw+7}" y="${n.y+n.h/2+4}">${n.n} <tspan class="nval">${n.v} · ${Math.round(100*n.v/tot)}%</tspan></text>`}</g>`});
  if(!L.length)s+=`<text x="${Wd/2}" y="${H/2}" text-anchor="middle" class="nval">No patients match these filters yet.</text>`;
  svg.innerHTML=s;
- DOTS=[];links.forEach((l,i)=>{const n=Math.min(14,Math.ceil(l.v/5));for(let k=0;k<n;k++)DOTS.push({l,lit:lit(l),t:Math.random(),off:.15+Math.random()*.7,sp:.00018+Math.random()*.00014})});
+ DOTS=[];if(playing)links.forEach((l,i)=>{const n=Math.min(14,Math.ceil(l.v/5));for(let k=0;k<n;k++)DOTS.push({l,lit:lit(l),t:Math.random(),off:.15+Math.random()*.7,sp:.00018+Math.random()*.00014})});
  const g=svg.querySelector("#dots");g.innerHTML=DOTS.map(d=>`<circle class="dot" r="${d.lit?2.1:1.4}" fill="#fff" opacity="${d.lit?.95:.35}"/>`).join("");DOTEL=[...g.children];
  svg.querySelectorAll(".link").forEach(p=>{const l=links[+p.dataset.i];p.onmousemove=ev=>{p.setAttribute("opacity",.75);showTip(ev,`<b>${l.a}</b> → <b>${l.b}</b> · ${l.v} patients`)};
   p.onmouseleave=()=>{p.setAttribute("opacity",lit(l)?.42:.08);hideTip()}});
@@ -204,29 +214,35 @@ function drawPayors(){const P=$("payors");P.innerHTML=PAYORS.map(p=>{const L=E.f
   const fp=sub.length?Math.round(100*sub.filter(e=>e.c==="clear").length/sub.length):0;
   const bars=[...Array(W)].map((_,w)=>{const B=E.filter(e=>e.payor===p&&e.wk===w+1&&(F.spec==="all"||e.spec===F.spec)),n=Math.max(1,6);
    const seg=(k,c)=>{const v=B.filter(k).length;return v?`<span style="height:${Math.min(100,v/n*100)}%;background:${c}"></span>`:""};
-   return `<i class="${w+1>week?"future":""}" data-w="${w+1}" data-p="${p}">${seg(e=>e.c==="clear"||e.c==="partial","#8C5FB9")}${seg(e=>e.c==="held"||e.c==="rule","#F2A98F")}${seg(e=>e.c==="denied","#D36E97")}</i>`}).join("");
+   return `<i class="${w+1>week?"future":""}" data-w="${w+1}" data-p="${p}">${seg(e=>e.c==="clear"||e.c==="partial","#8C5FB9")}${seg(e=>e.c==="held"||e.c==="rule","#F2A98F")}${seg(e=>e.c==="denied","#C0446A")}</i>`}).join("");
   return `<div class="prow ${F.payor===p?"on":""}" data-p="${p}"><div><div class="pcode">${p}</div></div><div><div class="spark">${bars}</div><div class="pname">${NAMES[p]}</div></div>
    <div class="prate">${fp}%<small>${sub.length} SENT</small></div></div>`}).join("");
  P.querySelectorAll(".prow").forEach(r=>r.onclick=()=>{F.payor=F.payor===r.dataset.p?null:r.dataset.p;all()});
  P.querySelectorAll(".spark i").forEach(b=>{b.onmousemove=ev=>{const w=+b.dataset.w,B=E.filter(e=>e.payor===b.dataset.p&&e.wk===w&&(F.spec==="all"||e.spec===F.spec));
   showTip(ev,`<b>${b.dataset.p} · week ${w}</b><br>${B.filter(e=>e.c==="clear"||e.c==="partial").length} clear · ${B.filter(e=>e.c==="held"||e.c==="rule").length} fixed before payor · ${B.filter(e=>e.c==="denied").length} denied`)};b.onmouseleave=hideTip});
- const n=$("notice");if(week>A.week+1){n.innerHTML=`<b>New payor rule · week ${A.week+1}</b><br>${A.payor} caps physical therapy at 20 visits. Learned from denials, enforced from week ${A.week+2}. <u>Show who it saved</u>`;
-  n.classList.add("show");n.onclick=()=>{F.payor=A.payor;F.kpi="rule";F.node=null;all()}}else n.classList.remove("show")}
+ const n=$("act"),saved=E.filter(e=>e.learned&&e.wk<=week).length;
+ if(week>A.week+1&&!actOff){n.innerHTML=`<div style="flex:1"><div class="t">Action required · new payor rule</div>
+  <p><b>${NAMES[A.payor]||A.payor}</b> now caps physical therapy at 20 visits per authorization. Learned from denial letters in week ${A.week+1}; ${saved} request${saved===1?"":"s"} held and fixed before the payor saw ${saved===1?"it":"them"}.</p></div>
+  <button class="btn" id="acts">Show those patients</button><span class="x" id="actx">✕</span>`;n.classList.add("show");
+  $("acts").onclick=()=>{F.payor=A.payor;F.kpi="rule";F.node=null;F.st="all";all()};$("actx").onclick=()=>{actOff=true;n.classList.remove("show")}}
+ else n.classList.remove("show")}
 // ---------------------------------------------------------------- queue
-const COLS=[["name","Patient"],["spec","Service"],["payor","Payor"],["src","Source"],["status","Status"],["units","Requested"],["recommended","Submitted"],["approved","Approved"],["wk","Week"]];
+const COLS=[["name","Patient"],["spec","Service"],["payor","Payor"],["status","Status"],["units","Asked"],["recommended","Sent"],["approved","Approved"],["wk","Week"]];
 function drawQueue(){$("thead").innerHTML=COLS.map(([k,l])=>`<th data-k="${k}">${l}${sortK===k?(sortDir>0?" ↑":" ↓"):""}</th>`).join("");
  $("thead").querySelectorAll("th").forEach(t=>t.onclick=()=>{sortDir=sortK===t.dataset.k?-sortDir:1;sortK=t.dataset.k;drawQueue()});
  const L=E.filter(filt).sort((a,b)=>{const x=a[sortK]??-1,y=b[sortK]??-1;return (x>y?1:x<y?-1:0)*sortDir});
  const u=e=>SPEC[e.spec][1];
  $("rows").innerHTML=L.map(e=>`<tr class="r ${sel===e?"sel":""}" data-id="${e.id}"><td><b style="font-weight:600">${e.name}</b><div class="mut" style="font-size:11px">${e.id}</div></td>
-  <td>${SPEC[e.spec][0]}</td><td>${e.payor}</td><td>${e.src}</td><td><span class="pill p-${e.c}">${e.status}</span></td>
+  <td>${SPEC[e.spec][0]}</td><td>${e.payor}</td><td><span class="pill p-${e.c}">${e.status}</span></td>
   <td>${e.units} <span class="mut">${u(e)}</span></td><td>${e.recommended??'<span class="mut">not sent</span>'}</td><td>${e.approved??'<span class="mut">–</span>'}</td><td>${e.wk}</td></tr>`).join("")
-  ||`<tr><td colspan="9" class="mut" style="padding:22px">No patients match these filters.</td></tr>`;
+  ||`<tr><td colspan="8" class="mut" style="padding:22px">No patients match these filters.</td></tr>`;
  $("rows").querySelectorAll("tr.r").forEach(r=>r.onclick=()=>openDrawer(E.find(e=>e.id===r.dataset.id)));
  const chips=[];if(F.node)chips.push([F.node[1],()=>F.node=null]);if(F.payor)chips.push([NAMES[F.payor],()=>F.payor=null]);
  if(F.kpi)chips.push([{clear:"Clear for care",held:"Fixed before payor",fp:"Submitted",rule:"Learned rule"}[F.kpi],()=>F.kpi=null]);
  $("chips").innerHTML=["all","aba","physical_therapy","behavioral_health"].map(s=>`<button class="chip ${F.spec===s?"on":""}" data-s="${s}">${s==="all"?"All services":SPEC[s][0]}</button>`).join(" ")
   +" "+chips.map((c,i)=>`<button class="chip filter" data-c="${i}">${c[0]} ✕</button>`).join(" ")+` <span class="mut" style="font-size:12px;margin-left:6px">${L.length} shown</span>`;
+ $("stchips").innerHTML=[["all","All"],["clear","Clear for care"],["held","Action required"],["denied","Denied"]].map(([k,l])=>`<button class="chip ${F.st===k?"on":""}" data-st="${k}">${l}</button>`).join(" ")+" &nbsp;";
+ $("stchips").querySelectorAll("[data-st]").forEach(b=>b.onclick=()=>{F.st=b.dataset.st;drawQueue()});
  $("chips").querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{F.spec=b.dataset.s;all()});
  $("chips").querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{chips[+b.dataset.c][1]();all()})}
 $("q").oninput=ev=>{F.q=ev.target.value.trim().toLowerCase();drawQueue()};
@@ -251,7 +267,7 @@ function openDrawer(e){sel=e;const u=SPEC[e.spec][1],dr=$("drawer");
 // ---------------------------------------------------------------- time
 function all(){drawHead();drawFlow();drawPayors();drawQueue()}
 $("slider").oninput=ev=>{week=+ev.target.value;$("wkl").textContent="Week "+week;stop();all()};
-function stop(){if(playing){clearInterval(playing);playing=null;$("play").textContent="Replay 26 weeks"}}
+function stop(){if(playing){clearInterval(playing);playing=null;setTimeout(drawFlow,0);$("play").textContent="Replay 26 weeks"}}
 $("play").onclick=()=>{if(playing){stop();return}week=1;F.node=null;F.kpi=null;F.payor=null;$("play").textContent="Pause";
  playing=setInterval(()=>{week++;$("slider").value=week;$("wkl").textContent="Week "+week;all();if(week>=W)stop()},700);all()};
 window.addEventListener("resize",drawFlow);all();
@@ -260,4 +276,4 @@ window.addEventListener("resize",drawFlow);all();
 
 
 def operations_floor(data: dict) -> None:
-    st.iframe(HTML.replace("__DATA__", json.dumps(data)), height="content")
+    st.iframe(HTML.replace("__ROOTVARS__", css_vars()).replace("__DATA__", json.dumps(data)), height="content")

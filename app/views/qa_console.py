@@ -48,7 +48,8 @@ if sub:
         right_n = sum((verdicts[f["field"]] in ("correct", "absent")) == (f["auto_verdict"] in ("correct", "absent"))
                       for f in item["fields"])
         if t is None:
-            st.info(f"{right_n} of {len(item['fields'])} of your verdicts match ground truth. Join the study to have them count.")
+            st.session_state.qa_pending = {"item": item["item_id"], "verdicts": verdicts, "comment": comment}
+            st.success(f"{right_n} of {len(item['fields'])} of your verdicts match the truth.")
         else:
             secs = timer.seconds
             for f in item["fields"]:
@@ -61,9 +62,34 @@ if sub:
             st.toast(f"Saved. {right_n}/{len(item['fields'])} verdicts match ground truth.")
             st.rerun()
 
-st.markdown("### Reviewer agreement so far")
+pend = st.session_state.get("qa_pending")
+if t is None and pend and pend["item"] == item["item_id"]:
+    with st.form("qa_join"):
+        st.markdown("**Want this review to count?** Add a name and it is saved with the other reviewers' verdicts, "
+                    "so agreement between people can be measured. No email, no real patient data.")
+        a, b = st.columns(2)
+        nm = a.text_input("Name or handle", max_chars=60)
+        role = b.selectbox("Your role", ["Software engineer", "ML / AI engineer", "Data scientist / analyst",
+                                         "Healthcare operations / RCM", "Clinician", "Product / design", "Student", "Other"])
+        ok = st.checkbox("Store my reviews, page visits and times for this study, reported only in aggregate.")
+        if st.form_submit_button("Save my review", type="primary"):
+            if not nm.strip() or not ok:
+                st.error("Enter a name and tick the box.")
+            else:
+                tid = store().register(nm, role, "n/a")
+                st.session_state.tester = {"id": tid, "name": nm.strip(), "role": role}
+                st.session_state.pop("sid", None)
+                by = {f["field"]: f for f in item["fields"]}
+                for fld, v in pend["verdicts"].items():
+                    store().qa_label(tester_id=tid, item_id=pend["item"], field=fld, verdict=v,
+                                     comment=pend["comment"][:500], auto_verdict=by[fld]["auto_verdict"], seconds_on_item=0)
+                st.session_state.pop("qa_pending", None)
+                log("joined", {"role": role, "via": "qa"})
+                st.rerun()
+
 all_labels = store().rows(qa_labels)
-if all_labels:
+if all_labels and len({r["tester_id"] for r in all_labels}) >= 2:
+    st.markdown("### Reviewer agreement so far")
     df = pd.DataFrame(all_labels)
     df["matches_truth"] = df.apply(lambda r: (r.verdict in ("correct", "absent")) == (r.auto_verdict in ("correct", "absent")), axis=1)
     k = pairwise_kappa(all_labels)
@@ -75,5 +101,3 @@ if all_labels:
     if len(caught):
         st.caption(f"AI errors in reviewed items: {len(caught)}. Caught by reviewers: "
                    f"{(caught.verdict.isin(['wrong', 'missing'])).mean():.0%}.")
-else:
-    st.caption("No reviews yet.")

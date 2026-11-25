@@ -33,7 +33,7 @@ export default function(component){
   <div class="card plot"><div class="legend"><span><i style="background:#5B2A86"></i>approved in full</span><span><i style="background:#E0855F"></i>cut to partial</span>
    <span><i style="background:#C0446A"></i>denied</span><span>· ${D.dots.length} past decisions, same payor and service, similar severity</span></div>
    <svg id="sv" viewBox="0 0 ${W} ${H}" width="100%" style="touch-action:none;cursor:ew-resize"></svg><div class="tip" id="tip"></div>
-   <div class="row"><button class="btn" id="userec">Use recommended</button><button class="btn ghost" id="usecur">Back to the form's ${D.units}</button>
+   <div class="row"><button class="btn" id="userec">Use recommended</button><button class="btn ghost" id="usecur">Back to ${D.units}</button>
    <span class="hint">Drag across the chart to try a different request. Hover a dot to see that decision.</span></div></div>`;
  const sv=root.querySelector("#sv"),tip=root.querySelector("#tip");
  let base=`<rect x="${L}" y="${y(1)}" width="${W-L-R}" height="${y(D.target)-y(1)}" fill="#EFE7FA" opacity=".55"/>`;

@@ -18,34 +18,6 @@ if "claude_agent" not in da:
             "`python scripts/run_care_readiness.py --llm`. The offline arms below are deterministic stand-ins: "
             "they show the harness works, not how a model performs.")
 
-if da:
-    best = "claude_agent" if "claude_agent" in da else "offline_agent"
-    base = "claude_oneshot" if "claude_oneshot" in da else "offline_oneshot"
-    tiles([
-        (m.get("docagent_corpus", {}).get("charts", 0), "synthetic charts, 12 to 150 pages", "int", False),
-        (da[base]["summary"]["all"]["false_pass"], f"rules waved through wrongly: {LABEL[base].lower()}", "int", True),
-        (da[best]["summary"]["all"]["false_pass"], f"rules waved through wrongly: {LABEL[best].lower()}", "int", False),
-        (da[best]["summary"]["all"]["accuracy"], f"accuracy on decided rules: {LABEL[best].lower()}", "pct", False),
-    ])
-    rows = []
-    for a in arms:
-        for g in ("all", "1-40 pages", "41-100 pages", "100+ pages", "cross_page", "medical_necessity"):
-            s = da[a]["summary"].get(g)
-            if s:
-                rows.append({"arm": LABEL[a], "slice": g, "accuracy": s["accuracy"], "coverage": s["coverage"],
-                             "caught failing rules": s["catch_rate"], "false passes": s["false_pass"],
-                             "false blocks": s["false_block"]})
-    st.markdown("### Results by chart length and rule type")
-    st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
-    cost = pd.DataFrame([{"arm": LABEL[a], "p50 seconds per chart": da[a]["p50_seconds"],
-                          "cost per chart (USD)": da[a]["cost_per_chart_usd"], "mean turns": da[a]["mean_turns"],
-                          "charts fully correct": f"{da[a]['charts_fully_correct']}/{da[a]['charts']}"} for a in arms])
-    st.markdown("### Latency and cost per chart")
-    st.dataframe(cost, hide_index=True, width="stretch")
-    st.caption("A false pass is the expensive error: the request goes out, the payor denies it, and care waits. "
-               "Coverage below 100% means the arm sent a rule to a person instead of guessing, which costs minutes, "
-               "not a denial.")
-
 st.markdown("### Try a chart yourself")
 c1, c2, c3 = st.columns([1, 1, 2])
 n_pages = c1.select_slider("Chart length (pages)", [12, 30, 60, 100, 150], value=100)
@@ -63,6 +35,39 @@ c3.caption(f"Rules this chart fails: {', '.join(k for k, v in chart.truth.items(
            "Click a rule to light the pages that decide it; click any page to read it.")
 chart_read(chart.pages, sorted(chart.handwritten), chart.specialty.replace("_", " "),
            [LABEL[r.arm] for r in results], rules, key=f"cr_{n_pages}_{int(idx)}")
+
+with st.expander("How we know"):
+    if da:
+        best = "claude_agent" if "claude_agent" in da else "offline_agent"
+        base = "claude_oneshot" if "claude_oneshot" in da else "offline_oneshot"
+        tiles([
+            (m.get("docagent_corpus", {}).get("charts", 0), "synthetic charts, 12 to 150 pages", "int", False),
+            (da[base]["summary"]["all"]["false_pass"], f"rules waved through wrongly: {LABEL[base].lower()}", "int", True),
+            (da[best]["summary"]["all"]["false_pass"], f"rules waved through wrongly: {LABEL[best].lower()}", "int", False),
+            (da[best]["summary"]["all"]["accuracy"], f"accuracy on decided rules: {LABEL[best].lower()}", "pct", False),
+        ])
+        rows = []
+        for a in arms:
+            for g in ("all", "1-40 pages", "41-100 pages", "100+ pages", "cross_page", "medical_necessity"):
+                s = da[a]["summary"].get(g)
+                if s:
+                    rows.append({"Method": LABEL[a], "Charts": g.replace("_", " "), "Accuracy": s["accuracy"],
+                                 "Decided without a person": s["coverage"], "Failing rules caught": s["catch_rate"],
+                                 "False passes": s["false_pass"], "False blocks": s["false_block"]})
+        st.markdown("**Results by chart length and rule type**")
+        pct = st.column_config.NumberColumn(format="percent")
+        st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch",
+                     column_config={"Accuracy": pct, "Decided without a person": pct, "Failing rules caught": pct})
+        cost = pd.DataFrame([{"Method": LABEL[a], "Median seconds per chart": da[a]["p50_seconds"],
+                              "Cost per chart": da[a]["cost_per_chart_usd"], "Mean model turns": da[a]["mean_turns"],
+                              "Charts fully right": f"{da[a]['charts_fully_correct']} of {da[a]['charts']}"} for a in arms])
+        st.markdown("**Time and cost per chart**")
+        st.dataframe(cost, hide_index=True, width="stretch",
+                     column_config={"Cost per chart": st.column_config.NumberColumn(format="dollar")})
+        st.caption("A false pass is the expensive error: the request goes out, the payor denies it, and care waits. "
+                   "Coverage below 100% means the arm sent a rule to a person instead of guessing, which costs minutes, "
+                   "not a denial.")
+
 
 with st.expander("How the charts are built and scored"):
     st.markdown(

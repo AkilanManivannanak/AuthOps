@@ -14,14 +14,14 @@ import re  # noqa: E402
 
 md = re.sub(r"(?m)^#{1,3} ", "#### ", (PLAYBOOK_DIR / f"{portal}.md").read_text())  # keep the page's own title on top
 yml = (PLAYBOOK_DIR / f"{portal}.yaml").read_text()
-a, b = st.columns(2)
+a, b = st.columns([1, 1.25])
 with a:
-    st.markdown("#### Plain-English playbook")
+    st.markdown("#### The playbook, in plain English")
     st.markdown(md)
-with b:
-    st.markdown("#### Executable plan (edit me)")
-    edited = st.text_area("plan", yml, height=520, label_visibility="collapsed", key=f"yml_{portal}")
-    st.caption("Ideas: delete the `wait` step on Keystone, change a field label, drop the attestation on Summit.")
+with st.expander("Edit as code"):
+    edited = st.text_area("plan", yml, height=420, label_visibility="collapsed", key=f"yml_{portal}")
+    st.caption("Ideas: delete the `wait` step on Keystone, change a field label, drop the attestation on Summit. "
+               "Your edits are marked on the path above.")
 
 try:
     spec = yaml.safe_load(edited)
@@ -36,8 +36,9 @@ if valid:
 
     from app.widgets.planmap import plan_map  # noqa: E402
 
-    st.markdown("#### The path the agent walks")
-    plan_map(spec, yaml.safe_load(yml), key=f"pm_{portal}_{hashlib.md5(edited.encode()).hexdigest()[:8]}")
+    with b:
+        st.markdown("#### The path the agent walks")
+        plan_map(spec, yaml.safe_load(yml), key=f"pm_{portal}_{hashlib.md5(edited.encode()).hexdigest()[:8]}")
 
 n = st.slider("Backtest on how many sandbox cases", 1, 5, 2)
 if st.button("Backtest this plan", type="primary", disabled=not (valid and browser_available())):
@@ -60,7 +61,7 @@ if st.button("Backtest this plan", type="primary", disabled=not (valid and brows
     df = pd.DataFrame(rows)
     ok = (df.status == "submitted").mean()
     st.markdown(f"### {pill(f'{ok:.0%} submitted', 'ok' if ok == 1 else 'bad')}", unsafe_allow_html=True)
-    st.dataframe(df, hide_index=True, width="stretch")
+    st.dataframe(df.rename(columns=lambda c: c.replace("_", " ").capitalize()), hide_index=True, width="stretch")
     if edited != yml and ok < 1:
         st.info("Your edit broke something. Real AI Ops work is exactly this loop: change, backtest in a sandbox, "
                 "ship only what holds. Revert by switching portals and back.")

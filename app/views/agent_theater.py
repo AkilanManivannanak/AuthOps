@@ -1,4 +1,3 @@
-import base64
 import json
 import time
 
@@ -6,51 +5,17 @@ import pandas as pd
 import streamlit as st
 
 from app.sandbox import browser_available, sandbox, start_agent_run
-from app.ui import ASSETS, FOREST, RED, Timer, log, pill, require_tester, setup, store
+from app.ui import ASSETS, Timer, log, pill, require_tester, setup, store
+from app.widgets.replay import TOOL_ICON, player  # noqa: F401
 
 setup("Agent Theater", "Run the browser agent on a sandbox portal. Turn up the chaos and watch it recover.")
 t = require_tester("so your runs and diagnosis count")
 
-TOOL_ICON = {"goto": "🌐", "type_credential": "🔑", "enter_totp": "🔢", "click": "👆", "fill": "⌨️", "select": "🔽",
-             "check": "☑️", "pick_date": "📅", "upload": "📎", "answer": "💬", "read_confirmation": "🧾",
-             "dismiss_overlays": "🧹", "wait": "⏳", "swap_credential": "🔁", "backoff_resubmit": "↩️"}
 PORTALS = {"northwind": "Northwind (commercial): survey pop-ups",
            "keystone": "Keystone (Medicaid MCO): iframe, calendar widget, masked ID, delayed notice",
            "summit": "Summit (federal): TOTP, session kicks, 503s, stale credential, wizard"}
 
 
-def player(run: dict, folder) -> None:
-    """Animated step player: screenshot + timeline, autoplay with scrubbing."""
-    frames = []
-    for s in run["steps"]:
-        img = folder / s["image"] if s.get("image") else None
-        b64 = base64.b64encode(img.read_bytes()).decode() if img and img.exists() else ""
-        frames.append({"img": b64, "tool": s["tool"], "icon": TOOL_ICON.get(s["tool"], "•"), "ok": s["ok"],
-                       "err": s.get("error_class", ""), "detail": s.get("detail", "")[:120], "kind": s.get("kind", "tool")})
-    html = f"""
-    <style>body{{margin:0;font-family:Inter,system-ui,sans-serif;color:#1E0525}}
-    .wrap{{display:grid;grid-template-columns:1.6fr 1fr;gap:14px}} .shot{{border:1px solid #ECE5D8;border-radius:14px;overflow:hidden;background:#fff}}
-    .shot img{{width:100%;display:block}} .tl{{max-height:470px;overflow:auto;border:1px solid #ECE5D8;border-radius:14px;background:#fff;padding:6px}}
-    .row{{display:flex;gap:8px;padding:6px 8px;border-radius:10px;font-size:.84rem;cursor:pointer;opacity:.35;transition:all .25s}}
-    .row.seen{{opacity:1}} .row.cur{{background:#F7F0EC;box-shadow:inset 3px 0 0 {FOREST}}} .row.bad.seen{{color:{RED}}} .row.guard .t{{font-style:italic}}
-    .ctl{{display:flex;gap:10px;align-items:center;margin-top:10px}} button{{border:0;border-radius:999px;padding:7px 16px;font-weight:700;background:#1E0525;color:#FDF8F3;cursor:pointer}}
-    input[type=range]{{flex:1;accent-color:{FOREST}}} .cap{{font-size:.8rem;color:#7A6B80}}</style>
-    <div class="wrap"><div class="shot"><img id="img"/></div><div class="tl" id="tl"></div></div>
-    <div class="ctl"><button id="pp">Pause</button><input id="sl" type="range" min="0" max="{len(frames) - 1}" value="0"/>
-    <span class="cap" id="cap"></span></div>
-    <script>
-    const F={json.dumps(frames)}; let i=0, playing=true;
-    const tl=document.getElementById('tl'), img=document.getElementById('img'), sl=document.getElementById('sl'), cap=document.getElementById('cap');
-    F.forEach((f,k)=>{{const d=document.createElement('div'); d.className='row'+(f.ok?'':' bad')+(f.kind==='guard'?' guard':'');
-      d.innerHTML=`<span>${{f.icon}}</span><div><div class="t"><b>${{k+1}}. ${{f.tool}}</b> ${{f.ok?'':'· '+f.err}}</div><div class="cap">${{f.detail}}</div></div>`;
-      d.onclick=()=>{{i=k;show();}}; tl.appendChild(d);}});
-    function show(){{ const f=F[i]; if(f.img) img.src='data:image/jpeg;base64,'+f.img; sl.value=i;
-      [...tl.children].forEach((r,k)=>{{r.classList.toggle('seen',k<=i); r.classList.toggle('cur',k===i);}});
-      tl.children[i].scrollIntoView({{block:'nearest'}}); cap.textContent=`step ${{i+1}} of ${{F.length}}`; }}
-    sl.oninput=()=>{{i=+sl.value; show();}}; document.getElementById('pp').onclick=e=>{{playing=!playing; e.target.textContent=playing?'Pause':'Play';}};
-    setInterval(()=>{{ if(playing && i<F.length-1){{i++; show();}} }}, 900); show();
-    </script>"""
-    st.iframe(html, height=540)
 
 
 tab_live, tab_replay = st.tabs(["Run it live", "Recorded runs"])
@@ -145,7 +110,7 @@ with tab_live:
             m4.metric("Verified confirmation", "yes" if result["verified"] else "no")
             st.caption(f"Guard and recovery events: {result['counts'] or 'none'} · portal lockouts so far: "
                        f"{result['lockouts_total']}")
-            st.dataframe(pd.DataFrame(result["credentials"]), hide_index=True, width="stretch")
+            st.dataframe(pd.DataFrame(result["credentials"]).rename(columns=lambda c: c.replace("_", " ").capitalize()), hide_index=True, width="stretch")
             if t:
                 store().agent_run(tester_id=t["id"], portal=portal, case_id=cases[idx]["case_id"],
                                   status=result["status"], error_class=result["error_class"], steps=result["steps"],

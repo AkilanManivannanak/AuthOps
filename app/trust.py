@@ -5,10 +5,12 @@ import json
 
 import streamlit as st
 
+from app.tokens import css_vars
+
 HTML = r"""
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#1E0525;--violet:#5B2A86;--lilac:#8C5FB9;--rose:#C0446A;--peach:#FFB49D;--sand:#ECE5D8;--line:#F0EAE2;--cream:#FDF8F3;--muted:#8E8292}
+__ROOTVARS__
 *{box-sizing:border-box}body{margin:0;font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);background:transparent}
 .card{background:#fff;border:1px solid var(--sand);border-radius:20px;padding:20px 22px}
 .ctl{display:grid;grid-template-columns:1fr 1fr auto;gap:18px;align-items:end}
@@ -97,4 +99,4 @@ labels();play();
 
 
 def trust_replay(data: dict) -> None:
-    st.iframe(HTML.replace("__DATA__", json.dumps(data, separators=(",", ":"))), height="content")
+    st.iframe(HTML.replace("__ROOTVARS__", css_vars()).replace("__DATA__", json.dumps(data, separators=(",", ":"))), height="content")

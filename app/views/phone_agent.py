@@ -40,7 +40,10 @@ with tab_watch:
       d.innerHTML='<div class="who">'+(b.k==='heard'?'payor line':b.k==='dtmf'?'keypad (silent)':'agent')+'</div>'+(b.k==='dtmf'?'pressed '+b.t:b.t);
       c.appendChild(d);setTimeout(()=>d.classList.add('on'),i*650);}});</script>"""
     st.iframe(html, height=90 * len(bubbles) + 40)
-    st.markdown(f"**Outcome:** {res.status} · extracted {res.answer} · {res.turns} turns")
+    ans = res.answer if isinstance(res.answer, dict) else {}
+    parts = [f"{k.replace('_', ' ')}: {v}" for k, v in ans.items()] if ans else ([str(res.answer)] if res.answer else [])
+    st.markdown(f"**{res.status.replace('_', ' ').capitalize()}** after {res.turns} turns"
+                + (f" · {' · '.join(parts)}" if parts else ""))
 
 with tab_play:
     st.caption("Type what a payor rep would say. The agent answers. Try asking for the member ID or date of birth, "

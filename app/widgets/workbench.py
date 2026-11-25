@@ -20,9 +20,10 @@ CSS = BASE_CSS + """
 .sweep{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#8C5FB9,transparent);
  box-shadow:0 0 18px 4px rgba(140,95,185,.35);pointer-events:none}
 .w{position:absolute;border-radius:2px;background:rgba(140,95,185,.13);animation:land .26s ease-out both;pointer-events:none}
-.f{position:absolute;border-radius:3px;border:2px solid;cursor:pointer;animation:land .3s ease-out both;transition:box-shadow .2s}
+.f{position:absolute;border-radius:3px;border:2px solid;cursor:pointer;transition:box-shadow .2s;visibility:hidden}
+.f.cur{visibility:visible;animation:land .3s ease-out both}
 .f:hover,.f.on{box-shadow:0 0 0 4px rgba(255,180,157,.75)}
-.spot{position:absolute;border-radius:4px;pointer-events:none;box-shadow:0 0 0 9999px rgba(30,5,37,.38);transition:all .35s cubic-bezier(.2,.8,.2,1)}
+.spot{position:absolute;border-radius:4px;pointer-events:none;box-shadow:0 0 0 9999px rgba(30,5,37,.10);transition:all .35s cubic-bezier(.2,.8,.2,1)}
 .list{display:flex;flex-direction:column;gap:8px}
 .it{padding:12px 14px;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s;animation:rise .3s ease both}
 .it:hover{box-shadow:0 10px 24px -20px rgba(30,5,37,.6);transform:translateY(-1px)}
@@ -65,7 +66,7 @@ export default function(component){
   D.fields.forEach((f,i)=>f.boxes.forEach(b=>{const d=document.createElement("div");d.className="f";d.dataset.i=i;
    d.style.cssText=pct(b)+`;border-color:${COL[f.status]};background:${FILL[f.status]}`;d.title=`${f.label}: ${f.value??"blank"}`;
    d.onclick=()=>{open=i;cards();spot()};page.appendChild(d)}));spot();cap.textContent=D.summary}
- function spot(){let s=page.querySelector(".spot");const f=D.fields[open];
+ function spot(){page.querySelectorAll(".f").forEach(e=>e.classList.toggle("cur",+e.dataset.i===open));let s=page.querySelector(".spot");const f=D.fields[open];
   page.querySelectorAll(".f").forEach(e=>e.classList.toggle("on",+e.dataset.i===open));
   if(!f||!f.boxes.length){if(s)s.remove();return}const b=union(f.boxes),p=.006;
   if(!s){s=document.createElement("div");s.className="spot";page.appendChild(s)}s.style.cssText=pct([b[0]-p,b[1]-p,b[2]+2*p,b[3]+2*p])}

@@ -90,43 +90,6 @@ def main() -> None:
                     pg.mouse.wheel(0, px / steps)
                     time.sleep(0.08)
 
-            # 1. home: a request through the whole pipeline
-            go("/", 5)
-            try:
-                pg.get_by_role("button", name="Run a request").wait_for(timeout=30_000)
-            except Exception:
-                pg.screenshot(path=str(MEDIA / "_debug.png"), full_page=True)
-                sys.exit("The home page did not show the Run button. See docs/media/_debug.png; page text:\n"
-                         + pg.inner_text("body")[:1500])
-            # the care readiness console: replay the weeks, filter by the flow, open a patient
-            try:
-                fl = pg.frame_locator("iframe").first
-                fl.locator("#play").wait_for(timeout=20_000)
-                fl.locator("#play").click()
-                time.sleep(19)
-                fl.locator(".node[data-k='1|Held: documents'] rect").dispatch_event("click")
-                time.sleep(2.5)
-                fl.locator("tr.r").first.click()
-                time.sleep(3)
-                pg.screenshot(path=str(MEDIA / "console.png"))
-                fl.locator("#notice").dispatch_event("click")
-                time.sleep(3)
-            except Exception as e:
-                print("console scene skipped:", e)
-            pg.get_by_role("button", name="Run a request").scroll_into_view_if_needed()
-            pg.get_by_role("button", name="Run a request").click()
-            pg.get_by_text("Rules:", exact=False).first.wait_for(timeout=60_000)
-            time.sleep(4)
-            slow_scroll(500)
-            time.sleep(1.5)
-            shot("home")
-            # same, with a documentation gap: caught before the payor
-            slow_scroll(-500)
-            pg.get_by_text("Inject a documentation gap").click()
-            time.sleep(1)
-            pg.get_by_role("button", name="Run a request").click()
-            pg.get_by_text("Rules: blocked", exact=False).first.wait_for(timeout=60_000)
-            time.sleep(3)
             def scene(name, fn):
                 try:
                     fn()
@@ -134,28 +97,68 @@ def main() -> None:
                     pg.screenshot(path=str(MEDIA / f"_failed_{name}.png"))
                     print(f"scene '{name}' failed: {str(e).splitlines()[0]}  (see docs/media/_failed_{name}.png)")
 
-            # 2. browser agent, live on a portal
-            def agent():
-                go("/agent_theater")
-                pg.get_by_role("button", name="Run the agent").click(timeout=20_000)
-                time.sleep(14)
-                shot("agent")
-            scene("agent", agent)
-            # 3. approval outlook and policy drift
-            def outlook():
-                go("/denial_shield", 6)
-                scroll_to("Approval outlook")
-                slow_scroll(250)
-                time.sleep(2)
+            # 1. care readiness: replay the weeks, act on the new payor rule, open a patient
+            def console():
+                go("/", 5)
+                fl = pg.frame_locator("iframe").first
+                fl.locator("#play").wait_for(timeout=30_000)
+                fl.locator("#play").click()
+                time.sleep(19)
+                fl.locator("#acts").click()
+                time.sleep(2.5)
+                fl.locator("tr.r").first.click()
+                time.sleep(3)
+                shot("console")
+            scene("console", console)
+
+            # 2. prior authorizations: follow one patient from fax to approval
+            def journey():
+                go("/prior_authorizations", 6)
+                pg.get_by_role("button", name="Follow this patient").first.click()
+                time.sleep(7)
+                shot("journey_intake")
+                pg.get_by_role("button", name="Continue to the readiness check").click()
+                time.sleep(6)
+                ask = pg.get_by_role("button", name="Ask for")
+                if ask.count():
+                    ask.first.click()
+                    time.sleep(4)
                 shot("outlook")
-                scroll_to("Policy drift monitor")
-                slow_scroll(600, 16)
-                time.sleep(2)
+                pg.get_by_role("button", name="Ready to submit").or_(pg.get_by_role("button", name="Submit anyway")).first.click()
+                time.sleep(3)
+                pg.get_by_role("button", name="Submit", exact=True).click()
+                time.sleep(9)
+                shot("agent")
+                pg.get_by_role("button", name="See the payor's decision").click()
+                time.sleep(8)
+                pg.get_by_role("button", name="Start monitoring").click()
+                time.sleep(4)
+                shot("journey_done")
+            scene("journey", journey)
+
+            # 3. benefit check: the call fills the cost card; read-back corrects what was misheard
+            def benefits():
+                go("/benefit_checks", 4)
+                time.sleep(10)
+                pg.locator("#sw").first.click()
+                time.sleep(14)
+                shot("benefits")
+            scene("benefits", benefits)
+
+            # 4. insurance monitoring: runway, then a payor rule change approved
+            def monitoring():
+                go("/insurance_monitoring", 5)
+                pg.get_by_role("button", name="Play 8 weeks").click()
+                time.sleep(7)
+                scroll_to("Payor rule changes")
+                pg.get_by_role("button", name="Approve rule").first.click()
+                time.sleep(3)
                 shot("drift")
-            scene("outlook", outlook)
-            # 4. self-healing playbook on a portal redesign
+            scene("monitoring", monitoring)
+
+            # 5. AI Ops desk: a portal redesign and the repaired playbook
             def heal():
-                go("/playbook_studio")
+                go("/ai_ops_desk?desk=Playbooks", 5)
                 scroll_to("Portal release watch")
                 pg.get_by_text("Redesigned form", exact=False).first.click()
                 time.sleep(1)
@@ -165,15 +168,6 @@ def main() -> None:
                 time.sleep(2)
                 shot("heal")
             scene("heal", heal)
-            # 5. appeal packet with verified citations
-            def appeal():
-                go("/cases_api")
-                pg.get_by_role("tab", name="Appeals").click()
-                time.sleep(2.5)
-                slow_scroll(300)
-                time.sleep(2)
-                shot("appeal")
-            scene("appeal", appeal)
             ctx.close()
             b.close()
         webm = next(vid_dir.glob("*.webm"))

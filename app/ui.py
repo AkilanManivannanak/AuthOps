@@ -14,8 +14,10 @@ import streamlit as st
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "app" / "assets"
+from app.tokens import PALETTE as _P  # noqa: E402
+
 FOREST, GREEN, RED, INK, RULE, PAPER, TAG, AMBER = (
-    "#5B2A86", "#8C5FB9", "#C0446A", "#1E0525", "#ECE5D8", "#FDF8F3", "#FFE3D8", "#E0855F")
+    _P["violet"], _P["lilac"], _P["rose"], _P["ink"], _P["sand"], _P["cream"], _P["tag"], _P["amber"])
 
 CSS = f"""
 <style>
@@ -66,12 +68,19 @@ div[data-testid="stAlert"] a, div[data-testid="stAlert"] strong {{ color: #5B2A8
 div[data-testid="stExpander"] details {{ border-radius: 14px; border-color: #ECE5D8; }}
 div[data-testid="stPopover"] button {{ border-radius: 999px; }}
 .stTabs [data-baseweb="tab"] {{ font-weight: 600; }}
+header[data-testid="stHeader"] {{ background: rgba(255,255,255,.92); backdrop-filter: blur(8px); border-bottom: 1px solid #F0EAE2; }}
+header[data-testid="stHeader"] a {{ font-weight: 500; }}
+.ao-foot {{ margin-top: 3.5rem; padding-top: 1rem; border-top: 1px solid #F0EAE2; color: #8E8292; font-size: .8rem; line-height: 1.5; }}
+div[data-testid="stSegmentedControl"] button {{ border-radius: 999px !important; }}
 </style>
 """
 
 
 def setup(title: str, purpose: str = "") -> None:
     st.markdown(CSS, unsafe_allow_html=True)
+    if st.session_state.get("_embedded"):   # shown inside a parent page, which has its own heading
+        log("view", {"title": title})
+        return
     st.markdown(f"<h1>{title}</h1>", unsafe_allow_html=True)
     if purpose:
         st.markdown(f"<div class='ao-sub'>{purpose}</div>", unsafe_allow_html=True)
@@ -113,10 +122,7 @@ def log(action: str, payload: dict | None = None, page: str | None = None) -> No
 
 
 def require_tester(reason: str = "so your work counts in the study") -> dict | None:
-    t = tester()
-    if not t:
-        st.info(f"Join as a tester on the **Join the study** page {reason}. You can still explore without joining.")
-    return t
+    return tester()
 
 
 # ------------------------------------------------------------------ components
@@ -214,3 +220,41 @@ class Timer:
     @property
     def seconds(self) -> float:
         return round(time.time() - st.session_state[self.key], 1)
+
+
+def run_view(path: str) -> None:
+    """Run an existing view script inside the current page, without its own page heading."""
+    import runpy
+
+    st.session_state["_embedded"] = True
+    try:
+        runpy.run_path(str(ROOT / path), run_name="__main__")
+    finally:
+        st.session_state["_embedded"] = False
+
+
+def switch(options: dict, key: str) -> str:
+    """Pill switch between the tools on a page; the choice is kept in the URL so links can open a tool."""
+    names = list(options)
+    want = st.query_params.get(key)
+    if key not in st.session_state:
+        st.session_state[key] = want if want in names else names[0]
+    pick = st.segmented_control("View", names, key=key, label_visibility="collapsed") or names[0]
+    if st.query_params.get(key) != pick:
+        st.query_params[key] = pick
+    return pick
+
+
+def footer() -> None:
+    st.markdown("<div class='ao-foot'>AuthOps is an independent portfolio project by Akilan Manivannan, built for the "
+                "Silna Health AI Deployment Analyst application. Not affiliated with or endorsed by Silna Health. "
+                "Synthetic patients and fictional payors only; do not enter real patient information.</div>",
+                unsafe_allow_html=True)
+
+
+def rule_label(rule: str) -> str:
+    """Payor rule ids as people say them: icd10_billable -> ICD-10 billable."""
+    words = {"icd10": "ICD-10", "cpt": "CPT", "npi": "NPI", "id": "ID", "aba": "ABA", "pt": "PT"}
+    out = [words.get(w, w) for w in rule.split("_")]
+    out[0] = out[0] if out[0].isupper() or "-" in out[0] else out[0].capitalize()
+    return " ".join(out)
