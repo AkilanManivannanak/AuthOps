@@ -1,0 +1,100 @@
+import json
+import random
+import tempfile
+from datetime import date
+from pathlib import Path
+
+import streamlit as st
+
+from app.ui import log, setup, switch
+from app.widgets.assist_view import assist_view
+from authops.assist.reader import check_plan, ocr_text, read_letter, to_pages
+from authops.llm import llm_available
+
+setup("Try it on your document", "Bring a real letter or treatment plan. Get it explained, or checked, in seconds.")
+
+AI_CAP = 6   # AI reads per visit, to keep the free demo affordable
+MODES = {"I got a letter from my insurance": "letter", "We're about to send a prior auth": "plan",
+         "Show me what the AI read": "raw"}
+mode = MODES[switch(MODES, "mode")]
+
+st.markdown("<div class='ao-muted' style='margin:-.2rem 0 .8rem'>🔒 Cover names and member IDs before you upload. "
+            "Nothing is saved. With the AI reader on, the page is sent to Anthropic's API to be read.</div>",
+            unsafe_allow_html=True)
+
+
+@st.cache_data(show_spinner=False)
+def _sample(kind: str) -> list[str]:
+    from authops.synth.generate import PAYOR_BY_ID, generate_cases
+    from authops.synth.render import render_letter, render_treatment_plan, save_doc
+    c = generate_cases(1, seed=7, gap_rate=0.0)[0]
+    rng, d = random.Random(3), Path(tempfile.mkdtemp(prefix="sample_"))
+    if kind == "letter":
+        c.payor = PAYOR_BY_ID["KCM"]
+        w, _, _ = render_letter(c, rng)
+        return save_doc(w, d, "letter", "scan", rng)
+    c.signature_present, c.signature_date = False, None
+    return save_doc(render_treatment_plan(c, rng, False), d, "plan", "scan", rng)
+
+
+a, b, c = st.columns([2.2, 1, 1])
+up = a.file_uploader("Photo, scan or PDF", type=["png", "jpg", "jpeg", "pdf"], label_visibility="collapsed")
+sample = b.button("Use a sample " + ("letter" if mode == "letter" else "plan"), width="stretch")
+used = st.session_state.setdefault("ai_used", 0)
+ai_on = c.toggle("AI reader", value=llm_available() and used < AI_CAP, disabled=not llm_available() or used >= AI_CAP,
+                 help="Claude reads the page images and answers in a fixed shape; every quote is checked against the "
+                      "page. Off: OCR and rule checks only.")
+if not llm_available():
+    c.caption("Rules only on this deployment")
+
+if sample:
+    st.session_state.doc = {"pages": _sample("letter" if mode == "letter" else "plan"), "name": "sample"}
+elif up is not None and st.session_state.get("doc", {}).get("name") != up.name + str(up.size):
+    st.session_state.doc = {"pages": [str(p) for p in to_pages(up.getvalue(), up.name)], "name": up.name + str(up.size)}
+
+doc = st.session_state.get("doc")
+if not doc:
+    st.markdown("""<div class='ao-card' style='text-align:center;padding:48px 20px;margin-top:10px'>
+    <div style='font-family:Fraunces,Georgia,serif;font-size:1.6rem'>Drop a letter or a plan above</div>
+    <div class='ao-muted'>or press "Use a sample" to see it work on a synthetic one</div></div>""", unsafe_allow_html=True)
+    st.stop()
+
+pages = [Path(p) for p in doc["pages"]]
+key = (doc["name"], mode, ai_on)
+cache = st.session_state.setdefault("assist_cache", {})
+if key not in cache:
+    llm = None
+    if ai_on:
+        from authops.llm import ClaudeLLM
+        llm = ClaudeLLM()
+        st.session_state.ai_used += 1
+    with st.spinner("Reading the page"):
+        text = ocr_text(pages)
+        if mode == "letter":
+            cache[key] = read_letter(pages, llm, text=text)
+        elif mode == "plan":
+            cache[key] = check_plan(pages, llm, text=text, today=date.today())
+        else:
+            cache[key] = {"text": text, "letter": read_letter(pages, None, text=text)["facts"]}
+    log("assist", {"mode": mode, "ai": ai_on, "sample": doc["name"] == "sample"})
+res = cache[key]
+
+left, right = st.columns([1, 2.2])
+left.image(str(pages[0]), width="stretch")
+with right:
+    if mode in ("letter", "plan"):
+        assist_view(mode, res, key=f"av_{abs(hash(key))}")
+    else:
+        f = res["letter"]
+        st.markdown("#### What the reader pulled off the page")
+        rows = {"Decision words": f["decision"] or "none", "Amount": f["units"] or "none",
+                "Diagnosis codes": ", ".join(f["icd10"]) or "none", "Service codes": ", ".join(f["cpt"]) or "none",
+                "NPIs": ", ".join(f"{n['npi']} ({'valid' if n['valid'] else 'fails checksum'})" for n in f["npis"]) or "none",
+                "Dates": ", ".join(d.isoformat() for d in f["dates"]) or "none",
+                "Appeal window": f"{f['appeal_days']} days" if f["appeal_days"] else "not stated"}
+        for k_, v in rows.items():
+            st.markdown(f"**{k_}** &nbsp; {v}")
+        with st.expander("Full OCR text"):
+            st.text(res["text"])
+        st.download_button("Download as JSON", json.dumps({k_: str(v) for k_, v in rows.items()}, indent=1),
+                           "authops_read.json")

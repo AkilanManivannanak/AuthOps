@@ -3,12 +3,17 @@
 **Prior-authorization operations, end to end: read the documents, catch denials before they happen, submit through any channel, and keep rules and playbooks current on their own.**
 
 [![Live app](https://img.shields.io/badge/live%20app-open-28543E?style=for-the-badge)](https://akilan-silna-pa-agent.streamlit.app)
-![tests](https://img.shields.io/badge/tests-63%20passing-28543E?style=for-the-badge)
+![tests](https://img.shields.io/badge/tests-89%20passing-28543E?style=for-the-badge)
 ![data](https://img.shields.io/badge/data-synthetic%20only-9A9A9A?style=for-the-badge)
 
 ![AuthOps demo](docs/media/demo.gif)
 
-> Independent portfolio project by Akilan Manivannan. Not affiliated with or endorsed by Silna Health. All patients, providers and payors are synthetic.
+**Use it on a real document:** on *Try it on your document*, a patient or family can upload an insurance letter and get the
+decision, dates, appeal deadline and next steps in plain English; a clinic can upload a treatment plan and see what to fix
+before it goes to the payor. Claude reads the page; deterministic checks (NPI checksum, ICD-10 and CPT shape, dates,
+signature) run alongside it, and every quote the AI returns is checked against the page. Nothing is stored.
+
+> Independent portfolio project by Akilan Manivannan. Not affiliated with or endorsed by Silna Health. The demos use synthetic patients, providers and payors.
 
 ## How a request moves
 

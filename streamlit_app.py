@@ -10,9 +10,19 @@ import streamlit as st  # noqa: E402
 st.set_page_config(page_title="AuthOps: care readiness operations", page_icon="🩺", layout="wide",
                    initial_sidebar_state="collapsed")
 
+try:   # Streamlit secrets -> environment, so the AI reader finds the key on the hosted app
+    import os
+
+    for _k in ("ANTHROPIC_API_KEY", "AUTHOPS_MODEL"):
+        if _k in st.secrets and not os.environ.get(_k):
+            os.environ[_k] = str(st.secrets[_k])
+except Exception:
+    pass
+
 V = "app/views/"
 pages = [
     st.Page(V + "care_readiness.py", title="Care readiness", default=True, url_path="care_readiness"),
+    st.Page(V + "try_it.py", title="Try it on your document", url_path="try_it"),
     st.Page(V + "prior_authorizations.py", title="Prior authorizations", url_path="prior_authorizations"),
     st.Page(V + "benefit_checks.py", title="Benefit checks", url_path="benefit_checks"),
     st.Page(V + "insurance_monitoring.py", title="Insurance monitoring", url_path="insurance_monitoring"),

@@ -248,7 +248,7 @@ def switch(options: dict, key: str) -> str:
 def footer() -> None:
     st.markdown("<div class='ao-foot'>AuthOps is an independent portfolio project by Akilan Manivannan, built for the "
                 "Silna Health AI Deployment Analyst application. Not affiliated with or endorsed by Silna Health. "
-                "Synthetic patients and fictional payors only; do not enter real patient information.</div>",
+                "The demos use synthetic patients and fictional payors. On Try it, cover names and IDs first; nothing is saved.</div>",
                 unsafe_allow_html=True)
 
 

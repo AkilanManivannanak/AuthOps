@@ -275,5 +275,8 @@ window.addEventListener("resize",drawFlow);all();
 """
 
 
-def operations_floor(data: dict) -> None:
-    st.iframe(HTML.replace("__ROOTVARS__", css_vars()).replace("__DATA__", json.dumps(data)), height="content")
+def operations_floor(data: dict, compact: bool = False) -> None:
+    html = HTML
+    if compact:   # the page above already shows the headline numbers
+        html = html.replace("</style>", ".hd h2,.kpis{display:none}.hd{padding:14px 26px 10px}</style>", 1)
+    st.iframe(html.replace("__ROOTVARS__", css_vars()).replace("__DATA__", json.dumps(data)), height="content")

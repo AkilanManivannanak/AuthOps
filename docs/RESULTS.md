@@ -172,7 +172,8 @@ behind a "How we know" panel.
 
 | Page | What you do |
 |---|---|
-| Care readiness | The patient list with status chips, the readiness flow and payor panel; replay 26 weeks and watch an "Action required" rule appear |
+| Care readiness | Four headline numbers that replay 26 weeks and flip between "with AuthOps" and "without" (held requests become denials, recommended amounts become full-need asks); then the patient list, readiness flow and payors |
+| Try it on your document | Real documents: a payor letter explained for a patient (decision, dates, appeal window, next steps, questions), a treatment plan checked for a clinic (rule checks plus AI checks with page-verified quotes), or the raw read for an ops reviewer. Rules-only without an API key |
 | Prior authorizations | Follow one patient from a faxed plan to the payor's decision (intake, readiness check, submit, decision, monitoring). Tools: read a document, check a request with the approval outlook, watch the browser agent, appeal a denial, channels |
 | Benefit checks | A phone benefit check fills a patient cost card; switch read-back on and watch misheard numbers get corrected. Also a status call and a cost calculator |
 | Insurance monitoring | Every patient's authorization runway, plus payor rule changes found from decisions, each approved by a person |
