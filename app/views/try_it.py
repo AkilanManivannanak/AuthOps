@@ -128,7 +128,8 @@ if key not in cache:
                               "summary": r0.get("summary")})
         del w["plans"][12:]
         from authops import workspace as W
-        W.activity(w, f"Checked a treatment plan: {r0.get('to_fix', 0)} to fix", "try_it")
+        what = {"referral": "a referral", "visit_log": "a visit log"}.get(r0.get("kind"), "a treatment plan")
+        W.activity(w, f"Checked {what}: {r0.get('to_fix', 0)} to fix", "try_it")
         save()
 res = cache[key]
 

@@ -53,9 +53,133 @@ def to_pages(data: bytes, name: str, max_pages: int = 3) -> list[Path]:
     return out
 
 
+def _photo(img: Image.Image) -> Image.Image:
+    """Phone photos: uneven light breaks a fixed black/white threshold. Upscale and stretch contrast instead."""
+    from PIL import ImageOps
+    g = ImageOps.grayscale(img)
+    if g.width < 1800:
+        g = g.resize((g.width * 2, g.height * 2), Image.LANCZOS)
+    return ImageOps.autocontrast(g, cutoff=2)
+
+
 def ocr_text(pages: list[Path]) -> str:
-    from authops.docintel.ocr import ocr_pages
-    return ocr_pages([str(p) for p in pages]).text
+    """Read each page two ways (scan cleanup and phone-photo cleanup) and keep the one OCR is more sure of."""
+    import pytesseract
+
+    from authops.docintel.ocr import ocr_image
+    out = []
+    for p in pages:
+        img = Image.open(p).convert("RGB")
+        scan = ocr_image(img)
+        d = pytesseract.image_to_data(_photo(img), config="--psm 4", output_type=pytesseract.Output.DICT)
+        conf = [float(c) for c, t in zip(d["conf"], d["text"]) if t.strip() and float(c) >= 0]
+        lines: dict = {}
+        for i, t in enumerate(d["text"]):
+            if t.strip():
+                lines.setdefault((d["block_num"][i], d["par_num"][i], d["line_num"][i]), []).append(t.strip())
+        photo_conf = sum(conf) / len(conf) if conf else 0.0
+        out.append("\n".join(" ".join(v) for v in lines.values()) if photo_conf > scan.mean_conf else scan.text)
+    return "\n\n".join(out)
+
+
+# ------------------------------------------------------------------ referrals, insurance order, visit logs
+# Learned from a real outpatient PT clinic's paperwork (de-identified): a referral lists the reason for the
+# visit next to a long problem list, the patient can have three insurances, and the clinic's visit log uses
+# its own modality shorthand rather than billing codes.
+
+REF_REASON = re.compile(r"referral\s+reason\s*[:\-]?\s*\n?\s*([^\n]{3,160})", re.I)
+INSURANCE = re.compile(r"\b(first|primary|secondary|second|third|tertiary)\s+insurance\s*[:\-]\s*([^\n(]{3,60})", re.I)
+ORDER = {"first": 1, "primary": 1, "secondary": 2, "second": 2, "third": 3, "tertiary": 3}
+# Empire BlueCross BlueShield became Anthem Blue Cross and Blue Shield in New York on Jan 1, 2024 (same member IDs).
+PAYOR_ALIASES = [(r"\b(bcbs|blue\s*cross|empire|anthem)\b", "Anthem Blue Cross and Blue Shield"),
+                 (r"\bvns\b|vnsny|vns\s*health", "VNS Health"), (r"\bmedicaid\b", "Medicaid"),
+                 (r"\bmedicare\b", "Medicare")]
+PT_MODALITIES = {  # clinic shorthand -> (what it is, CPT code, note)
+    "CP": ("cold packs", "97010", "usually bundled, not paid on its own"),
+    "HP": ("hot packs", "97010", "usually bundled, not paid on its own"),
+    "US": ("ultrasound", "97035", "timed, 15-minute units"),
+    "ES": ("electrical stimulation", "97014", "unattended; Medicare plans usually want G0283; 97032 if attended"),
+    "AE": ("active assisted exercise", "97110", "therapeutic exercise, timed"),
+    "TE": ("therapeutic exercise", "97110", "timed, 15-minute units"),
+    "TM": ("treadmill", "97110", "97116 if documented as gait training"),
+    "MR": ("myofascial release", "97140", "manual therapy, timed"),
+    "TX": ("traction", "97012", "mechanical traction"),
+    "PB": ("paraffin bath", "97018", ""),
+    "IE": ("initial evaluation", "97161-97163", "low, moderate or high complexity"),
+}
+
+
+def _icd_fix(code: str) -> str:
+    """OCR repairs inside an ICD-10 code: a letter first, then digits (MS4.50 -> M54.50)."""
+    c = code.upper().replace("}", "").replace(")", "")
+    head, tail = c[:1], c[1:]
+    return head + tail.translate(str.maketrans({"S": "5", "O": "0", "I": "1", "L": "1", "B": "8", "Z": "2"}))
+
+
+def payor_name(raw: str) -> str:
+    for pat, name in PAYOR_ALIASES:
+        if re.search(pat, raw, re.I):
+            return name
+    return raw.strip()
+
+
+def insurances(text: str) -> list[dict]:
+    out = []
+    for order, raw in INSURANCE.findall(text):
+        raw = re.sub(r"\s*insured\b.*$", "", raw, flags=re.I).strip(" :")
+        out.append({"order": ORDER[order.lower()], "as_written": raw, "payor": payor_name(raw),
+                    "medicare_advantage": bool(re.search(r"advantage|dual|\bmapd?\b|d-?snp", raw, re.I))})
+    return sorted(out, key=lambda r: r["order"])
+
+
+def send_auth_to(ins: list[dict]) -> dict | None:
+    """Which plan gets the prior-auth request, and what to know about the others."""
+    if not ins:
+        return None
+    first = ins[0]
+    names = {i["payor"] for i in ins}
+    notes = []
+    dual = "Medicaid" in names and ("Medicare" in names or any(i["medicare_advantage"] for i in ins))
+    if first["medicare_advantage"]:
+        notes.append("The primary plan is a Medicare Advantage plan, so it manages these visits. Original Medicare, "
+                     "if listed, does not pay while the patient is enrolled in it.")
+    if dual:
+        notes.append("Medicare and Medicaid both apply (dual eligible). Medicaid is billed after the primary plan, "
+                     "so the request goes to the primary plan first.")
+    if first["payor"] == "Anthem Blue Cross and Blue Shield" and re.search(r"bcbs|blue|empire", first["as_written"], re.I):
+        notes.append("BCBS and Empire plans in New York are now Anthem Blue Cross and Blue Shield; member IDs did not change.")
+    return {"payor": first["payor"], "as_written": first["as_written"], "dual_eligible": dual, "notes": notes}
+
+
+def referral(text: str) -> dict | None:
+    """A doctor's referral, not a plan of care: find the reason for this referral among everything else."""
+    if not re.search(r"referral\s+reason|please evaluate|referral\s+date|referred\s+(?:to|for)", text, re.I):
+        return None
+    m = REF_REASON.search(text)
+    reason, code = (m.group(1).strip() if m else None), None
+    if reason:
+        cm = re.search(r"\(?\s*([A-TV-Z][0-9OSIL][0-9A-Z]\.?[0-9A-Z}]{0,4})\s*[)}]?\s*$", reason)
+        if cm:
+            code = _icd_fix(cm.group(1))
+            reason = reason[:cm.start()].strip(" ,(")
+    discipline = "physical therapy" if re.search(r"^\s*PT\s*$|physical therap", text, re.I | re.M) else None
+    others = sorted({c for c in ICD.findall(text) if c != code})
+    return {"reason": reason, "code": code, "discipline": discipline, "other_codes": len(others)}
+
+
+LEGEND = {"CP": r"cold\s*pack", "HP": r"h\w{1,2}t\s*pack", "US": r"ultra\s*s", "ES": r"electric|e-?stim",
+          "AE": r"active\s*assist", "TE": r"thera?\s*p?\s*eutic|therd\s*peutic", "TM": r"tread\s*mill",
+          "MR": r"myo\s*fascial", "TX": r"traction|^TX\b", "PB": r"paraffin", "IE": r"initial\s+eval"}
+
+
+def modality_codes(text: str) -> list[dict]:
+    """A clinic visit log (treatment record): map its column legend to billing codes.
+    Matched on the legend wording, which survives OCR better than the two-letter column heads."""
+    hits = [k for k, pat in LEGEND.items() if re.search(pat, text, re.I | re.M)]
+    if len(hits) < 3 and not re.search(r"treatment\s+record|visit\s+log|flow\s*sheet", text, re.I):
+        return []
+    return [{"column": k, "means": PT_MODALITIES[k][0], "cpt": PT_MODALITIES[k][1], "note": PT_MODALITIES[k][2]}
+            for k in hits]
 
 
 # ------------------------------------------------------------------ rules layer
@@ -197,10 +321,55 @@ def _default_steps(decision: str | None) -> list[str]:
 RULE_CHECKS = ["Provider signature and date", "Diagnosis codes", "Service codes", "Provider NPI", "Plan dates"]
 
 
+def check_referral(r: dict, ins: list[dict], f: dict) -> dict:
+    """A referral starts a PT authorization but is not the request: say what it gives and what is still missing."""
+    checks = [{"name": "Reason for this referral", "layer": "rules", "status": "pass" if r["code"] else "fix",
+               "detail": (f"{r['reason']} ({r['code']}). Use this code on the request." if r["code"] else
+                          "No diagnosis code next to the referral reason; ask the referring office for it.")
+               + (f" The other {r['other_codes']} codes on the page are the patient's history, not this referral."
+                  if r["other_codes"] else "")}]
+    to = send_auth_to(ins)
+    if to:
+        checks.append({"name": "Which plan gets the request", "layer": "rules", "status": "pass",
+                       "detail": f"Send it to the primary plan: {to['payor']} (written as \"{to['as_written']}\"). "
+                       + " ".join(to["notes"])})
+    else:
+        checks.append({"name": "Which plan gets the request", "layer": "rules", "status": "unclear",
+                       "detail": "No insurance listed on the referral; confirm the primary plan on the insurance card."})
+    if f["npis"]:
+        ok = any(n["valid"] for n in f["npis"])
+        checks.append({"name": "Referring provider NPI", "layer": "rules", "status": "pass" if ok else "fix",
+                       "detail": "NPI passes the checksum." if ok else "NPI fails the checksum; check for a typo."})
+    missing = ["Initial evaluation by the physical therapist (CPT 97161-97163)",
+               "Plan of care with measurable goals, frequency and duration, signed by the therapist",
+               "Visit codes for the planned treatment (for example 97110, 97140, 97035)",
+               "Rendering therapist NPI"]
+    return {"layer": "rules", "kind": "referral", "facts": f, "referral": r, "insurances": ins, "send_to": to,
+            "checks": checks, "missing": missing,
+            "summary": "This is a referral. It gives the reason and the insurance; the payor also needs the evaluation "
+                       "and a signed plan of care before visits are approved."}
+
+
 def check_plan(pages: list[Path], llm=None, text: str | None = None, today: date | None = None) -> dict:
     text = text if text is not None else ocr_text(pages)
     f = facts(text)
     today = today or date.today()
+    ref = referral(text)
+    if ref:
+        res = check_referral(ref, insurances(text), f)
+        n = len(res["checks"]) + len(res["missing"])   # a referral alone is not ready to send
+        res["score"] = round(100 * sum(c["status"] == "pass" for c in res["checks"]) / n)
+        res["to_fix"] = sum(c["status"] == "fix" for c in res["checks"]) + len(res["missing"])
+        return res
+    log = modality_codes(text)
+    if log and not (f["has_goals"] or f["icd10"] or f["cpt"]):
+        return {"layer": "rules", "kind": "visit_log", "facts": f, "modalities": log, "score": 100, "to_fix": 0,
+                "checks": [{"name": "Visit log columns as billing codes", "status": "pass", "layer": "rules",
+                            "detail": "; ".join(f"{m['column']} = {m['means']}, {m['cpt']}"
+                                                + (f" ({m['note']})" if m["note"] else "") for m in log) + "."}],
+                "missing": ["The authorization number, approved visit count and end date, kept with this log so "
+                            "each visit is counted against the approval"],
+                "summary": "This is a visit log. Each column maps to a billing code; count visits against the approval."}
     checks = []
     checks.append({"name": "Provider signature and date", "status": "pass" if f["signed"] else "fix", "layer": "rules",
                    "detail": "A signature line was found." if f["signed"] else "No signature found. Unsigned plans are a top denial reason."})
@@ -224,7 +393,10 @@ def check_plan(pages: list[Path], llm=None, text: str | None = None, today: date
                        "detail": f"Latest date on the plan is {ds[-1]:%b %d, %Y}" + (", which has passed." if expired else ".")})
     else:
         checks.append({"name": "Plan dates", "status": "unclear", "layer": "rules", "detail": "Could not find a start and end date."})
-    res = {"layer": "rules", "facts": f, "checks": checks, "missing": [], "summary": None}
+    if log:
+        checks.append({"name": "Visit log columns as billing codes", "status": "pass", "layer": "rules",
+                       "detail": "; ".join(f"{m['column']} = {m['means']}, {m['cpt']}" for m in log) + "."})
+    res = {"layer": "rules", "facts": f, "checks": checks, "missing": [], "summary": None, "modalities": log}
     if llm is not None:
         try:
             ai, meta = _ask(PLAN_PROMPT, text, pages, llm)

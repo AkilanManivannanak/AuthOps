@@ -3,8 +3,8 @@
 **Prior-authorization operations, end to end: read the documents, catch denials before they happen, submit through any channel, and keep rules and playbooks current on their own.**
 
 [![Live app](https://img.shields.io/badge/live%20app-open-28543E?style=for-the-badge)](https://akilan-silna-pa-agent.streamlit.app)
-![tests](https://img.shields.io/badge/tests-109%20passing-28543E?style=for-the-badge)
-![UI checks](https://img.shields.io/badge/UI%20checks-69%2F69-28543E?style=for-the-badge)
+![tests](https://img.shields.io/badge/tests-115%20passing-28543E?style=for-the-badge)
+![UI checks](https://img.shields.io/badge/UI%20checks-80%2F80-28543E?style=for-the-badge)
 ![data](https://img.shields.io/badge/data-synthetic%20only-9A9A9A?style=for-the-badge)
 
 ![AuthOps demo](docs/media/demo.gif)
@@ -15,6 +15,8 @@
 decision, dates, appeal deadline and next steps in plain English; a clinic can upload a treatment plan and see what to fix
 before it goes to the payor. Claude reads the page; deterministic checks (NPI checksum, ICD-10 and CPT shape, dates,
 signature) run alongside it, and every quote the AI returns is checked against the page. Nothing is stored.
+
+**Tried on real clinic paperwork:** a Brooklyn physical therapy clinic shared one patient file, de-identified before use. It exposed four real gaps: phone-photo OCR lost the referral reason, history codes were taken as the request's diagnosis, a referral was graded like a plan, and three insurances had no routing. All four are fixed and tested. See [docs/FIELD_FEEDBACK.md](docs/FIELD_FEEDBACK.md).
 
 > Independent portfolio project by Akilan Manivannan. Not affiliated with or endorsed by Silna Health. The demos use synthetic patients, providers and payors.
 
@@ -83,7 +85,7 @@ python scripts/run_all.py          # full pipeline, writes reports/
 streamlit run streamlit_app.py     # the app
 ```
 
-`pytest -q` runs 109 tests, including real-browser runs on every sandbox portal.
+`pytest -q` runs 115 tests, including real-browser runs on every sandbox portal.
 
 ```bash
 python -m authops.analytics.reports            # the usage and AI-quality reports, from authops/analytics/queries/*.sql
@@ -95,9 +97,9 @@ Tested at three levels, from code up to the full user journey:
 
 | Level | What is checked | Result |
 |---|---|---|
-| Code | `ruff` lint and `pytest`: extraction, payor rules, approval model, workspace actions, document reader, X12 278 build/parse/validate, SQL reports, portal agents in a real browser | 109 / 109 pass |
+| Code | `ruff` lint and `pytest`: extraction, payor rules, approval model, workspace actions, document reader, X12 278 build/parse/validate, SQL reports, portal agents in a real browser | 115 / 115 pass |
 | Pages | Every page and every tool on it, for each role (patient, clinic, operations): loads without errors, plain professional wording, load time | 35 / 35 views clean, slowest 4.1 s |
-| Journeys | Recorded browser runs of real use, with each check shown on screen as it runs | 69 / 69 checks pass |
+| Journeys | Recorded browser runs of real use, with each check shown on screen as it runs | 80 / 80 checks pass |
 
 The recorded journeys:
 
@@ -107,6 +109,7 @@ The recorded journeys:
 4. **Operations:** the review queue first, then every AI Ops desk tab and every prior-authorization tool.
 5. **Phone (390 px):** sign-in, the dashboard and the menu, with no sideways scrolling.
 6. **Standards and quality:** a request goes out as an X12 278 that passes the envelope check; approvals and denials come back and are read correctly; a person marks a letter reading wrong, and the rating appears in the SQL reports on the AI Ops desk.
+7. **Real clinic paperwork (de-identified, not in the repo):** a doctor's referral is recognised as a referral, the reason is found among the history codes, the request is routed to the primary plan for a dual-eligible patient, and a visit log's columns map to billing codes.
 
 ![Recorded UI test run, 8x speed](docs/media/ui_test_run.gif)
 
