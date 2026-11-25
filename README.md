@@ -49,10 +49,12 @@ flowchart LR
 | 📈 **Earns autonomy** | Human QA share drops only while results hold; prompt changes pass a regression gate |
 
 <p>
-<img src="docs/media/agent.png" width="49%" alt="Browser agent on a sandbox portal"/>
-<img src="docs/media/drift.png" width="49%" alt="Policy drift alert"/>
-<img src="docs/media/outlook.png" width="49%" alt="Approval outlook"/>
-<img src="docs/media/heal.png" width="49%" alt="Self-healing playbook"/>
+<img src="docs/media/signin.png" width="49%" alt="Sign-in page with the preview for patients, clinics and operations"/>
+<img src="docs/media/today.png" width="49%" alt="A clinic's day: next steps and what needs attention"/>
+<img src="docs/media/board.png" width="49%" alt="Every request on one board, from new document to clear for care"/>
+<img src="docs/media/readiness.png" width="49%" alt="Readiness check with the approval outlook"/>
+<img src="docs/media/runway.png" width="49%" alt="Authorizations by days of care left, with payor rule changes"/>
+<img src="docs/media/letter.png" width="49%" alt="An insurance letter explained for a patient"/>
 </p>
 
 ## Results
@@ -98,7 +100,9 @@ The recorded journeys:
 4. **Operations:** the review queue first, then every AI Ops desk tab and every prior-authorization tool.
 5. **Phone (390 px):** sign-in, the dashboard and the menu, with no sideways scrolling.
 
-Watch the full run: **[docs/media/ui_test_run.mp4](docs/media/ui_test_run.mp4)** (6 min 25 s).
+![Recorded UI test run, 8x speed](docs/media/ui_test_run.gif)
+
+The run above is played at 8x speed. Full-length video: [docs/media/ui_test_run.mp4](docs/media/ui_test_run.mp4) (6 min 25 s, download to watch).
 
 Run the journeys yourself against a running app (each one records a video into `tests_ui/runs/`):
 

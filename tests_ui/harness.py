@@ -105,7 +105,7 @@ class Journey:
         self.ctx.close()
         self.b.close()
         self.p.stop()
-        webm = sorted(self.vid.glob("*.webm"))[-1]
+        webm = max(self.vid.glob("*.webm"), key=lambda p: p.stat().st_mtime)
         mp4 = OUT / f"{self.name}.mp4"
         ff = shutil.which("ffmpeg")
         if not ff:
