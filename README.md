@@ -8,6 +8,8 @@
 
 ![AuthOps demo](docs/media/demo.gif)
 
+**Accounts and roles:** sign in, choose patient, clinic or AI operations, and work on one shared workspace where every action shows up on every page, with "Next up" suggestions.
+
 **Use it on a real document:** on *Try it on your document*, a patient or family can upload an insurance letter and get the
 decision, dates, appeal deadline and next steps in plain English; a clinic can upload a treatment plan and see what to fix
 before it goes to the payor. Claude reads the page; deterministic checks (NPI checksum, ICD-10 and CPT shape, dates,

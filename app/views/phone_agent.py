@@ -113,5 +113,5 @@ with tab_stream:
             x=alt.X("ms:Q", title="ms"), y=alt.Y("mode:N", title=None), color=alt.Color(
                 "stat:N", scale=alt.Scale(range=["#8C5FB9", "#E0855F"]), legend=alt.Legend(orient="top", title=None)),
             yOffset="stat:N").properties(height=180), width="stretch")
-        st.caption("Simulated from stated stage timings (speech-to-text, model first token, token rate, "
+        st.caption("Modelled from stated stage timings (speech-to-text, model first token, token rate, "
                    "text-to-speech first byte), not measured on a vendor.")

@@ -167,18 +167,23 @@ The panel is deliberately stressed (45% Medicaid, 30% partial approvals, short P
 
 An interactive Streamlit app puts every part of the system in front of a person:
 
-Six pages, named the way a care-readiness team names its work. Each opens with the thing working; tables sit
-behind a "How we know" panel.
+Sign in (or continue without an account), then choose how you use it: patient or family, clinic, or AI
+operations. Each role sees only its own pages. Everything works on one shared workspace per account
+(`authops/workspace.py`), so reading a plan, fixing a gap, sending a request, a payor decision, approving a payor
+rule or starting a reauthorization changes the same patient record on every page, and "Next up" suggests what to
+do next from that state.
 
-| Page | What you do |
+| Page (clinic view) | What you do |
 |---|---|
-| Care readiness | Four headline numbers that replay 26 weeks and flip between "with AuthOps" and "without" (held requests become denials, recommended amounts become full-need asks); then the patient list, readiness flow and payors |
-| Try it on your document | Real documents: a payor letter explained for a patient (decision, dates, appeal window, next steps, questions), a treatment plan checked for a clinic (rule checks plus AI checks with page-verified quotes), or the raw read for an ops reviewer. Rules-only without an API key |
-| Prior authorizations | Follow one patient from a faxed plan to the payor's decision (intake, readiness check, submit, decision, monitoring). Tools: read a document, check a request with the approval outlook, watch the browser agent, appeal a denial, channels |
-| Benefit checks | A phone benefit check fills a patient cost card; switch read-back on and watch misheard numbers get corrected. Also a status call and a cost calculator |
-| Insurance monitoring | Every patient's authorization runway, plus payor rule changes found from decisions, each approved by a person |
-| AI Ops desk | Review (swipe QA), Playbooks (path view, edits, canary repairs), Prompt changes (regression gate), Autonomy (QA ramp), Long charts |
-| How it was measured | Four headline numbers, each linked to the page that reproduces it, then the method and its limits |
+| Today | Next-up suggestions, four counts, and every patient as a card in its stage (new, action required, ready, waiting on payor, reauth due, clear for care); click a card to open it. Recent activity, and the last 26 weeks with and without AuthOps |
+| Prior authorizations | Work one patient's request: intake (the plan is read), readiness check with one-click fixes and the approval outlook, send by the payor's channel, read the decision letter, then monitoring. Tools: read a document, check a request, browser agent, appeal a denial, channels |
+| Benefit checks | A phone benefit check for a patient, with read-back; save the estimate to their record. Status calls and a cost calculator |
+| Insurance monitoring | Every active authorization by days of care left (no overlapping dots; details in a side panel); start a reauthorization. Payor rule changes: approving one holds the open requests it affects |
+| Check a document | A real letter explained, or a plan checked before sending; results kept in the account, never the image |
+| AI Ops desk | Review (swipe QA), Playbooks, Prompt changes, Autonomy, Long charts |
+| How it was measured | Four headline numbers, each linked to the page that reproduces it, then the method and limits |
+
+Patients and families see My care (their letters and deadlines), Read a letter, My costs and How it works.
 
 Run locally: `streamlit run streamlit_app.py`.
 

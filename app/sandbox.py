@@ -1,4 +1,4 @@
-"""Live sandbox for the app: synthetic cases, rendered documents, mock portals, browser agent.
+"""Live test environment for the app: sample cases, rendered documents, mock portals, browser agent.
 
 The portal server starts once per app process. Each agent run gets its own browser in a
 worker thread (Playwright's sync API must not share Streamlit's script thread), and
@@ -42,7 +42,7 @@ def browser_available() -> bool:
     return any(Path(r).is_dir() and any(Path(r).glob("chromium*")) for r in roots if str(r))
 
 
-@st.cache_resource(show_spinner="Setting up the sandbox: generating patients and documents...")
+@st.cache_resource(show_spinner="Setting up the test environment: generating patients and documents...")
 def sandbox():
     from authops.synth.generate import generate_cases
     from authops.synth.render import render_corpus
@@ -53,7 +53,7 @@ def sandbox():
     return {"dir": d, "cases": [c.model_dump(mode="json") for c in cases]}
 
 
-@st.cache_resource(show_spinner="Starting the sandbox payor portals...")
+@st.cache_resource(show_spinner="Starting the test payor portals...")
 def portal_server():
     from authops.portals.server import PortalServer
 

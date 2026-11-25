@@ -98,4 +98,4 @@ with st.expander("How the gate decides"):
     st.markdown(f"""- Every {window} runs it looks at the window: success rate, and silent errors found by audit.
 - If success is at least 90% and at most one silent error turned up in audit, the QA share drops by 15 points (floor 5%).
 - If success falls more than 15 points below target or more than one silent error appears, the share jumps up by 30 points.
-- The same `QARamp` class runs in the real pipeline (`authops/ops/experiments.py`); this page only feeds it simulated outcomes.""")
+- The same `QARamp` class runs in the real pipeline (`authops/ops/experiments.py`); this page only feeds it modelled outcomes.""")

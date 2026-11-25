@@ -8,7 +8,7 @@ from app.sandbox import browser_available, sandbox, start_agent_run
 from app.ui import ASSETS, Timer, log, pill, require_tester, setup, store
 from app.widgets.replay import TOOL_ICON, player  # noqa: F401
 
-setup("Agent Theater", "Run the browser agent on a sandbox portal. Turn up the chaos and watch it recover.")
+setup("Agent Theater", "Run the browser agent on a test portal. Turn up the chaos and watch it recover.")
 t = require_tester("so your runs and diagnosis count")
 
 PORTALS = {"northwind": "Northwind (commercial): survey pop-ups",

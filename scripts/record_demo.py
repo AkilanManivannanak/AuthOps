@@ -97,42 +97,40 @@ def main() -> None:
                     pg.screenshot(path=str(MEDIA / f"_failed_{name}.png"))
                     print(f"scene '{name}' failed: {str(e).splitlines()[0]}  (see docs/media/_failed_{name}.png)")
 
+            # 0. enter as a clinic, without an account
+            pg.goto(base)
+            pg.get_by_role("button", name="Continue without an account").click(timeout=60_000)
+            time.sleep(3)
+            pg.locator("button", has_text="Continue").nth(1).click()
+            time.sleep(6)
+
             # 1. care readiness: replay the weeks, act on the new payor rule, open a patient
             def console():
-                go("/", 5)
-                fl = pg.frame_locator("iframe").first
-                fl.locator("#play").wait_for(timeout=30_000)
-                fl.locator("#play").click()
-                time.sleep(19)
-                fl.locator("#acts").click()
-                time.sleep(2.5)
-                fl.locator("tr.r").first.click()
-                time.sleep(3)
+                time.sleep(4)
                 shot("console")
+                pg.locator(".card2").first.click()
+                time.sleep(6)
             scene("console", console)
 
             # 2. prior authorizations: follow one patient from fax to approval
             def journey():
                 go("/prior_authorizations", 6)
-                pg.get_by_role("button", name="Follow this patient").first.click()
-                time.sleep(7)
                 shot("journey_intake")
-                pg.get_by_role("button", name="Continue to the readiness check").click()
-                time.sleep(6)
+                for label in ("Looks right", "Get the provider", "Attach the school", "Update the plan", "Lower to"):
+                    b = pg.get_by_role("button", name=label, exact=False)
+                    if b.count():
+                        b.first.click()
+                        time.sleep(5)
                 ask = pg.get_by_role("button", name="Ask for")
                 if ask.count():
                     ask.first.click()
                     time.sleep(4)
                 shot("outlook")
-                pg.get_by_role("button", name="Ready to submit").or_(pg.get_by_role("button", name="Submit anyway")).first.click()
-                time.sleep(3)
-                pg.get_by_role("button", name="Submit", exact=True).click()
+                pg.get_by_role("button", name="Send to", exact=False).first.click()
                 time.sleep(9)
                 shot("agent")
-                pg.get_by_role("button", name="See the payor's decision").click()
+                pg.get_by_role("button", name="Check for a decision").click()
                 time.sleep(8)
-                pg.get_by_role("button", name="Start monitoring").click()
-                time.sleep(4)
                 shot("journey_done")
             scene("journey", journey)
 

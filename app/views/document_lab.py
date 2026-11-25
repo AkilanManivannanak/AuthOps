@@ -48,7 +48,7 @@ def read_doc(pages: tuple, doc_type: str | None):
             "ocr_mean": ocr.mean_conf, "words": words, "latency_ms": ex.latency_ms}
 
 
-src = st.radio("Source", ["Generate a synthetic document", "Upload your own image"], horizontal=True,
+src = st.radio("Source", ["Generate a sample document", "Upload your own image"], horizontal=True,
                label_visibility="collapsed")
 truth, template, pages = None, "tp", []
 if src.startswith("Generate"):
@@ -68,7 +68,7 @@ if src.startswith("Generate"):
     doc_id = f"gen-{doc['doc_id']}-{cond}-{st.session_state.doc_seed}"
     doc_type = doc["doc_type"]
 else:
-    up = st.file_uploader("PNG or JPG of a synthetic or redacted document. No real patient data.", type=["png", "jpg", "jpeg"])
+    up = st.file_uploader("PNG or JPG of a sample or redacted document. No real patient data.", type=["png", "jpg", "jpeg"])
     if not up:
         st.stop()
     p = Path(tempfile.mkdtemp()) / up.name

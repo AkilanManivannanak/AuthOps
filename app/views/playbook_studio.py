@@ -40,7 +40,7 @@ if valid:
         st.markdown("#### The path the agent walks")
         plan_map(spec, yaml.safe_load(yml), key=f"pm_{portal}_{hashlib.md5(edited.encode()).hexdigest()[:8]}")
 
-n = st.slider("Backtest on how many sandbox cases", 1, 5, 2)
+n = st.slider("Backtest on how many test cases", 1, 5, 2)
 if st.button("Backtest this plan", type="primary", disabled=not (valid and browser_available())):
     log("backtest", {"portal": portal, "edited": edited != yml, "n": n})
     rows = []
@@ -63,7 +63,7 @@ if st.button("Backtest this plan", type="primary", disabled=not (valid and brows
     st.markdown(f"### {pill(f'{ok:.0%} submitted', 'ok' if ok == 1 else 'bad')}", unsafe_allow_html=True)
     st.dataframe(df.rename(columns=lambda c: c.replace("_", " ").capitalize()), hide_index=True, width="stretch")
     if edited != yml and ok < 1:
-        st.info("Your edit broke something. Real AI Ops work is exactly this loop: change, backtest in a sandbox, "
+        st.info("Your edit broke something. Real AI Ops work is exactly this loop: change, backtest in a test environment, "
                 "ship only what holds. Revert by switching portals and back.")
 elif not browser_available():
     st.caption("Backtests need a browser on the server; see Agent Theater for recorded runs.")
@@ -71,9 +71,9 @@ elif not browser_available():
 # ---------------------------------------------------------------- portal release watch
 st.divider()
 st.markdown("### Portal release watch")
-note("A daily canary walks each portal in the sandbox and compares every form with the fingerprint stored "
+note("A daily canary walks each portal in the test environment and compares every form with the fingerprint stored "
            "when its playbook was approved. On a mismatch the changed steps are re-drafted, hand-written judgment "
-           "steps are kept, and the candidate must reach a confirmation in the sandbox before it is offered.")
+           "steps are kept, and the candidate must reach a confirmation in the test environment before it is offered.")
 
 import json  # noqa: E402
 import tempfile  # noqa: E402
@@ -98,7 +98,7 @@ def _walk_cases():
     return f, next(c for c in cs if c["specialty"] == "physical_therapy")
 
 
-rel_label = st.radio("Northwind release in the sandbox", list(RELEASES), horizontal=True)
+rel_label = st.radio("Northwind release in the test environment", list(RELEASES), horizontal=True)
 rel = RELEASES[rel_label]
 if st.button("Run canary", type="primary"):
     cf, wcase = _walk_cases()
@@ -125,7 +125,7 @@ if st.session_state.get("release_watch") and st.session_state.release_watch[0] =
                          hide_index=True, width="stretch", height=260)
             if ch["button"]:
                 c1.caption(f"Forward button: '{ch['button'][0]}' -> '{ch['button'][1]}'")
-            status = {"healed": ("Candidate verified in the sandbox", "ok"),
+            status = {"healed": ("Candidate verified in the test environment", "ok"),
                       "needs_human": ("Needs a specialist before it can be repaired", "bad")}.get(h.status, (h.status, "ok"))
             c2.markdown(pill(status[0], status[1]), unsafe_allow_html=True)
             names = {"member_id": "Member ID", "dob": "Date of birth", "last_name": "Last name",
@@ -145,7 +145,7 @@ if st.session_state.get("release_watch") and st.session_state.release_watch[0] =
             if h.carried_over:
                 c2.caption("Kept from the approved playbook: " + "; ".join(h.carried_over))
             if h.stopped:
-                c2.caption(f"Sandbox walk stopped: {h.stopped}")
+                c2.caption(f"Test walk stopped: {h.stopped}")
         with st.expander("Patch for review"):
             st.code(h.patch or "(no candidate)", language="diff")
         if h.status == "healed":

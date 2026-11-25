@@ -31,7 +31,7 @@ export default function(component){
   <div class="card tile"><b id="te"></b><span>units expected on first pass</span></div>
   <div class="card tile rec"><b>${D.rec}</b><span>recommended: largest request that clears ${Math.round(D.target*100)}%</span></div></div>
   <div class="card plot"><div class="legend"><span><i style="background:#5B2A86"></i>approved in full</span><span><i style="background:#E0855F"></i>cut to partial</span>
-   <span><i style="background:#C0446A"></i>denied</span><span>· ${D.dots.length} past decisions, same payor and service, similar severity</span></div>
+   <span><i style="background:#C0446A"></i>denied</span>${D.dots.length?`<span>· ${D.dots.length} past decisions, same payor and service, similar severity</span>`:""}</div>
    <svg id="sv" viewBox="0 0 ${W} ${H}" width="100%" style="touch-action:none;cursor:ew-resize"></svg><div class="tip" id="tip"></div>
    <div class="row"><button class="btn" id="userec">Use recommended</button><button class="btn ghost" id="usecur">Back to ${D.units}</button>
    <span class="hint">Drag across the chart to try a different request. Hover a dot to see that decision.</span></div></div>`;

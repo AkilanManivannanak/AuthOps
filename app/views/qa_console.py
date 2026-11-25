@@ -8,6 +8,11 @@ from authops.ops.userstore import pairwise_kappa, qa_labels
 
 setup("QA Console", "Grade what the AI extracted. Your verdicts are scored against the truth and other reviewers.")
 t = require_tester("to grade items (reviews are tied to a reviewer for agreement scoring)")
+_a = st.session_state.get("acct")
+if t is None and _a and not _a.get("guest"):   # a signed-in account reviews under its own name
+    st.session_state.tester = {"id": store().register(_a["name"] + " <" + _a["email"] + ">", _a.get("role", ""), "n/a"),
+                               "name": _a["name"], "role": _a.get("role", "")}
+    t = st.session_state.tester
 items = (asset_json("qa/items.json") or [])
 if not items:
     st.warning("No review items. Run scripts/build_app_assets.py.")
@@ -47,6 +52,12 @@ if sub:
     else:
         right_n = sum((verdicts[f["field"]] in ("correct", "absent")) == (f["auto_verdict"] in ("correct", "absent"))
                       for f in item["fields"])
+        from app.account import save as _save, ws as _ws
+        from authops import workspace as _W
+        _ws()["reviews"] = _ws().get("reviews", 0) + 1
+        _W.activity(_ws(), f"Reviewed a {item['doc_type'].replace('_', ' ')}: {right_n} of {len(item['fields'])} fields right",
+                    "ai_ops_desk")
+        _save()
         if t is None:
             st.session_state.qa_pending = {"item": item["item_id"], "verdicts": verdicts, "comment": comment}
             st.success(f"{right_n} of {len(item['fields'])} of your verdicts match the truth.")

@@ -5,7 +5,11 @@ import streamlit as st
 from app.ui import asset_json, log, run_view, setup, switch
 from authops.benefits.calls import FIELDS, estimate, extract_careful, make_calls, readback
 
-setup("Benefit checks", "One phone call to the payor becomes one accurate patient cost quote.")
+from app.account import role as _role  # noqa: E402
+
+setup("My costs" if _role() == "patient" else "Benefit checks",
+      "Estimate your share of the cost before your visits." if _role() == "patient" else
+      "One call to the payor becomes one accurate cost quote, saved to the patient.")
 
 LABEL = {"plan_active": "Plan active", "in_network": "In network", "deductible": "Deductible",
          "deductible_met": "Deductible met", "coinsurance_pct": "Coinsurance", "copay": "Copay per visit",
@@ -42,29 +46,47 @@ def _calls():
 
 
 calls = _calls()
-TOOLS = {"Phone benefit check": None, "Watch a status call": "app/views/phone_agent.py",
-         "Cost calculator": "cost"}
-pick = switch(TOOLS, "bc")
+from app.account import role, save, today, ws  # noqa: E402
+from authops import workspace as W  # noqa: E402
+
+if role() == "patient":
+    TOOLS = {"Cost calculator": "cost"}
+    pick = "Cost calculator"
+else:
+    TOOLS = {"Phone benefit check": None, "Watch a status call": "app/views/phone_agent.py", "Cost calculator": "cost"}
+    pick = switch(TOOLS, "bc")
 if pick == "Phone benefit check":
-    st.session_state.setdefault("bc_i", 0)
-    c1, c2 = st.columns([4, 1])
-    if c2.button("Another call", width="stretch"):
-        st.session_state.bc_i = (st.session_state.bc_i + 1) % len(calls)
-    k, c, careful, fixed = calls[st.session_state.bc_i]
-    names = ["Avery Brooks", "Maya Ortiz", "Jordan Lee", "Sam Patel", "Riley Chen", "Noah Kim"]
+    w = ws()
+    ids = [p["id"] for p in w["patients"]]
+    focus = st.session_state.get("focus") if st.session_state.get("focus") in ids else ids[0]
+    c1, c2 = st.columns([3, 1.2])
+    pid = c1.selectbox("Check benefits for", ids, index=ids.index(focus),
+                       format_func=lambda i: f"{W.find(w, i)['name']} · {W.find(w, i)['payor_name']}")
+    st.session_state.focus = pid
+    pt = W.find(w, pid)
+    k, c, careful, fixed = calls[pt["seed"] % len(calls)]
+    names = [pt["name"]] * 6
     turns = []
     for f, q, heard in c.turns:
         t = getattr(c.truth, f)
         turns.append({"label": LABEL[f], "q": q, "heard": heard, "got": fmt(f, careful[f]), "truth": fmt(f, t),
                       "ok": careful[f] == t, "fixed": fixed[f] == t})
-    data = {"turns": turns, "patient": names[k % len(names)], "payor": "Prairie Valley Health",
+    data = {"turns": turns, "patient": names[k % len(names)], "payor": pt["payor_name"],
             "service": SERVICE.get(c.specialty, c.specialty), "readback": False,
             "est": money(estimate(careful, 150, 12)), "est_rb": money(estimate(fixed, 150, 12)),
             "est_truth": money(estimate(c.truth, 150, 12))}
     from app.widgets.benefitcard import benefit_card
 
-    benefit_card(data, key=f"bc_{k}")
+    benefit_card(data, key=f"bc_{k}_{pid}")
     log("benefit_call", {"call": k})
+    if pt.get("benefit"):
+        c2.markdown(f"<div class='ao-muted' style='margin-top:1.9rem'>Saved {pt['benefit']['on']}: {pt['benefit']['estimate']} for 12 visits</div>",
+                    unsafe_allow_html=True)
+    elif c2.button("Save to their record", type="primary", width="stretch"):
+        pt["benefit"] = {"estimate": data["est_rb"], "on": f"{today():%b %d}"}
+        W.activity(w, f"Checked {pt['name']}'s benefits: {data['est_rb']} for the next 12 visits", "benefit_checks")
+        save("Estimate saved to " + pt["name"] + ".")
+        st.rerun()
     bv = (asset_json("care_readiness.json") or {}).get("benefits", {})
     if bv:
         st.markdown(f"Across 120 calls, careful parsing took the mean error in a 12-visit estimate from "
@@ -82,7 +104,7 @@ if pick == "Phone benefit check":
                          hide_index=True, width="stretch",
                          column_config={"Fields right": st.column_config.NumberColumn(format="percent"),
                                         "Mean estimate error": st.column_config.NumberColumn(format="dollar")})
-            st.caption("120 synthetic calls. Reps spell numbers out, correct themselves, say 'remaining' instead of "
+            st.caption("120 sample calls. Reps spell numbers out, correct themselves, say 'remaining' instead of "
                        "'met', and quote what the plan pays instead of the member. Speech recognition swaps teens "
                        "and tens (fifteen heard as fifty) on a quarter of numbers. Read-back assumes the rep catches "
                        "90% of wrong values read to them; that rate is an assumption, not a measurement.")

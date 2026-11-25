@@ -52,8 +52,8 @@ export default function(component){
  const pct=b=>`left:${b[0]*100}%;top:${b[1]*100}%;width:${b[2]*100}%;height:${b[3]*100}%`;
  let open=D.fields.findIndex(f=>f.status!=="sure");if(open<0)open=0;let timers=[];
  function cards(){list.innerHTML=D.fields.map((f,i)=>`<div class="card it ${i===open?"on":""}" data-i="${i}" style="animation-delay:${i*40}ms">
-   <div class="row"><div><div class="eyebrow">${f.label}</div><div class="val">${f.value??'<span style="color:#8E8292">left blank</span>'}</div></div>
-   <span class="pill s-${f.status}">${f.status}</span></div>
+   <div class="row"><div><div class="eyebrow">${f.label}</div><div class="val">${f.value??'<span style="color:#8E8292">left for you</span>'}</div></div>
+   <span class="pill s-${f.status}">${{sure:"read",unsure:"check it",abstained:"for you"}[f.status]||f.status}</span></div>
    <div class="conf"><i style="width:${Math.round(f.conf*100)}%;background:${COL[f.status]}"></i></div>
    ${i===open?(f.boxes.length?`<div class="loupe" id="loupe"></div>`:"")+`<div class="why">${f.why}</div>`:""}</div>`).join("");
   list.querySelectorAll(".it").forEach(el=>el.onclick=()=>{open=+el.dataset.i;cards();spot()});loupe()}

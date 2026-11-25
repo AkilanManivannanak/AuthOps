@@ -35,7 +35,7 @@ if ch == "fhir":
     st.markdown("This payor exposes a Prior Authorization API, so no browser is needed. The request goes as a "
                 "Da Vinci PAS-shaped Bundle:")
     st.json(build_pas_bundle(case), expanded=2)
-    if st.button("Submit to the sandbox FHIR endpoint", type="primary"):
+    if st.button("Submit to the test FHIR endpoint", type="primary"):
         try:
             from app.sandbox import portal_server, sandbox
             from authops.channels.router import submit_fhir
@@ -45,7 +45,7 @@ if ch == "fhir":
             st.markdown(pill(r["status"], "ok" if r["status"] == "submitted" else "bad") +
                         f" &nbsp; preAuthRef **{r['ref']}** in {r['duration_s']}s (HTTP {r['http']})", unsafe_allow_html=True)
         except Exception as e:
-            st.error(f"Sandbox unavailable: {e}")
+            st.error(f"Test unavailable: {e}")
 elif ch == "portal":
     st.markdown("No API yet, so the browser agent submits through the portal. See **Agent Theater**.")
 else:

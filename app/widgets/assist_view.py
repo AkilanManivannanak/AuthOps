@@ -39,7 +39,7 @@ export default function(component){
  let root=parentElement.querySelector(".root");if(root)root.remove();
  root=document.createElement("div");root.className="root";parentElement.appendChild(root);
  const D=data,esc=s=>String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;");
- const meta=D.ai?`Read by ${D.ai.model} in ${D.ai.seconds}s, checked by rules`:`Read by OCR and rules only${D.ai_error?" (the AI was unavailable)":""}`;
+ const meta=D.ai?`Read by the AI reader in ${D.ai.seconds}s and double-checked by rules`:`Read by text recognition and rule checks${D.ai_error?" (the AI reader was busy; try again in a moment)":""}`;
  if(D.mode==="letter"){
   const dec=(D.decision||"unclear").toLowerCase(),C={approved:["APPROVED","#5B2A86"],"partially approved":["PARTLY APPROVED","#B4532F"],denied:["DENIED","#C0446A"]}[dec]||[dec.toUpperCase(),"#6E5C76"];
   const chips=[[D.approved_amount,"approved"],[D.requested_amount,"asked for"],[D.start&&D.end?`${D.start} → ${D.end}`:null,"dates"],[D.deadline,"appeal deadline",1]].filter(c=>c[0]);

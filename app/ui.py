@@ -25,7 +25,7 @@ CSS = f"""
 html, body, [class*="css"], .stMarkdown, p, li, label, input, textarea, button {{ font-family: 'DM Sans', system-ui, sans-serif; }}
 h1, h2, h3 {{ font-family: 'Fraunces', Georgia, serif !important; font-weight: 400 !important; letter-spacing: -0.025em; color: {INK}; }}
 h1 {{ font-size: 3rem !important; line-height: 1.05 !important; }}
-.block-container {{ padding-top: 2.2rem; max-width: 1280px; }}
+.block-container {{ max-width: 1280px; }}
 .ao-sub {{ color: #7A6B80; font-size: 1.02rem; margin-top: -0.6rem; margin-bottom: 1.4rem; max-width: 760px; }}
 .ao-tile {{ border: 1px solid {RULE}; background: #fff; border-radius: 18px; padding: 18px 20px; transition: all .18s ease; height: 100%; }}
 .ao-tile:hover {{ transform: translateY(-2px); box-shadow: 0 8px 24px rgba(31,42,36,.10); border-color: {FOREST}; }}
@@ -72,6 +72,7 @@ header[data-testid="stHeader"] {{ background: rgba(255,255,255,.92); backdrop-fi
 header[data-testid="stHeader"] a {{ font-weight: 500; }}
 .ao-foot {{ margin-top: 3.5rem; padding-top: 1rem; border-top: 1px solid #F0EAE2; color: #8E8292; font-size: .8rem; line-height: 1.5; }}
 div[data-testid="stSegmentedControl"] button {{ border-radius: 999px !important; }}
+.block-container {{ padding-top: 4.2rem !important; }}
 </style>
 """
 
@@ -237,18 +238,21 @@ def switch(options: dict, key: str) -> str:
     """Pill switch between the tools on a page; the choice is kept in the URL so links can open a tool."""
     names = list(options)
     want = st.query_params.get(key)
-    if key not in st.session_state:
-        st.session_state[key] = want if want in names else names[0]
+    if want in names and st.session_state.get(f"_{key}_url") != want:   # arrived from a link that names a tool
+        st.session_state[key] = want
+    if st.session_state.get(key) not in names:
+        st.session_state[key] = names[0]
     pick = st.segmented_control("View", names, key=key, label_visibility="collapsed") or names[0]
     if st.query_params.get(key) != pick:
         st.query_params[key] = pick
+    st.session_state[f"_{key}_url"] = pick
     return pick
 
 
 def footer() -> None:
     st.markdown("<div class='ao-foot'>AuthOps is an independent portfolio project by Akilan Manivannan, built for the "
                 "Silna Health AI Deployment Analyst application. Not affiliated with or endorsed by Silna Health. "
-                "The demos use synthetic patients and fictional payors. On Try it, cover names and IDs first; nothing is saved.</div>",
+                "The demos use sample patients and payors. On Try it, cover names and IDs first; nothing is saved.</div>",
                 unsafe_allow_html=True)
 
 

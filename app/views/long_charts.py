@@ -10,11 +10,11 @@ setup("Long-chart validation", "Check a 12 to 150 page chart against payor rules
 m = asset_json("care_readiness.json") or {}
 da = m.get("docagent", {})
 arms = [a for a in ("claude_oneshot", "claude_agent", "offline_oneshot", "offline_agent") if a in da]
-LABEL = {"claude_oneshot": "Claude, one call", "claude_agent": "Claude, background agent",
+LABEL = {"claude_oneshot": "AI, one call", "claude_agent": "AI, background agent",
          "offline_oneshot": "Offline single pass", "offline_agent": "Offline document finder"}
 
 if "claude_agent" not in da:
-    st.info("The Claude arms are not in this build yet. They run on the owner's machine with "
+    st.info("The AI arms are not in this build yet. They run on the owner's machine with "
             "`python scripts/run_care_readiness.py --llm`. The offline arms below are deterministic stand-ins: "
             "they show the harness works, not how a model performs.")
 
@@ -41,7 +41,7 @@ with st.expander("How we know"):
         best = "claude_agent" if "claude_agent" in da else "offline_agent"
         base = "claude_oneshot" if "claude_oneshot" in da else "offline_oneshot"
         tiles([
-            (m.get("docagent_corpus", {}).get("charts", 0), "synthetic charts, 12 to 150 pages", "int", False),
+            (m.get("docagent_corpus", {}).get("charts", 0), "sample charts, 12 to 150 pages", "int", False),
             (da[base]["summary"]["all"]["false_pass"], f"rules waved through wrongly: {LABEL[base].lower()}", "int", True),
             (da[best]["summary"]["all"]["false_pass"], f"rules waved through wrongly: {LABEL[best].lower()}", "int", False),
             (da[best]["summary"]["all"]["accuracy"], f"accuracy on decided rules: {LABEL[best].lower()}", "pct", False),
@@ -78,5 +78,5 @@ with st.expander("How the charts are built and scored"):
         "- Each of the 8 rules fails on about 30% of charts, and the answer key is known.\n"
         "- Every verdict must cite a page and an exact quote. A quote that is not on the cited page turns the "
         "verdict into needs-human, so a confident answer without evidence never counts as a pass.\n"
-        "- The Claude agent gets three tools: keyword search over the chart, read up to 3 pages, and record a "
+        "- The AI agent gets three tools: keyword search over the chart, read up to 3 pages, and record a "
         "finding. It runs asynchronously, outside the request path.")

@@ -11,6 +11,7 @@ wiped on Streamlit Cloud redeploys).
 from __future__ import annotations
 
 import hashlib
+from hmac import compare_digest as hmac_eq
 import json
 import os
 import time
@@ -56,6 +57,11 @@ agent_runs = Table("agent_runs", meta,
                    Column("tester_id", String(32)), Column("ts", Float), Column("portal", String(20)),
                    Column("case_id", String(20)), Column("status", String(20)), Column("error_class", String(40)),
                    Column("steps", Integer), Column("smoothness", Float), Column("settings", Text))
+accounts = Table("accounts", meta,
+                 Column("account_id", String(32), primary_key=True), Column("email", String(160), unique=True),
+                 Column("name", String(80)), Column("pw_hash", String(128)), Column("salt", String(32)),
+                 Column("role", String(20)), Column("workspace", Text), Column("created_at", Float),
+                 Column("updated_at", Float))
 
 
 def _url() -> str:
@@ -129,6 +135,54 @@ class UserStore:
 
     def agent_run(self, **row):
         self._ins(agent_runs, ts=time.time(), **row)
+
+    # ------------------------------------------------------------ accounts
+    @staticmethod
+    def _hash(password: str, salt: str) -> str:
+        return hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), 200_000).hex()
+
+    def create_account(self, email: str, name: str, password: str) -> dict:
+        email = email.strip().lower()
+        if "@" not in email or len(password) < 8:
+            raise ValueError("Use a valid email and a password of at least 8 characters.")
+        with self.engine.begin() as c:
+            if c.execute(select(accounts.c.account_id).where(accounts.c.email == email)).first():
+                raise ValueError("An account with this email already exists. Sign in instead.")
+            salt, aid = uuid.uuid4().hex[:16], uuid.uuid4().hex[:16]
+            c.execute(insert(accounts).values(account_id=aid, email=email, name=name.strip()[:80] or email.split("@")[0],
+                                              pw_hash=self._hash(password, salt), salt=salt, role="",
+                                              workspace="", created_at=time.time(), updated_at=time.time()))
+        return self.account(aid)
+
+    def sign_in(self, email: str, password: str) -> dict | None:
+        with self.engine.connect() as c:
+            r = c.execute(select(accounts).where(accounts.c.email == email.strip().lower())).first()
+        if r is None or not hmac_eq(self._hash(password, r.salt), r.pw_hash):
+            return None
+        return self.account(r.account_id)
+
+    def account(self, aid: str) -> dict | None:
+        with self.engine.connect() as c:
+            r = c.execute(select(accounts).where(accounts.c.account_id == aid)).first()
+        if r is None:
+            return None
+        return {"id": r.account_id, "email": r.email, "name": r.name, "role": r.role or "",
+                "workspace": json.loads(r.workspace) if r.workspace else None}
+
+    def save_account(self, aid: str, role: str | None = None, workspace: dict | None = None, name: str | None = None):
+        vals = {"updated_at": time.time()}
+        if role is not None:
+            vals["role"] = role
+        if workspace is not None:
+            vals["workspace"] = json.dumps(workspace, default=str)
+        if name is not None:
+            vals["name"] = name[:80]
+        with self.engine.begin() as c:
+            c.execute(accounts.update().where(accounts.c.account_id == aid).values(**vals))
+
+    def delete_account(self, aid: str) -> None:
+        with self.engine.begin() as c:
+            c.execute(accounts.delete().where(accounts.c.account_id == aid))
 
     def rows(self, table) -> list[dict]:
         with self.engine.connect() as c:

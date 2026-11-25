@@ -114,7 +114,7 @@ with out:
     if short:
         st.button(f"Ask for {rec_now} units instead ({p_rec:.0%} chance)", type="primary", width="stretch",
                   on_click=_use_rec, args=(rec_now,))
-    if st.button("Send to the payor (simulated)", type="secondary" if short else "primary", width="stretch"):
+    if st.button("Send to the payor ", type="secondary" if short else "primary", width="stretch"):
         decision, approved, reason = payor_decision(case, random.Random(hash((pid, spec, units))))
         drift = rep.ready and decision == "denied"
         st.session_state.ds_history.insert(0, {"payor": pid, "specialty": spec, "units": units,
@@ -192,13 +192,13 @@ with st.expander("Payor requirements database (what the rules know)"):
     st.code(yaml.safe_dump({pid: req["payors"][pid]}, sort_keys=False), language="yaml")
     st.caption("Default rules for every payor: " + ", ".join(req["defaults"]))
 
-with st.expander("Write a plain-English rule (LLM yes/no)"):
+with st.expander("Write a plain-English rule (AI yes/no)"):
     q = st.text_input("Rule", "Does the plan state measurable functional goals?")
     txt = st.text_area("Document text to check", "Goals target measurable improvement over the authorization period. "
                        "Each goal has a baseline, a mastery criterion and a review date.")
     if st.button("Evaluate rule"):
         if not llm_available():
-            st.warning("Needs ANTHROPIC_API_KEY in the app secrets. Without it the rule returns 'could not evaluate', "
+            st.warning("Needs the AI reader to be switched on. Without it the rule returns 'could not evaluate', "
                        "which routes to a person instead of passing.")
         r = NLRule(q, ClaudeLLM() if llm_available() else None).run(case, {"documents_text": txt})
         st.markdown(pill({True: "PASS", False: "FAIL", None: "COULD NOT EVALUATE"}[r.passed],

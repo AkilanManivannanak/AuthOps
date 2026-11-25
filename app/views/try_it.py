@@ -11,15 +11,20 @@ from app.widgets.assist_view import assist_view
 from authops.assist.reader import check_plan, ocr_text, read_letter, to_pages
 from authops.llm import llm_available
 
-setup("Try it on your document", "Bring a real letter or treatment plan. Get it explained, or checked, in seconds.")
+from app.account import role, save, today, ws  # noqa: E402
+
+R = role()
+setup("Read a letter" if R == "patient" else "Check a document",
+      "Take a photo of an insurance letter and get the decision, the dates and what to do next." if R == "patient" else
+      "Upload a treatment plan before it goes out, or a payor's letter when it comes back.")
 
 AI_CAP = 6   # AI reads per visit, to keep the free demo affordable
-MODES = {"I got a letter from my insurance": "letter", "We're about to send a prior auth": "plan",
-         "Show me what the AI read": "raw"}
-mode = MODES[switch(MODES, "mode")]
+MODES = ({"My insurance letter": "letter"} if R == "patient" else
+         {"Before we send a prior auth": "plan", "A payor's letter came back": "letter", "Show me what was read": "raw"})
+mode = MODES[switch(MODES, "mode")] if len(MODES) > 1 else "letter"
 
 st.markdown("<div class='ao-muted' style='margin:-.2rem 0 .8rem'>🔒 Cover names and member IDs before you upload. "
-            "Nothing is saved. With the AI reader on, the page is sent to Anthropic's API to be read.</div>",
+            "Only the result is kept in your account, never the image. The AI reader sends the page to a secure AI service to be read.</div>",
             unsafe_allow_html=True)
 
 
@@ -42,7 +47,7 @@ up = a.file_uploader("Photo, scan or PDF", type=["png", "jpg", "jpeg", "pdf"], l
 sample = b.button("Use a sample " + ("letter" if mode == "letter" else "plan"), width="stretch")
 used = st.session_state.setdefault("ai_used", 0)
 ai_on = c.toggle("AI reader", value=llm_available() and used < AI_CAP, disabled=not llm_available() or used >= AI_CAP,
-                 help="Claude reads the page images and answers in a fixed shape; every quote is checked against the "
+                 help="the AI reads the page images and answers in a fixed shape; every quote is checked against the "
                       "page. Off: OCR and rule checks only.")
 if not llm_available():
     c.caption("Rules only on this deployment")
@@ -56,7 +61,7 @@ doc = st.session_state.get("doc")
 if not doc:
     st.markdown("""<div class='ao-card' style='text-align:center;padding:48px 20px;margin-top:10px'>
     <div style='font-family:Fraunces,Georgia,serif;font-size:1.6rem'>Drop a letter or a plan above</div>
-    <div class='ao-muted'>or press "Use a sample" to see it work on a synthetic one</div></div>""", unsafe_allow_html=True)
+    <div class='ao-muted'>or press "Use a sample" to see it work on a sample one</div></div>""", unsafe_allow_html=True)
     st.stop()
 
 pages = [Path(p) for p in doc["pages"]]
@@ -77,6 +82,22 @@ if key not in cache:
         else:
             cache[key] = {"text": text, "letter": read_letter(pages, None, text=text)["facts"]}
     log("assist", {"mode": mode, "ai": ai_on, "sample": doc["name"] == "sample"})
+    r0, w = cache[key], ws()
+    if mode == "letter":
+        w["letters"].insert(0, {"read_on": f"{today():%b %d}", "decision": r0.get("decision"), "summary": r0.get("summary"),
+                                "deadline": r0.get("deadline"), "start": r0.get("start"), "end": r0.get("end"),
+                                "service": r0.get("service"), "steps": r0.get("next_steps", [])})
+        del w["letters"][12:]
+        from authops import workspace as W
+        W.activity(w, f"Read a payor letter: {r0.get('decision') or 'decision unclear'}", "try_it")
+        save("Saved to " + ("My care." if R == "patient" else "your activity."))
+    elif mode == "plan":
+        w["plans"].insert(0, {"read_on": f"{today():%b %d}", "score": r0.get("score"), "to_fix": r0.get("to_fix"),
+                              "summary": r0.get("summary")})
+        del w["plans"][12:]
+        from authops import workspace as W
+        W.activity(w, f"Checked a treatment plan: {r0.get('to_fix', 0)} to fix", "try_it")
+        save()
 res = cache[key]
 
 left, right = st.columns([1, 2.2])
@@ -98,3 +119,13 @@ with right:
             st.text(res["text"])
         st.download_button("Download as JSON", json.dumps({k_: str(v) for k_, v in rows.items()}, indent=1),
                            "authops_read.json")
+
+st.markdown("<div style='height:.8rem'></div><div class='ao-eyebrow'>What next</div>", unsafe_allow_html=True)
+n1, n2, _ = st.columns([1, 1, 2])
+if R == "patient":
+    n1.page_link("app/views/care_readiness.py", label="See it in My care", icon=":material/arrow_forward:")
+    n2.page_link("app/views/benefit_checks.py", label="Estimate what visits will cost", icon=":material/arrow_forward:",
+                 query_params={"bc": "Cost calculator"})
+else:
+    n1.page_link("app/views/care_readiness.py", label="Back to today's patients", icon=":material/arrow_forward:")
+    n2.page_link("app/views/prior_authorizations.py", label="Work the next request", icon=":material/arrow_forward:")

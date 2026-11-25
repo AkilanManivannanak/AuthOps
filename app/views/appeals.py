@@ -61,6 +61,6 @@ with st.expander("Backtest"):
         st.dataframe(pd.DataFrame([{k: v for k, v in a.items() if k != "rows"} for a in ap.values()]),
                      hide_index=True, width="stretch")
     st.caption("30 denials on 12-150 page charts, 18 wrongful and 12 correct. The offline finder is "
-               "template-aware, so its result only shows the pipeline works; the Claude document agent is "
+               "template-aware, so its result only shows the pipeline works; the AI document agent is "
                "the real test of finding the evidence.")
 

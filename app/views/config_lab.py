@@ -15,7 +15,7 @@ with tab_auto:
     ac = asset_json("autoconfig.json") or {}
     s = ac.get("summary:lexicon")
     if s:
-        tiles([(s["reached_confirmation"], f"of {s['walks']} sandbox walks reached a confirmation", "int", False),
+        tiles([(s["reached_confirmation"], f"of {s['walks']} test walks reached a confirmation", "int", False),
                (s["hand_field_recall"], "of hand-written field mappings reproduced", "pct", False),
                (s["wrong_mappings"], "wrong field mappings", "int", s["wrong_mappings"] > 0),
                (int(s["held_out_lakeshore"].split("/")[0]), "of 3 walks on Lakeshore, the held-out portal", "int", False)])
@@ -28,15 +28,15 @@ with tab_auto:
         st.dataframe(df, hide_index=True, width="stretch")
         if "summary:claude" in ac:
             c = ac["summary:claude"]
-            st.markdown(f"**Claude label mapper:** {c['reached_confirmation']}/{c['walks']} walks reached a "
+            st.markdown(f"**AI label mapper:** {c['reached_confirmation']}/{c['walks']} walks reached a "
                         f"confirmation, {c['hand_field_recall']:.1%} of hand mappings, {c['wrong_mappings']} wrong.")
         st.markdown("#### The drafted Lakeshore playbook")
-        st.caption("Generated from one sandbox walk; the browser agent submits with it in "
+        st.caption("Generated from one test walk; the browser agent submits with it in "
                    "tests/test_e2e_portals.py::test_drafted_playbook_submits.")
         if "lexicon:lakeshore" in ac.get("drafts", {}):
             with st.expander("Show it as code"):
                 st.code(yaml.safe_dump(ac["drafts"]["lexicon:lakeshore"], sort_keys=False, width=100), language="yaml")
-        st.caption("The Lakeshore portal and the label lexicon share an author; the Claude mapper uses no lexicon "
+        st.caption("The Lakeshore portal and the label lexicon share an author; the AI mapper uses no lexicon "
                    "and is the stricter test of unfamiliar labels.")
     else:
         st.info("Run `python scripts/run_autoconfig.py` to populate this tab.")

@@ -20,20 +20,39 @@ except Exception:
     pass
 
 V = "app/views/"
-pages = [
-    st.Page(V + "care_readiness.py", title="Care readiness", default=True, url_path="care_readiness"),
-    st.Page(V + "try_it.py", title="Try it on your document", url_path="try_it"),
-    st.Page(V + "prior_authorizations.py", title="Prior authorizations", url_path="prior_authorizations"),
-    st.Page(V + "benefit_checks.py", title="Benefit checks", url_path="benefit_checks"),
-    st.Page(V + "insurance_monitoring.py", title="Insurance monitoring", url_path="insurance_monitoring"),
-    st.Page(V + "ai_ops_desk.py", title="AI Ops desk", url_path="ai_ops_desk"),
-    st.Page(V + "measured.py", title="How it was measured", url_path="how_it_was_measured"),
-]
+from app.account import gate, header, role  # noqa: E402
+
+gate()
+r = role()
+P = {
+    "home": lambda t: st.Page(V + "care_readiness.py", title=t, default=True, url_path="care_readiness"),
+    "try": lambda t: st.Page(V + "try_it.py", title=t, url_path="try_it"),
+    "pa": lambda t: st.Page(V + "prior_authorizations.py", title=t, url_path="prior_authorizations"),
+    "bc": lambda t: st.Page(V + "benefit_checks.py", title=t, url_path="benefit_checks"),
+    "im": lambda t: st.Page(V + "insurance_monitoring.py", title=t, url_path="insurance_monitoring"),
+    "ops": lambda t: st.Page(V + "ai_ops_desk.py", title=t, url_path="ai_ops_desk"),
+    "how": lambda t: st.Page(V + "measured.py", title=t, url_path="how_it_was_measured"),
+}
+MENU = {   # each role sees only the pages it needs, named the way that person would say it
+    "patient": [("home", "My care"), ("try", "Read a letter"), ("bc", "My costs"), ("how", "How it works")],
+    "clinic": [("home", "Today"), ("pa", "Prior authorizations"), ("bc", "Benefit checks"),
+               ("im", "Insurance monitoring"), ("try", "Check a document"), ("ops", "AI Ops desk"),
+               ("how", "How it was measured")],
+    "ops": [("home", "Today"), ("ops", "AI Ops desk"), ("im", "Insurance monitoring"), ("pa", "Prior authorizations"),
+            ("try", "Check a document"), ("how", "How it was measured")],
+}
+pages = [P[k](t) for k, t in MENU[r]]
 if st.query_params.get("owner") == "1":   # tester study tools, never shown to visitors
     pages += [st.Page(V + "join.py", title="Join the study", url_path="join"),
               st.Page(V + "study.py", title="Study", url_path="study")]
 nav = st.navigation(pages, position="top")
+_entry = st.session_state.pop("_entry", "")
+if _entry and _entry != nav.url_path:
+    _want = next((pg for pg in pages if pg.url_path == _entry), None)
+    if _want is not None:
+        st.switch_page(_want)
 st.session_state.page = nav.title
+header()
 nav.run()
 
 from app.ui import footer  # noqa: E402
