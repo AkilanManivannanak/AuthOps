@@ -695,7 +695,12 @@ def create_app(cases_path: str | Path | None = None, chaos: Chaos | None = None)
         if not claim or claim.get("use") != "preauthorization":
             return JSONResponse({"resourceType": "OperationOutcome", "issue": [
                 {"severity": "error", "code": "invalid", "diagnostics": "Bundle must contain a preauthorization Claim"}]}, 400)
-        member = claim.get("patient", {}).get("identifier", {}).get("value")
+        ref_ = claim.get("patient", {})
+        if "reference" in ref_:   # R4: the claim points at the Patient in the bundle
+            pat = next((e["resource"] for e in bundle.get("entry", []) if e.get("fullUrl") == ref_["reference"]), {})
+            member = next((i.get("value") for i in pat.get("identifier", [])), None)
+        else:
+            member = ref_.get("identifier", {}).get("value")
         case = st.members.get(member)
         if not case:
             return JSONResponse({"resourceType": "OperationOutcome", "issue": [

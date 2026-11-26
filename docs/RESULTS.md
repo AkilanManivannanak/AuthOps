@@ -191,8 +191,29 @@ Run locally: `streamlit run streamlit_app.py`.
 1. share.streamlit.io, New app, pick this repo, branch `main`, main file `streamlit_app.py`.
 2. `packages.txt` installs Tesseract and Chromium; `requirements.txt` installs the rest.
 3. Settings, Secrets: add `DATABASE_URL` (free Neon or Supabase Postgres) so tester data survives redeploys,
-   `ADMIN_KEY` for the CSV export, and optionally `ANTHROPIC_API_KEY`. See `.streamlit/secrets.toml.example`.
+   `AUTHOPS_SECRET` (any long random string) to sign saved sign-ins, `ADMIN_KEY` for the CSV export, and
+   optionally `ANTHROPIC_API_KEY`. See `.streamlit/secrets.toml.example`.
 4. Follow [docs/USER_STUDY.md](docs/USER_STUDY.md) to invite testers. Only claim what the Study page computes.
+
+## Letter and plan reader (after the Nov 2026 reviews)
+
+`python scripts/eval_reader.py` renders 56 synthetic letters and plans (seed 26) to images and reads them back
+by OCR. They are written with the wording the reviews found hard: "sixty (60) days" next to other "within N days"
+sentences, partial approvals without the word "partial", approval ranges next to a birth date and a letter date,
+abbreviated months and 2-digit years, wrapped reasons, addresses and phone numbers, blank signature lines.
+
+| Field | Before (32b7302) | After |
+|---|---|---|
+| Letter decision | 21/40 (7 wrong) | 40/40 |
+| Appeal days | 6/40 (26 wrong) | 40/40 |
+| Appeal deadline as a date | 0/40 (32 wrong) | 40/40 |
+| Approval start / end | 0 and 12 of 27 | 26/27 each (1 left blank: OCR read "Apri") |
+| Plan signed | 8/16 (8 wrong) | 16/16 |
+| Plan start / end | 4 and 8 of 16 | 16/16 each |
+| **Wrong values shown as fact** | **105** | **0** |
+
+Limit: the set was written after the reviews, so it measures the failure modes they found; it is not held out.
+Full rows in `reports/reader_eval.json`. Response to every review finding: [REVIEW_RESPONSE.md](REVIEW_RESPONSE.md).
 
 ## Run it
 

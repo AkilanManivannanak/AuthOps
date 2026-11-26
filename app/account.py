@@ -67,16 +67,47 @@ export default function(component){
 _keeper = st.components.v2.component("authops_keeper", js=_KEEP_JS, html="<span></span>")
 
 
+TOKEN_DAYS = 30
+
+
 def _secret() -> bytes:
+    """AUTHOPS_SECRET from the environment or Streamlit Secrets; otherwise a random key kept with the data.
+    Never a value that can be worked out from the code."""
     import hashlib
     import os
-    return hashlib.sha256(("authops:" + os.environ.get("AUTHOPS_SECRET", "") + os.environ.get("DATABASE_URL", "local")).encode()).digest()
+    s = os.environ.get("AUTHOPS_SECRET")
+    if not s:
+        try:
+            s = st.secrets.get("AUTHOPS_SECRET")
+        except Exception:
+            s = None
+    return hashlib.sha256((s or _store().signing_key()).encode()).digest()
 
 
-def _token(aid: str) -> str:
+def _token(aid: str, ver: int | None = None, exp: int | None = None) -> str:
+    """account.version.expiry.signature: expires after 30 days, and signing out anywhere bumps the version."""
     import hashlib
     import hmac
-    return aid + "." + hmac.new(_secret(), aid.encode(), hashlib.sha256).hexdigest()[:32]
+    import time
+    ver = _store().token_version(aid) if ver is None else ver
+    exp = int(time.time()) + TOKEN_DAYS * 86400 if exp is None else exp
+    msg = f"{aid}.{ver}.{exp}"
+    return msg + "." + hmac.new(_secret(), msg.encode(), hashlib.sha256).hexdigest()
+
+
+def token_account(tok: str) -> str | None:
+    """The account a saved token belongs to, or None if it is forged, expired or signed out."""
+    import hashlib
+    import hmac
+    import time
+    parts = (tok or "").split(".")
+    if len(parts) != 4 or not parts[1].isdigit() or not parts[2].isdigit():
+        return None
+    aid, ver, exp, sig = parts[0], int(parts[1]), int(parts[2]), parts[3]
+    good = hmac.new(_secret(), f"{aid}.{ver}.{exp}".encode(), hashlib.sha256).hexdigest()
+    if not hmac.compare_digest(sig, good) or exp < time.time() or ver != _store().token_version(aid):
+        return None
+    return aid
 
 
 def _restore() -> bool:
@@ -88,13 +119,11 @@ def _restore() -> bool:
     if tok is None:
         return False
     st.session_state._keep_checked = True
-    if tok != "none" and "." in tok:
-        aid = tok.split(".")[0]
-        import hmac
-        if hmac.compare_digest(tok, _token(aid)):
-            got = _store().account(aid)
-            if got:
-                _start(got, remember=False)
+    aid = token_account(tok) if tok != "none" else None
+    if aid:
+        got = _store().account(aid)
+        if got:
+            _start(got, remember=False)
     return True
 
 
@@ -147,6 +176,13 @@ def _landing_stats() -> list[tuple[str, str]]:
 
 def gate() -> None:
     """Sign in, then pick a role. Stops the page until both are done."""
+    if not st.session_state.get("_landed"):   # count every visit, including people who leave at the sign-in page
+        st.session_state._landed = True
+        try:
+            from app.ui import log
+            log("landing", page="sign_in")
+        except Exception:
+            pass
     if "_entry" not in st.session_state:   # remember the page asked for, to return to it after signing in
         try:
             from urllib.parse import urlparse
@@ -182,11 +218,16 @@ def gate() -> None:
                 em = st.text_input("Email")
                 pw = st.text_input("Password", type="password")
                 if st.form_submit_button("Sign in", type="primary", width="stretch"):
-                    got = _store().sign_in(em, pw)
-                    if got:
-                        _start(got)
-                        st.rerun()
-                    st.error("That email and password don't match.")
+                    try:
+                        got = _store().sign_in(em, pw)
+                    except PermissionError as e:
+                        got = None
+                        st.error(str(e))
+                    else:
+                        if got:
+                            _start(got)
+                            st.rerun()
+                        st.error("That email and password don't match.")
             with t2, st.form("signup"):
                 nm = st.text_input("Your name")
                 em2 = st.text_input("Email", key="em2")
@@ -234,11 +275,26 @@ def header() -> None:
         if st.button("Start my workspace over", width="stretch"):
             set_role(a["role"])
             st.rerun()
-        if st.button("Sign out", width="stretch"):
+        def _out():
             for k in ("acct", "ws", "focus"):
                 st.session_state.pop(k, None)
             st.session_state._keep_clear = True
+
+        if st.button("Sign out", width="stretch"):
+            _out()
             st.rerun()
+        if not a.get("guest"):
+            if st.button("Sign out on all devices", width="stretch"):
+                _store().revoke_sessions(a["id"])
+                _out()
+                st.rerun()
+            with st.expander("Delete my account"):
+                st.caption("Deletes your account, your saved work, and your usage and ratings. This can't be undone.")
+                if st.checkbox("I understand", key="del_ok") and st.button("Delete everything", type="primary",
+                                                                           width="stretch"):
+                    _store().delete_account(a["id"])
+                    _out()
+                    st.rerun()
 
 
 def open_page(page: str, pid: str | None = None, params: dict | None = None) -> None:

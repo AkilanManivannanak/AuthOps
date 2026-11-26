@@ -48,6 +48,17 @@ table("ai_accuracy", "No ratings yet. People rate answers with 'Was this right?'
 table("what_went_wrong", "Nothing marked wrong yet.")
 table("field_errors", "No review-queue verdicts yet.")
 
+wrong = [r for r in s.rows(__import__("authops.ops.userstore", fromlist=["feedback"]).feedback) if r["verdict"] == "wrong"]
+if wrong:
+    st.markdown("#### Look at an answer someone marked wrong")
+    pick = st.selectbox("Rating", range(len(wrong)), format_func=lambda i: (
+        f"{wrong[i]['day']} · {wrong[i]['kind']} · {wrong[i]['what'] or 'not said'} · "
+        f"{'sample' if wrong[i].get('is_sample') else 'real upload'} · document {wrong[i].get('doc_id') or 'n/a'}"))
+    r = wrong[pick]
+    if r.get("comment"):
+        st.markdown(f"**They said it should be:** {r['comment']}")
+    st.json(__import__("json").loads(r["result"]) if r.get("result") else {"result": "not recorded (rated before Nov 26)"})
+
 with st.expander("The SQL behind these numbers"):
     q = st.selectbox("Report", list(TITLES), format_func=TITLES.get)
     st.code(sql(q), language="sql")

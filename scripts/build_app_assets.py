@@ -27,6 +27,21 @@ from authops.schemas import DocType  # noqa: E402
 DATA, REPORTS, ASSETS = ROOT / "data", ROOT / "reports", ROOT / "app" / "assets"
 
 
+def _on_shown_page(field: str, truth, text: str) -> bool:
+    """Is the true value printed on the page the reviewer is shown? Reviewers are only scored on what they can see."""
+    from authops.assist.reader import _on_page
+    if truth is None:
+        return True
+    if field == "signature_present":
+        return "signature" in text.lower() or "signed" in text.lower()
+    if isinstance(truth, (list, tuple)):
+        return all(str(x).replace(".", "") in text.replace(".", "") for x in truth)
+    t = str(truth)
+    if t.replace(" ", "").isalpha() or " " in t:
+        return all(w.lower() in text.lower() for w in t.split())
+    return _on_page(t, text)
+
+
 def build_qa_items(n_letters: int = 20, n_plans: int = 20) -> None:
     out = ASSETS / "qa"
     if out.exists():
@@ -54,7 +69,9 @@ def build_qa_items(n_letters: int = 20, n_plans: int = 20) -> None:
                 auto = "absent" if t is None else "missing"
             else:
                 auto = "correct" if values_match(k, shown, t) else "wrong"
-            fields.append({"field": k, "value": shown, "conf": fv.confidence, "auto_verdict": auto})
+            fields.append({"field": k, "value": shown, "conf": fv.confidence, "auto_verdict": auto,
+                           "visible": d["doc_type"] != "treatment_plan" or auto in ("correct", "absent")
+                           or _on_shown_page(k, t, ocr.text)})
         items.append({"item_id": d["doc_id"], "doc_type": d["doc_type"], "condition": d["condition"],
                       "template": d["template"], "image": img_name, "fields": fields})
     (out / "items.json").write_text(json.dumps(items, indent=1, default=str))

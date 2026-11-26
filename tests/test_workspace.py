@@ -59,3 +59,26 @@ def test_operations_people_see_their_own_work_first():
     w = W.new_workspace("ops", "Ops", seed=3, today=date(2026, 11, 25))
     top = W.suggestions(w, date(2026, 11, 25), 3)
     assert top[0]["title"] == "Review what the AI read" and top[1]["title"] == "Approve a payor rule change"
+
+
+def test_payor_limit_fix_uses_the_payors_limit_and_keeps_the_rest():
+    """Chrisen 8: the button must apply the payor's rule, never quietly lower care to the model's number."""
+    from datetime import date
+
+    from authops import workspace as W
+    t = date(2026, 11, 25)
+    ws = W.new_workspace("clinic", "T", seed=1, today=t)
+    over = None
+    for p in ws["patients"]:
+        if p["stage"] in ("check", "ready"):
+            p["units"] = W.payor_limit(p) + 57
+            if any(i["code"] == "units_within_payor_limit" for i in W.issues(p, ws, t)):
+                over = p
+                break
+    assert over is not None
+    it = next(i for i in W.issues(over, ws, t) if i["code"] == "units_within_payor_limit")
+    cap = W.payor_limit(over)
+    assert it["cap"] == cap
+    W.split(ws, over["id"], t)
+    assert over["units"] == cap and over["remainder"] == 57
+    assert not any(i["code"] == "units_within_payor_limit" for i in W.issues(over, ws, t))

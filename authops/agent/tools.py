@@ -98,7 +98,10 @@ class Tools:
 
     # ---------------------------------------------------------------- primitives
     def goto(self, path: str) -> ToolResult:
-        url = path if path.startswith("http") else self.base_url + path
+        from urllib.parse import urljoin, urlparse
+        url = urljoin(self.base_url + "/", str(path))
+        if urlparse(url).netloc != urlparse(self.base_url).netloc:   # never leave the portal, before anything loads
+            raise ToolError("off_domain", f"refused to open {urlparse(url).netloc}: only the portal may be opened")
         resp = self.page.goto(url, wait_until="domcontentloaded", timeout=15000)
         self.last_status = resp.status if resp else None
         return ToolResult(True, f"opened {url}")

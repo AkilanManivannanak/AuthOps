@@ -39,38 +39,43 @@ item = queue_left[0]
 timer = Timer(f"qa_{item['item_id']}")
 from app.widgets.deck import review_deck  # noqa: E402
 
+# Only fields printed on the page shown are reviewed and scored; the rest are on a later page of the document.
+shown = [f for f in item["fields"] if f.get("visible", True)]
+later = [f["field"].replace("_", " ") for f in item["fields"] if not f.get("visible", True)]
+if later:
+    st.caption("On a later page, so not shown and not scored: " + ", ".join(later) + ".")
 fields = [{"field": f["field"], "label": f["field"].replace("_", " "), "conf": float(f.get("conf") or 0),
            "value": None if f["value"] is None else (", ".join(f["value"]) if isinstance(f["value"], list) else str(f["value"]))}
-          for f in item["fields"]]
+          for f in shown]
 sub = review_deck(ASSETS / "qa" / item["image"], fields,
                   f"{item['doc_type'].replace('_', ' ')} · {item['condition']} image", can_save=t is not None,
                   key=f"deck_{item['item_id']}")
 if sub:
     verdicts, comment = sub.get("verdicts", {}), sub.get("comment", "")
-    if len(verdicts) < len(item["fields"]):
+    if len(verdicts) < len(shown):
         st.error("Give every field a verdict.")
     else:
         right_n = sum((verdicts[f["field"]] in ("correct", "absent")) == (f["auto_verdict"] in ("correct", "absent"))
-                      for f in item["fields"])
+                      for f in shown)
         from app.account import save as _save, ws as _ws
         from authops import workspace as _W
         _ws()["reviews"] = _ws().get("reviews", 0) + 1
-        _W.activity(_ws(), f"Reviewed a {item['doc_type'].replace('_', ' ')}: {right_n} of {len(item['fields'])} fields right",
+        _W.activity(_ws(), f"Reviewed a {item['doc_type'].replace('_', ' ')}: {right_n} of {len(shown)} fields right",
                     "ai_ops_desk")
         _save()
         if t is None:
             st.session_state.qa_pending = {"item": item["item_id"], "verdicts": verdicts, "comment": comment}
-            st.success(f"{right_n} of {len(item['fields'])} of your verdicts match the truth.")
+            st.success(f"{right_n} of {len(shown)} of your verdicts match the answer key.")
         else:
             secs = timer.seconds
-            for f in item["fields"]:
+            for f in shown:
                 store().qa_label(tester_id=t["id"], item_id=item["item_id"], field=f["field"],
                                  verdict=verdicts[f["field"]], comment=comment[:500], auto_verdict=f["auto_verdict"],
                                  seconds_on_item=secs)
             log("qa_review", {"item": item["item_id"], "seconds": secs})
             if len(done_ids) + 1 >= 5:
                 store().task(tester_id=t["id"], task="qa_review", success=1, seconds=secs, detail=f"{len(done_ids) + 1} items")
-            st.toast(f"Saved. {right_n}/{len(item['fields'])} verdicts match ground truth.")
+            st.toast(f"Saved. {right_n}/{len(shown)} verdicts match the answer key.")
             st.rerun()
 
 pend = st.session_state.get("qa_pending")

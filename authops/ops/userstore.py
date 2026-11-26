@@ -72,7 +72,19 @@ feedback = Table("feedback", meta,
                  Column("id", Integer, primary_key=True, autoincrement=True), Column("ts", Float),
                  Column("day", String(10)), Column("session_id", String(32)), Column("who", String(40)),
                  Column("role", String(20)), Column("kind", String(20)), Column("verdict", String(10)),
-                 Column("what", String(80)), Column("layer", String(10)), Column("comment", Text))
+                 Column("what", String(80)), Column("layer", String(10)), Column("comment", Text),
+                 Column("doc_id", String(32)), Column("is_sample", Integer), Column("result", Text))
+
+# Sessions: the signing key (when AUTHOPS_SECRET is not set) and a per-account version that signing out bumps.
+app_keys = Table("app_keys", meta, Column("name", String(40), primary_key=True), Column("value", String(128)))
+token_versions = Table("token_versions", meta, Column("account_id", String(32), primary_key=True),
+                       Column("ver", Integer))
+sign_in_failures = Table("sign_in_failures", meta, Column("id", Integer, primary_key=True, autoincrement=True),
+                         Column("email", String(200)), Column("ts", Float))
+ai_quota = Table("ai_quota", meta, Column("who", String(60), primary_key=True), Column("day", String(10), primary_key=True),
+                 Column("n", Integer))
+# Columns added after a table first shipped; create_all does not add columns, so _migrate does.
+LATE_COLUMNS = {"feedback": [("doc_id", "VARCHAR(32)"), ("is_sample", "INTEGER"), ("result", "TEXT")]}
 
 
 def _url() -> str:
@@ -101,6 +113,17 @@ class UserStore:
         self.url = url or _url()
         self.engine = create_engine(self.url, pool_pre_ping=True)
         meta.create_all(self.engine)
+        self._migrate()
+
+    def _migrate(self) -> None:
+        from sqlalchemy import inspect, text
+        insp = inspect(self.engine)
+        for table, cols in LATE_COLUMNS.items():
+            have = {c["name"] for c in insp.get_columns(table)}
+            for name, typ in cols:
+                if name not in have:
+                    with self.engine.begin() as c:
+                        c.execute(text(f"ALTER TABLE {table} ADD COLUMN {name} {typ}"))
 
     @property
     def persistent(self) -> bool:
@@ -138,13 +161,16 @@ class UserStore:
                   who=(who or "")[:40], role=(role or "")[:20], page=(page or "")[:60], action=action[:60])
 
     def feedback(self, session_id: str, who: str, role: str, kind: str, verdict: str, what: str = "",
-                 layer: str = "", comment: str = "") -> None:
+                 layer: str = "", comment: str = "", doc_id: str = "", is_sample: bool = False,
+                 result: str = "") -> None:
+        """A person's verdict on one answer, tied to the document (a hash, never the image) and the result shown."""
         if verdict not in ("right", "wrong"):
             raise ValueError("verdict must be right or wrong")
         now = time.time()
         self._ins(feedback, ts=now, day=time.strftime("%Y-%m-%d", time.gmtime(now)), session_id=session_id,
                   who=(who or "")[:40], role=(role or "")[:20], kind=kind[:20], verdict=verdict,
-                  what=(what or "")[:80], layer=(layer or "")[:10], comment=(comment or "")[:2000])
+                  what=(what or "")[:80], layer=(layer or "")[:10], comment=(comment or "")[:2000],
+                  doc_id=(doc_id or "")[:32], is_sample=int(bool(is_sample)), result=(result or "")[:4000])
 
     def doc_label(self, **row):
         self._ins(doc_labels, ts=time.time(), **row)
@@ -179,12 +205,59 @@ class UserStore:
                                               workspace="", created_at=time.time(), updated_at=time.time()))
         return self.account(aid)
 
+    MAX_FAILS, FAIL_WINDOW = 5, 60.0
+
     def sign_in(self, email: str, password: str) -> dict | None:
-        with self.engine.connect() as c:
-            r = c.execute(select(accounts).where(accounts.c.email == email.strip().lower())).first()
-        if r is None or not hmac_eq(self._hash(password, r.salt), r.pw_hash):
-            return None
+        """None for a wrong email or password. Raises after 5 failures for one email within a minute."""
+        email = email.strip().lower()
+        now = time.time()
+        with self.engine.begin() as c:
+            fails = c.execute(select(func.count()).select_from(sign_in_failures).where(
+                sign_in_failures.c.email == email, sign_in_failures.c.ts > now - self.FAIL_WINDOW)).scalar() or 0
+            if fails >= self.MAX_FAILS:
+                raise PermissionError("Too many tries. Wait a minute and try again.")
+            r = c.execute(select(accounts).where(accounts.c.email == email)).first()
+            if r is None or not hmac_eq(self._hash(password, r.salt), r.pw_hash):
+                c.execute(insert(sign_in_failures).values(email=email, ts=now))
+                return None
         return self.account(r.account_id)
+
+    # ------------------------------------------------------------ sessions
+    def signing_key(self) -> str:
+        """A random key made once and kept with the data, used when AUTHOPS_SECRET is not set."""
+        import secrets
+        with self.engine.begin() as c:
+            r = c.execute(select(app_keys.c.value).where(app_keys.c.name == "signing_key")).first()
+            if r:
+                return r[0]
+            k = secrets.token_hex(32)
+            c.execute(insert(app_keys).values(name="signing_key", value=k))
+            return k
+
+    def token_version(self, aid: str) -> int:
+        with self.engine.connect() as c:
+            r = c.execute(select(token_versions.c.ver).where(token_versions.c.account_id == aid)).first()
+        return int(r[0]) if r else 0
+
+    def revoke_sessions(self, aid: str) -> int:
+        """Ends every saved sign-in for this account, on every device."""
+        v = self.token_version(aid) + 1
+        with self.engine.begin() as c:
+            c.execute(token_versions.delete().where(token_versions.c.account_id == aid))
+            c.execute(insert(token_versions).values(account_id=aid, ver=v))
+        return v
+
+    def ai_calls(self, who: str, day: str, add: int = 0) -> int:
+        """AI reads used today by one account (or one guest session); add=1 records one more."""
+        with self.engine.begin() as c:
+            r = c.execute(select(ai_quota.c.n).where(ai_quota.c.who == who, ai_quota.c.day == day)).first()
+            n = (int(r[0]) if r else 0) + add
+            if add:
+                if r:
+                    c.execute(ai_quota.update().where(ai_quota.c.who == who, ai_quota.c.day == day).values(n=n))
+                else:
+                    c.execute(insert(ai_quota).values(who=who, day=day, n=n))
+        return n
 
     def account(self, aid: str) -> dict | None:
         with self.engine.connect() as c:
@@ -206,8 +279,15 @@ class UserStore:
             c.execute(accounts.update().where(accounts.c.account_id == aid).values(**vals))
 
     def delete_account(self, aid: str) -> None:
+        """The account, its saved workspace, its usage and ratings, its AI quota and its sessions."""
+        who = "acct:" + aid
         with self.engine.begin() as c:
             c.execute(accounts.delete().where(accounts.c.account_id == aid))
+            c.execute(usage.delete().where(usage.c.who == who))
+            c.execute(feedback.delete().where(feedback.c.who == who))
+            c.execute(ai_quota.delete().where(ai_quota.c.who == who))
+            c.execute(token_versions.delete().where(token_versions.c.account_id == aid))
+        self.revoke_sessions(aid)   # any token still in a browser stays dead
 
     def rows(self, table) -> list[dict]:
         with self.engine.connect() as c:

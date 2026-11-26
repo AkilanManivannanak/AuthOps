@@ -1,0 +1,136 @@
+{
+ "what": "Letter and plan reader on 56 synthetic documents with payor wording, read from page images by OCR (scripts/eval_reader.py, seed 26). Rules layer only.",
+ "before": {
+  "commit": "32b7302",
+  "fields": {
+   "letter.appeal_days": {
+    "n": 40,
+    "right": 6,
+    "abstained": 8,
+    "silent_errors": 26,
+    "accuracy": 0.15
+   },
+   "letter.deadline": {
+    "n": 40,
+    "right": 0,
+    "abstained": 8,
+    "silent_errors": 32,
+    "accuracy": 0.0
+   },
+   "letter.decision": {
+    "n": 40,
+    "right": 21,
+    "abstained": 12,
+    "silent_errors": 7,
+    "accuracy": 0.525
+   },
+   "letter.end": {
+    "n": 27,
+    "right": 12,
+    "abstained": 11,
+    "silent_errors": 4,
+    "accuracy": 0.444
+   },
+   "letter.start": {
+    "n": 27,
+    "right": 0,
+    "abstained": 11,
+    "silent_errors": 16,
+    "accuracy": 0.0
+   },
+   "plan.end": {
+    "n": 16,
+    "right": 8,
+    "abstained": 4,
+    "silent_errors": 4,
+    "accuracy": 0.5
+   },
+   "plan.signed": {
+    "n": 16,
+    "right": 8,
+    "abstained": 0,
+    "silent_errors": 8,
+    "accuracy": 0.5
+   },
+   "plan.start": {
+    "n": 16,
+    "right": 4,
+    "abstained": 4,
+    "silent_errors": 8,
+    "accuracy": 0.25
+   }
+  },
+  "total": {
+   "n": 222,
+   "right": 59,
+   "abstained": 58,
+   "silent_errors": 105
+  }
+ },
+ "after": {
+  "fields": {
+   "letter.appeal_days": {
+    "n": 40,
+    "right": 40,
+    "abstained": 0,
+    "silent_errors": 0,
+    "accuracy": 1.0
+   },
+   "letter.deadline": {
+    "n": 40,
+    "right": 40,
+    "abstained": 0,
+    "silent_errors": 0,
+    "accuracy": 1.0
+   },
+   "letter.decision": {
+    "n": 40,
+    "right": 40,
+    "abstained": 0,
+    "silent_errors": 0,
+    "accuracy": 1.0
+   },
+   "letter.end": {
+    "n": 27,
+    "right": 26,
+    "abstained": 1,
+    "silent_errors": 0,
+    "accuracy": 0.963
+   },
+   "letter.start": {
+    "n": 27,
+    "right": 26,
+    "abstained": 1,
+    "silent_errors": 0,
+    "accuracy": 0.963
+   },
+   "plan.end": {
+    "n": 16,
+    "right": 16,
+    "abstained": 0,
+    "silent_errors": 0,
+    "accuracy": 1.0
+   },
+   "plan.signed": {
+    "n": 16,
+    "right": 16,
+    "abstained": 0,
+    "silent_errors": 0,
+    "accuracy": 1.0
+   },
+   "plan.start": {
+    "n": 16,
+    "right": 16,
+    "abstained": 0,
+    "silent_errors": 0,
+    "accuracy": 1.0
+   }
+  },
+  "total": {
+   "n": 222,
+   "right": 220,
+   "abstained": 2,
+   "silent_errors": 0
+  }
+ }
+}

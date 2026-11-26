@@ -159,8 +159,17 @@ def journey() -> None:
             for i, it in enumerate(iss):
                 st.markdown(f"<div class='ao-card' style='border-color:#F4C9D8;background:#FDF5F8'><b style='color:#A8355F'>"
                             f"{it['text']}</b><div class='ao-muted'>{it['detail']}</div></div>", unsafe_allow_html=True)
-                lim = it.get("cap") or o["recommended"]
-                label = W.FIX.get(it["code"], ("Fix it",))[0] + (f" ({lim} {p['unit']})" if it["code"] in ("rule", "units_within_payor_limit") else "")
+                if it["code"] == "units_within_payor_limit":   # the payor's rule, with the rest kept as a second request
+                    if st.button(f"Split it: {it['cap']} now, {p['units'] - it['cap']} in a second request",
+                                 key=f"jr_split_{pid}_{i}", type="primary"):
+                        save(W.split(w, pid, t))
+                        st.rerun()
+                    if st.button(f"Lower to the payor's limit ({it['cap']} {p['unit']})", key=f"jr_fix_{pid}_{i}"):
+                        save(W.fix(w, pid, it["code"], t, value=it["cap"]))
+                        st.rerun()
+                    continue
+                lim = it.get("cap")
+                label = W.FIX.get(it["code"], ("Fix it",))[0] + (f" ({lim} {p['unit']})" if lim else "")
                 if st.button(label, key=f"jr_fix_{pid}_{i}", type="primary"):
                     save(W.fix(w, pid, it["code"], t, value=lim))
                     st.rerun()

@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-JOURNEYS = ["j_accounts.py", "j_patient.py", "j_clinic.py", "j_ops.py", "j_mobile.py", "j_standards.py"]
+JOURNEYS = ["j_accounts.py", "j_patient.py", "j_clinic.py", "j_ops.py", "j_mobile.py", "j_standards.py", "j_review_fixes.py"]
 for j in JOURNEYS:
     subprocess.run([sys.executable, str(HERE / j)], cwd=HERE)
 total = passed = 0

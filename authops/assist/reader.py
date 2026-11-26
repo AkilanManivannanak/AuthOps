@@ -11,6 +11,7 @@ from __future__ import annotations
 import io
 import re
 import tempfile
+from contextlib import contextmanager
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -20,35 +21,138 @@ from authops.docagent.validators import _found
 from authops.docintel.normalize import KNOWN_ICD10, npi_valid, parse_date
 
 ICD = re.compile(r"\b([A-TV-Z][0-9][0-9AB](?:\.[0-9A-TV-Z]{1,4})?)\b")
-CPT = re.compile(r"\b(9[0-9]{4}|0[0-9]{3}T|[A-V][0-9]{4})\b")
-NPI = re.compile(r"\b(\d{10})\b")
+CPT = re.compile(r"(?<!\d-)\b(9[0-9]{4}|0[0-9]{3}T|[A-V][0-9]{4})\b")
+STATES = ("AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND "
+          "OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY PR").split()
+ZIP_BEFORE = re.compile(r"(?:^|[\s,])(?:" + "|".join(STATES) + r")\.?\s{1,2}$")   # "San Francisco, CA " / "Brooklyn NY "
+NPI = re.compile(r"\b([12]\d{9})\b")          # every NPI starts with 1 or 2
+PHONE_BEFORE = re.compile(r"(phone|fax|tel|ph|call|cell|mobile)\b[^\n]{0,15}$", re.I)
 DATE = re.compile(r"\b(\d{1,2}/\d{1,2}/\d{2,4}|\d{4}-\d{2}-\d{2}|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*\.? \d{1,2},? \d{4})\b")
+RANGE = re.compile(rf"{DATE.pattern}\s*(?:to|through|thru|until|-|\u2013|\u2014)\s*{DATE.pattern}", re.I)
+NOT_PERIOD = re.compile(r"\b(dob|d\.o\.b|birth|born|letter\s+date|date\s+of\s+(?:this\s+)?(?:letter|notice)|notice\s+date|"
+                        r"printed|received|date\s+sent|mailed|request(?:ed)?\s+date)\b", re.I)
 UNITS = re.compile(r"(?:(?:approved|authorized)\s+(?:units|visits|hours|sessions)|(?:units|visits|hours|sessions)\s+"
                    r"(?:approved|authorized)|^\s*QTY\b[^\d\n]*)\s*[:.\-]*\s*(\d{1,4})\b", re.I | re.M)
-APPEAL = re.compile(r"within\s+(\d{1,3})\s+(?:calendar\s+|business\s+)?days", re.I)
-REASON = re.compile(r"reason(?:\s+for\s+(?:the\s+)?(?:denial|decision))?\s*[:\-]\s*\n?\s*([^\n]{8,200})", re.I)
+OF_N = re.compile(r"(?:approved|authorized)\s+(\d{1,4})\s+(?:of|out\s+of)\s+(?:the\s+)?(\d{1,4})", re.I)
+WORDNUM = {"five": 5, "seven": 7, "ten": 10, "fourteen": 14, "fifteen": 15, "twenty": 20, "thirty": 30,
+           "forty-five": 45, "forty five": 45, "sixty": 60, "ninety": 90, "one hundred twenty": 120,
+           "one hundred eighty": 180}
+APPEAL_WORDS = re.compile(r"appeal|reconsideration|grievance|fair\s+hearing|redetermination|review\s+of\s+this\s+decision|"
+                          r"peer[\s-]+to[\s-]+peer", re.I)
+WITHIN = re.compile(r"within\s+(?:[a-z]{1,3}\s+)?(?:(" + "|".join(sorted(WORDNUM, key=len, reverse=True)) +
+                    r")\s*)?\(?\s*(\d{1,3})?\s*\)?\s+(?:calendar\s+|business\s+|working\s+)?days", re.I)
+REASON = re.compile(r"reason(?:\s+for\s+(?:the\s+)?(?:denial|decision))?\s*[:\-]\s*(.{8,300}?)(?:\.(?:\s|$)|\n\s*\n|$)",
+                    re.I | re.S)
+SIGNED = re.compile(r"/s/\s*[A-Za-z]|electronically\s+signed|signed\s+by\s*[:\-]?\s*(?!date\b)[A-Za-z]{2,}|"
+                    r"signature\s*[:\-]\s*(?!date\b)(?!print)(?!name\b)[A-Za-z]{2,}", re.I)
+
+
+def _sentences(text: str) -> list[str]:
+    return [x.strip() for x in re.split(r"(?<=[.!?])\s+|\n\s*\n", text) if x.strip()]
+
+
+def appeal_days(text: str) -> int | None:
+    """Days to appeal, read next to the word 'appeal' (or reconsideration, fair hearing...): 'sixty (60) days'
+    reads as 60, and a 'within 5 days' that belongs to another sentence is never taken."""
+    flat = re.sub(r"\s+", " ", text)
+    for m in APPEAL_WORDS.finditer(flat):
+        after = re.split(r"(?<=[.!?])\s", flat[m.start():m.start() + 160])[0]       # rest of this sentence
+        before = re.split(r"[.!?]\s", flat[max(0, m.start() - 90):m.start()])[-1]   # start of this sentence
+        for part in (after, before):
+            w = WITHIN.search(part)
+            if w:
+                return int(w.group(2)) if w.group(2) else WORDNUM[w.group(1).lower()]
+        d = re.search(r"\(?(\d{1,3})\)?\s+(?:calendar\s+|business\s+)?days\s+(?:from[^.]{0,40}?\s)?to\s+"
+                      r"(?:file\s+|request\s+|ask\s+for\s+)?(?:an?\s+)?$", before, re.I)   # "you have 30 days to appeal"
+        if d:
+            return int(d.group(1))
+    return None
+
+
+def period(text: str) -> tuple[date | None, date | None]:
+    """The approval or plan period: a written range first; otherwise the dates not on a DOB/letter-date line."""
+    for m in RANGE.finditer(text):
+        a, b = parse_date(m.group(1)), parse_date(m.group(2))
+        if a and b and a <= b:
+            return a, b
+    loose = []
+    for line in text.splitlines():
+        if NOT_PERIOD.search(line):
+            continue
+        loose += [d for d in (parse_date(x) for x in DATE.findall(line)) if d and d.year >= date.today().year - 1]
+    loose = sorted(set(loose))
+    return (loose[0], loose[-1]) if len(loose) >= 2 else (None, None)
+
+
+def decision(text: str) -> str | None:
+    low = re.sub(r"\s+", " ", text.lower())
+    no = re.search(r"\b(denied|not approved|not authorized|adverse determination|deny|is not covered)\b", low)
+    ok = re.search(r"(?<!not )(?<!not be )\b(approved|authorized|approve)\b", re.sub(r"not (?:be )?(?:approved|authorized)", "", low))
+    if re.search(r"partial(ly)?\s+approv", low) or OF_N.search(text) or (ok and no):
+        return "partially approved"
+    return "denied" if no else "approved" if ok else None
+
+
+def cpts(text: str) -> list[str]:
+    """CPT/HCPCS codes, but not a ZIP code at the end of an address."""
+    out = set()
+    for m in CPT.finditer(text):
+        before = text[max(0, m.start() - 40):m.start()].split("\n")[-1]
+        if not ZIP_BEFORE.search(before) and not PHONE_BEFORE.search(before) and not m.group(1).startswith(("19", "20")):
+            out.add(m.group(1))
+    return sorted(out)
+
+
+def npis(text: str) -> list[str]:
+    """10-digit numbers that can be NPIs: start with 1 or 2 and are not a phone or fax number."""
+    out = []
+    for m in NPI.finditer(text):
+        before = text[max(0, m.start() - 30):m.start()].split("\n")[-1]
+        if not PHONE_BEFORE.search(before):
+            out.append(m.group(1))
+    return sorted(set(out))
 
 
 # ------------------------------------------------------------------ input
 
-def to_pages(data: bytes, name: str, max_pages: int = 3) -> list[Path]:
-    """PNG, JPG or PDF bytes -> up to `max_pages` PNG files on disk (deleted with the temp dir by the OS)."""
-    d = Path(tempfile.mkdtemp(prefix="assist_"))
+def png_pages(data: bytes, name: str, max_pages: int = 3) -> list[bytes]:
+    """PNG, JPG or PDF bytes -> up to `max_pages` PNG images, in memory. Nothing is written to disk."""
     out = []
     if name.lower().endswith(".pdf"):
         import pypdfium2 as pdfium
         pdf = pdfium.PdfDocument(data)
-        for i in range(min(len(pdf), max_pages)):
-            img = pdf[i].render(scale=2.0).to_pil()
-            p = d / f"p{i + 1}.png"
-            img.convert("RGB").save(p)
-            out.append(p)
+        imgs = [pdf[i].render(scale=2.0).to_pil() for i in range(min(len(pdf), max_pages))]
     else:
         img = Image.open(io.BytesIO(data)).convert("RGB")
         if max(img.size) > 2400:
             img.thumbnail((2400, 2400))
-        p = d / "p1.png"
-        img.save(p)
+        imgs = [img]
+    for img in imgs:
+        b = io.BytesIO()
+        img.convert("RGB").save(b, "PNG")
+        out.append(b.getvalue())
+    return out
+
+
+@contextmanager
+def on_disk(pngs: list[bytes]):
+    """Page files only for as long as OCR and the model need them; the folder is deleted afterwards."""
+    with tempfile.TemporaryDirectory(prefix="assist_") as d:
+        paths = []
+        for i, b in enumerate(pngs):
+            p = Path(d) / f"p{i + 1}.png"
+            p.write_bytes(b)
+            paths.append(p)
+        yield paths
+
+
+def to_pages(data: bytes, name: str, max_pages: int = 3) -> list[Path]:
+    """Kept for scripts: writes pages to a temp folder the caller must clean up. The app uses png_pages/on_disk."""
+    d = Path(tempfile.mkdtemp(prefix="assist_"))
+    out = []
+    for i, b in enumerate(png_pages(data, name, max_pages)):
+        p = d / f"p{i + 1}.png"
+        p.write_bytes(b)
         out.append(p)
     return out
 
@@ -77,8 +181,10 @@ def ocr_text(pages: list[Path]) -> str:
         for i, t in enumerate(d["text"]):
             if t.strip():
                 lines.setdefault((d["block_num"][i], d["par_num"][i], d["line_num"][i]), []).append(t.strip())
-        photo_conf = sum(conf) / len(conf) if conf else 0.0
-        out.append("\n".join(" ".join(v) for v in lines.values()) if photo_conf > scan.mean_conf else scan.text)
+        # keep the reading with more confident text in total: a mean alone rewards reading less of the page
+        photo_total = sum(conf)
+        scan_total = scan.mean_conf * len(scan.text.split())
+        out.append("\n".join(" ".join(v) for v in lines.values()) if photo_total > scan_total else scan.text)
     return "\n\n".join(out)
 
 
@@ -186,25 +292,23 @@ def modality_codes(text: str) -> list[dict]:
 
 def facts(text: str) -> dict:
     icd = sorted(set(ICD.findall(text)))
-    cpt = sorted({c for c in CPT.findall(text) if not c.startswith(("19", "20"))})
-    npis = sorted(set(NPI.findall(text)))
+    cpt = cpts(text)
     dates = []
-    for s in DATE.findall(text):
-        d = parse_date(s)
+    for s_ in DATE.findall(text):
+        d = parse_date(s_)
         if d and 1990 < d.year < 2100:
             dates.append(d)
     low = text.lower()
-    decision = ("partially approved" if re.search(r"partial(ly)?\s+approv", low) else
-                "denied" if re.search(r"\b(denied|not approved|adverse determination|deny)\b", low) else
-                "approved" if re.search(r"\bapproved\b", low) else None)
-    um = UNITS.search(text)
-    am, rm = APPEAL.search(text), REASON.search(text)
-    period = [d for d in dates if d.year >= date.today().year - 1]
-    return {"period": sorted(set(period)), "appeal_days": int(am.group(1)) if am else None,
-            "reason": rm.group(1).strip() if rm else None,"icd10": icd, "icd10_known": [c for c in icd if c in KNOWN_ICD10], "cpt": cpt,
-            "npis": [{"npi": n, "valid": npi_valid(n)} for n in npis], "dates": sorted(set(dates)),
-            "decision": decision, "units": int(um.group(1)) if um else None,
-            "signed": bool(re.search(r"/s/|electronically signed|signed by|signature\s*[:\-]\s*[A-Za-z]", text, re.I)),
+    um, of = UNITS.search(text), OF_N.search(text)
+    rm = REASON.search(text)
+    start, end = period(text)
+    return {"period": [start, end] if start else [], "start": start, "end": end, "appeal_days": appeal_days(text),
+            "reason": re.sub(r"\s+", " ", rm.group(1)).strip() if rm else None,
+            "icd10": icd, "icd10_known": [c for c in icd if c in KNOWN_ICD10], "cpt": cpt,
+            "npis": [{"npi": n, "valid": npi_valid(n)} for n in npis(text)], "dates": sorted(set(dates)),
+            "decision": decision(text), "units": int(of.group(1)) if of else int(um.group(1)) if um else None,
+            "requested": int(of.group(2)) if of else None,
+            "signed": bool(SIGNED.search(text)),
             "has_goals": bool(re.search(r"\bgoal", low)), "has_baseline": "baseline" in low,
             "has_necessity": "necess" in low}
 
@@ -247,6 +351,38 @@ def _ask(prompt: str, text: str, pages: list[Path], llm) -> tuple[dict | None, d
                                                       "cost_usd": round(r.cost_usd, 4)}
 
 
+CLAIM_WORDS = re.compile(r"\b(note to (?:the )?reviewer|reviewer|answer (?:yes|no)|ignore (?:the|previous|all)|"
+                         r"(?:is|are|has been|have been) (?:established|met|satisfied|documented|present)|"
+                         r"criteria (?:are )?met|requirements? (?:are |is )?met)\b", re.I)
+
+
+def _self_assertion(quote: str, check_name: str) -> bool:
+    """A quote that only states the check is met ('medical necessity is established') is a claim, not evidence."""
+    if CLAIM_WORDS.search(quote):
+        return True
+    words = {w for w in re.findall(r"[a-z]{4,}", check_name.lower())}
+    have = set(re.findall(r"[a-z]{4,}", quote.lower()))
+    claims = re.search(r"\b(?:is|are|was|were|been)\b[^.]{0,30}\b(?:met|established|documented|present|provided|"
+                       r"satisfied|included|clear|sufficient|adequate)\b", quote, re.I)
+    # restating the check's own words plus "is met/established" is a claim; data that shares words is evidence
+    return bool(claims) and bool(words) and len(words & have) / len(words) >= 0.6
+
+
+def _on_page(value, text: str) -> bool:
+    """Does an AI-reported amount or date actually appear on the page (in any common format)?"""
+    if value in (None, ""):
+        return True
+    v = str(value)
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", v):
+        d = date.fromisoformat(v)
+        forms = [f"{d.month}/{d.day}/{d.year}", f"{d:%m/%d/%Y}", f"{d:%m/%d/%y}", v, f"{d:%B} {d.day}, {d.year}",
+                 f"{d:%b} {d.day}, {d.year}", f"{d:%b}. {d.day}, {d.year}", f"{d:%B} {d.day} {d.year}"]
+        flat = re.sub(r"\s+", " ", text)
+        return any(f.lower() in flat.lower() for f in forms) or any(d == x for x in (parse_date(m) for m in DATE.findall(text)))
+    nums = re.findall(r"\d+", v)
+    return all(re.search(rf"(?<!\d){n}(?!\d)", text) for n in nums) if nums else True
+
+
 def _grounded(quote: str | None, text: str) -> bool | None:
     if not quote:
         return None
@@ -260,9 +396,9 @@ def read_letter(pages: list[Path], llm=None, text: str | None = None) -> dict:
     f = facts(text)
     res = {"layer": "rules", "text_chars": len(text), "facts": f, "decision": f["decision"],
            "approved_amount": f"{f['units']} units" if f["units"] else None,
-           "start": f["period"][0].isoformat() if len(f["period"]) >= 2 else None,
-           "end": f["period"][-1].isoformat() if len(f["period"]) >= 2 else None,
-           "reason": f["reason"], "appeal_days": f["appeal_days"], "summary": None, "next_steps": [], "questions": [], "quotes": []}
+           "start": f["start"].isoformat() if f["start"] else None,
+           "end": f["end"].isoformat() if f["end"] else None,
+           "reason": f["reason"], "appeal_days": f["appeal_days"], "letter_date": letter_date(text), "summary": None, "next_steps": [], "questions": [], "quotes": []}
     if llm is not None:
         try:
             ai, meta = _ask(LETTER_PROMPT, text, pages, llm)
@@ -275,6 +411,15 @@ def read_letter(pages: list[Path], llm=None, text: str | None = None) -> dict:
             res["questions"] = [s for s in (ai.get("questions") or []) if isinstance(s, str)][:3]
             res["quotes"] = [{"text": q, "found": _grounded(q, text)} for q in (ai.get("quotes") or []) if isinstance(q, str)][:3]
             res["layer"], res["ai"] = "AI", meta
+            # evidence or abstain: amounts and dates must be on the page, or they are shown as unverified
+            res["unverified"] = [k for k in ("approved_amount", "start", "end") if res.get(k) and not _on_page(res[k], text)]
+            for k in res["unverified"]:
+                res[k + "_ai"], res[k] = res[k], {"approved_amount": f"{f['units']} units" if f["units"] else None,
+                                                  "start": f["start"].isoformat() if f["start"] else None,
+                                                  "end": f["end"].isoformat() if f["end"] else None}[k]
+            if res["decision"] in ("approved", "partially approved", "denied") and not f["decision"] and \
+                    not any(q["found"] for q in res["quotes"]):
+                res["conflict"] = "The AI's decision is not backed by any wording found on the page. Check the letter."
             # the rules layer is the referee: a decision word the AI reports must appear on the page
             if res["decision"] in ("approved", "partially approved", "denied") and f["decision"] and \
                     f["decision"] != res["decision"]:
@@ -283,9 +428,60 @@ def read_letter(pages: list[Path], llm=None, text: str | None = None) -> dict:
         res["summary"] = {"approved": "The letter appears to approve the request.",
                           "partially approved": "The letter appears to approve only part of what was asked for.",
                           "denied": "The letter appears to deny the request."}.get(f["decision"] or "", None)
+    res["reason_plain"] = plain_words(res.get("reason"))
+    res["evidence"] = evidence(text)
     res["deadline"] = _deadline(res)
     res["next_steps"] = res["next_steps"] or _default_steps(res.get("decision"))
     return res
+
+
+PLAIN = [(r"requested units exceed (?:the )?per[- ]request limit", "the amount of care asked for is more than the plan "
+          "approves in one request"),
+         (r"\brequested units\b", "the amount of care asked for"), (r"\bunits\b", "visits or hours of care"),
+         (r"\b(?:the )?per[- ]request limit\b", "the most the plan approves in one request"),
+         (r"\bmedical necessity\b", "proof the care is needed"), (r"\bpeer[- ]to[- ]peer\b", "a call between your doctor and the plan's doctor"),
+         (r"\bre-?evaluation\b", "a new check-up by your therapist"), (r"\bauthorization period\b", "the approved dates")]
+
+
+def plain_words(reason: str | None) -> str | None:
+    """The payor's reason with insurance terms put in everyday words, for patients and families."""
+    if not reason:
+        return None
+    out = reason
+    for pat, words in PLAIN:
+        out = re.sub(pat, words, out, flags=re.I)
+    return out if out != reason else None
+
+
+def letter_date(text: str) -> str | None:
+    """The date the letter was written, when it is labelled (needed to turn '60 days' into a calendar date)."""
+    m = re.search(r"(?:letter|notice)\s+date\s*[:\-]?\s*" + DATE.pattern + r"|^\s*date\s*[:\-]\s*" + DATE.pattern,
+                  text, re.I | re.M)
+    d = parse_date(m.group(1) or m.group(2)) if m else None
+    return d.isoformat() if d else None
+
+
+def evidence(text: str) -> list[dict]:
+    """The lines on the page the rules answer came from, so every field can be checked against the letter."""
+    out, seen = [], set()
+
+    def add(label, line):
+        line = re.sub(r"\s+", " ", line).strip()[:200]
+        if line and line not in seen:
+            seen.add(line)
+            out.append({"for": label, "text": line, "found": True})
+    for sent in _sentences(text):
+        if re.search(r"\b(denied|approved|authorized|not approved|adverse determination)\b", sent, re.I):
+            add("decision", sent)
+            break
+    for sent in _sentences(text):
+        if APPEAL_WORDS.search(sent) and WITHIN.search(sent):
+            add("appeal deadline", sent)
+            break
+    m = RANGE.search(text)
+    if m:
+        add("dates", text[max(0, text.rfind("\n", 0, m.start()) + 1):m.end()])
+    return out
 
 
 def _deadline(res: dict) -> str | None:
@@ -294,7 +490,7 @@ def _deadline(res: dict) -> str | None:
     if isinstance(days, (int, float)) and days > 0 and base:
         return f"by {(base + timedelta(days=int(days))):%b %d, %Y}"
     if isinstance(days, (int, float)) and days > 0:
-        return f"within {int(days)} days of the letter's date"
+        return f"{int(days)} days from the date printed on the letter"
     return None
 
 
@@ -381,16 +577,16 @@ def check_plan(pages: list[Path], llm=None, text: str | None = None, today: date
                               "No CPT or HCPCS codes found. Most payors need them on the request.")})
     if f["npis"]:
         bad = [n["npi"] for n in f["npis"] if not n["valid"]]
-        checks.append({"name": "Provider NPI", "status": "fix" if bad and len(bad) == len(f["npis"]) else "pass", "layer": "rules",
+        checks.append({"name": "Provider NPI", "status": "fix" if bad else "pass", "layer": "rules",
                        "detail": (f"NPI {', '.join(bad)} fails the NPI checksum; check for a typo." if bad else
                                   "NPI passes the checksum.")})
     else:
         checks.append({"name": "Provider NPI", "status": "unclear", "layer": "rules", "detail": "No 10-digit NPI found."})
-    ds = f["period"]
-    if len(ds) >= 2:
-        expired = ds[-1] < today
+    if f["start"] and f["end"]:
+        expired = f["end"] < today
         checks.append({"name": "Plan dates", "status": "fix" if expired else "pass", "layer": "rules",
-                       "detail": f"Latest date on the plan is {ds[-1]:%b %d, %Y}" + (", which has passed." if expired else ".")})
+                       "detail": f"Plan runs {f['start']:%b %d, %Y} to {f['end']:%b %d, %Y}" +
+                                 ("; it has ended." if expired else ".")})
     else:
         checks.append({"name": "Plan dates", "status": "unclear", "layer": "rules", "detail": "Could not find a start and end date."})
     if log:
@@ -413,16 +609,22 @@ def check_plan(pages: list[Path], llm=None, text: str | None = None, today: date
                        "fix" if st_ in ("fix", "fail", "failed", "missing", "no", "error") else "unclear")
                 item = {"name": c["name"], "status": st_, "detail": c.get("detail", ""),
                         "quote": q, "found": _grounded(q, text), "layer": "AI"}
-                if item["status"] == "pass" and q and item["found"] is False:
-                    item["status"], item["detail"] = "unclear", item["detail"] + " (The quote could not be found on the page.)"
+                # evidence or abstain: an AI pass needs a quote that is on the page and is not just a claim
+                if item["status"] == "pass":
+                    why = ("no supporting text was given" if not q else
+                           "the quote could not be found on the page" if item["found"] is not True else
+                           "the quote only asserts the check instead of showing it" if _self_assertion(q, c["name"]) else "")
+                    if why:
+                        item["status"], item["detail"] = "unclear", f"{item['detail']} (Not counted: {why}.)".strip()
                 if c["name"].lower() not in have:
                     res["checks"].append(item)
             res["missing"] = [m for m in (ai.get("missing") or []) if isinstance(m, str)][:6]
             res["summary"], res["service"] = ai.get("summary"), ai.get("service")
             res["layer"], res["ai"] = "AI", meta
-    if res["layer"] == "rules":
-        for name, ok in (("Measurable goals with baselines", f["has_goals"] and f["has_baseline"]),
-                         ("Medical necessity", f["has_necessity"])):
+    evidenced = {c["name"].lower() for c in res["checks"] if c.get("layer") == "AI" and c["status"] == "pass"}
+    for name, key, ok in (("Measurable goals with baselines", "goal", f["has_goals"] and f["has_baseline"]),
+                          ("Medical necessity", "necess", f["has_necessity"])):
+        if not any(key in n for n in evidenced):   # the keyword check stays unless the AI showed evidence
             res["checks"].append({"name": name, "status": "pass" if ok else "unclear", "layer": "rules",
                                   "detail": "Mentioned on the page." if ok else "Not found by keyword; a person should check."})
     n = len(res["checks"])

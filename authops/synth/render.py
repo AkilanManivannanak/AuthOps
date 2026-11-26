@@ -310,3 +310,33 @@ def render_corpus(cases: list[Case], out_dir: Path, seed: int = 11,
     (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=1))
     (out_dir / "cases.json").write_text(json.dumps([c.model_dump(mode="json") for c in cases], indent=1))
     return manifest
+
+
+def render_member_letter(case: Case, rng: random.Random, notice: date | None = None) -> DocWriter:
+    """A notice addressed to the member (patient or family), worded the way Medicaid and Medicare plan notices
+    are: a notice date, a partial approval with numbers, a reason in plain words, and 'sixty (60) days' to appeal.
+    Used for the patient view's sample; the evaluation letters above are unchanged."""
+    from datetime import timedelta
+    payor = PAYOR_BY_ID[case.payor.payor_id]
+    notice = notice or case.start_date - timedelta(days=14)
+    asked = int(case.requested_units)
+    got = max(1, asked // 2)
+    w = DocWriter()
+    w.line(payor.name, w.title)
+    w.line("Member Services", w.bold)
+    w.rule()
+    w.line(f"Notice date: {notice:%m/%d/%Y}")
+    w.line(f"Member: {case.patient.full_name}    Member ID: {case.patient.member_id}")
+    w.space()
+    w.line(f"Dear {case.patient.first_name} {case.patient.last_name},", w.body)
+    w.space(6)
+    w.para(f"We reviewed the request from your provider for physical therapy. We approved {got} of the {asked} "
+           f"visits requested (CPT {case.cpt_codes[0]}).")
+    w.para(f"Approved from {case.start_date:%m/%d/%Y} through {case.end_date:%m/%d/%Y}.")
+    w.para(f"The other {asked - got} visits are denied.")
+    w.line("Reason for denial:", w.bold)
+    w.para("Your plan covers this number of visits before your therapist sends an updated progress report. "
+           "Your therapist can ask for more visits with that report.")
+    w.para("You have the right to appeal within sixty (60) days of the date of this notice. "
+           "Call Member Services at the number on your ID card for help.")
+    return w

@@ -72,11 +72,36 @@ def issues(p: dict, ws: dict, today: date) -> list[dict]:
     out = [{"code": "school_schedule" if "school" in r.rule else r.rule,
             "text": FIX.get("school_schedule" if "school" in r.rule else r.rule, (None, r.message))[1],
             "detail": r.message} for r in rep.blocking]
+    for it in out:   # a limit fix uses the payor's own limit, never the approval model's number
+        if it["code"] == "units_within_payor_limit":
+            it["cap"] = payor_limit(p)
+            it["detail"] = (f"{PAYOR_BY_ID[p['payor']].name} allows {it['cap']} {UNIT1[p['spec']]}s per request; "
+                            f"this asks for {p['units']}. Lower it, and send the other {p['units'] - it['cap']} "
+                            "as a second request.")
     for key, r in ws.get("rules", {}).items():
         if r.get("approved") and p["payor"] == r["payor"] and p["spec"] == r["spec"] and p["units"] > r["cap"]:
             out.append({"code": "rule", "text": f"Above {PAYOR_BY_ID[p['payor']].name}'s new {r['cap']}-{UNIT1[p['spec']]} limit",
                         "detail": r["text"], "cap": r["cap"]})
     return out
+
+
+def payor_limit(p: dict) -> int:
+    from authops.validation.rules import load_requirements
+    return int(load_requirements()["payors"][p["payor"]]["specialties"][p["spec"]]["max_units_per_request"])
+
+
+def split(ws: dict, pid: str, today: date) -> str:
+    """Lower to the payor's limit and keep the rest as a second request, so no care is dropped."""
+    p = find(ws, pid)
+    cap = payor_limit(p)
+    rest = max(0, p["units"] - cap)
+    p["units"] = cap
+    p["remainder"] = p.get("remainder", 0) + rest
+    left = issues(p, ws, today)
+    if not left and p["stage"] in ("check", "ready"):
+        p["stage"] = "ready"
+    activity(ws, f"Split {p['name']}'s request: {cap} now, {rest} in a second request", "prior_authorizations")
+    return f"Split: {cap} {UNIT1[p['spec']]}s go now; {rest} wait in a second request."
 
 
 def runway(p: dict, today: date) -> dict | None:

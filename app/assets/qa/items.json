@@ -10,31 +10,36 @@
     "field": "auth_number",
     "value": "R97767996",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "decision",
     "value": "denied",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_name",
     "value": "Ava Nguyen",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "1980-11-02",
     "conf": 0.957,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "KCM59081935",
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -42,31 +47,36 @@
      "97530"
     ],
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "approved_units",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "start_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "end_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1830166132",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -81,31 +91,36 @@
     "field": "auth_number",
     "value": "R21167381",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "decision",
     "value": "approved",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_name",
     "value": "Zara Abernathy",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2008-09-28",
     "conf": 0.957,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "KCM66255890",
     "conf": 0.92,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -113,31 +128,36 @@
      "97156"
     ],
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "approved_units",
     "value": 185,
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "start_date",
     "value": "2026-11-24",
     "conf": 0.947,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "end_date",
     "value": "2027-05-23",
     "conf": 0.957,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1194821991",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -152,31 +172,36 @@
     "field": "auth_number",
     "value": "HBL-A-613322",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "decision",
     "value": "partial",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_name",
     "value": "Owen Patel",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "1992-08-12",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "HBL34127884",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -184,31 +209,36 @@
      "97140"
     ],
     "conf": 0.94,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "approved_units",
     "value": 10,
     "conf": 0.94,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "start_date",
     "value": "2026-11-27",
     "conf": 0.92,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "end_date",
     "value": "2027-02-25",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1948757491",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -223,31 +253,36 @@
     "field": "auth_number",
     "value": null,
     "conf": 0.44,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": true
    },
    {
     "field": "decision",
     "value": "approved",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_name",
     "value": "Kai Rahman",
     "conf": 0.935,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "1976-12-12",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "SFB87832216",
     "conf": 0.7,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -256,31 +291,36 @@
      "90847"
     ],
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "approved_units",
     "value": 21,
     "conf": 0.94,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "start_date",
     "value": "2026-12-04",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "end_date",
     "value": "2027-03-04",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1147104974",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -295,31 +335,36 @@
     "field": "auth_number",
     "value": "R30704398",
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "decision",
     "value": "denied",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_name",
     "value": "Rohan Castillo",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2014-07-28",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "KCM32329304",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -327,31 +372,36 @@
      "97153"
     ],
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "approved_units",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "start_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "end_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1842684650",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -366,61 +416,71 @@
     "field": "auth_number",
     "value": null,
     "conf": 0.135,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": true
    },
    {
     "field": "decision",
     "value": "denied",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_name",
     "value": "Caleb Fujimoto",
     "conf": 0.855,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2012-01-05",
     "conf": 0.88,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "SFB91847639",
     "conf": 0.77,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": true
    },
    {
     "field": "approved_units",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "start_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "end_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1289078663",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -435,31 +495,36 @@
     "field": "auth_number",
     "value": "NWH-A-426434",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "decision",
     "value": "denied",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_name",
     "value": "Zara Nguyen",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "1961-01-19",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "NWH58802897",
     "conf": 0.92,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -468,31 +533,36 @@
      "90847"
     ],
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "approved_units",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "start_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "end_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1396245957",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -507,31 +577,36 @@
     "field": "auth_number",
     "value": null,
     "conf": 0.18,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": true
    },
    {
     "field": "decision",
     "value": "approved",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_name",
     "value": "Ines Okafor",
     "conf": 0.935,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "SFB37543491",
     "conf": 0.73,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -539,31 +614,36 @@
      "90847"
     ],
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "approved_units",
     "value": 12,
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "start_date",
     "value": "2026-12-06",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "end_date",
     "value": "2027-04-05",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1280841481",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -578,31 +658,36 @@
     "field": "auth_number",
     "value": "R65291623",
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "decision",
     "value": "approved",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_name",
     "value": "Maya Okafor",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2016-08-12",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "KCM47502921",
     "conf": 0.89,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -610,31 +695,36 @@
      "97155"
     ],
     "conf": 0.94,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "approved_units",
     "value": 399,
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "start_date",
     "value": "2026-12-05",
     "conf": 0.947,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "end_date",
     "value": "2027-04-04",
     "conf": 0.897,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1395755139",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -649,31 +739,36 @@
     "field": "auth_number",
     "value": "JN38WMFDFG",
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "decision",
     "value": "approved",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_name",
     "value": "Noah Osei",
     "conf": 0.935,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "1996-02-27",
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": null,
     "conf": 0.27,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -682,31 +777,36 @@
      "90847"
     ],
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "approved_units",
     "value": 21,
     "conf": 0.94,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "start_date",
     "value": "2026-12-05",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "end_date",
     "value": "2027-03-05",
     "conf": 0.7,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1651676128",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -721,31 +821,36 @@
     "field": "auth_number",
     "value": "NWH-A-400307",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "decision",
     "value": "approved",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_name",
     "value": "Noah Haddad",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2008-12-21",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "NWH68224916",
     "conf": 0.89,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -754,31 +859,36 @@
      "97156"
     ],
     "conf": 0.955,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "approved_units",
     "value": 336,
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "start_date",
     "value": "2026-11-26",
     "conf": 0.94,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "end_date",
     "value": "2027-02-24",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1043483951",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -793,31 +903,36 @@
     "field": "auth_number",
     "value": "HBL-A-109966",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "decision",
     "value": "approved",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_name",
     "value": "Maya Haddad",
     "conf": 0.955,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2020-03-20",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "HBL33131984",
     "conf": 0.864,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -825,31 +940,36 @@
      "97155"
     ],
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "approved_units",
     "value": 101,
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "start_date",
     "value": "2026-11-24",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "end_date",
     "value": "2027-03-24",
     "conf": 0.86,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1918058888",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -864,31 +984,36 @@
     "field": "auth_number",
     "value": "NWH-A-940411",
     "conf": 0.88,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "decision",
     "value": "denied",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_name",
     "value": "Ines Moreau",
     "conf": 0.955,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2015-06-20",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "NWH47203213",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -897,31 +1022,36 @@
      "97155"
     ],
     "conf": 0.955,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "approved_units",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "start_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "end_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1878384837",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -936,31 +1066,36 @@
     "field": "auth_number",
     "value": "R97935641",
     "conf": 0.89,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "decision",
     "value": "denied",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_name",
     "value": "Mateo Haddad",
     "conf": 0.955,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2019-11-22",
     "conf": 0.957,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "KCM43971558",
     "conf": 0.92,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -969,31 +1104,36 @@
      "97155"
     ],
     "conf": 0.935,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "approved_units",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "start_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "end_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1316723265",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -1008,31 +1148,36 @@
     "field": "auth_number",
     "value": "HBL-A-643630",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "decision",
     "value": "approved",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_name",
     "value": "Sofia Abemathy",
     "conf": 0.92,
-    "auto_verdict": "wrong"
+    "auto_verdict": "wrong",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2000-01-13",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "HBL78754679",
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -1041,31 +1186,36 @@
      "97530"
     ],
     "conf": 0.875,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "approved_units",
     "value": 10,
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "start_date",
     "value": "2026-11-22",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "end_date",
     "value": "2027-02-20",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1311440246",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -1080,31 +1230,36 @@
     "field": "auth_number",
     "value": "HBL-A-602081",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "decision",
     "value": "denied",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_name",
     "value": "Ava Kowalski",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2009-05-01",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "HBL21239731",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -1112,31 +1267,36 @@
      "97153"
     ],
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "approved_units",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "start_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "end_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1417058645",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -1151,31 +1311,36 @@
     "field": "auth_number",
     "value": null,
     "conf": 0.025,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": true
    },
    {
     "field": "decision",
     "value": "approved",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_name",
     "value": "Leah Lindqvist",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "1988-04-16",
     "conf": 0.65,
-    "auto_verdict": "wrong"
+    "auto_verdict": "wrong",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "SFB46308897",
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -1184,31 +1349,36 @@
      "90847"
     ],
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "approved_units",
     "value": 22,
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "start_date",
     "value": "2026-12-01",
     "conf": 0.93,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "end_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1400088385",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -1223,31 +1393,36 @@
     "field": "auth_number",
     "value": "R50023191",
     "conf": 0.89,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "decision",
     "value": "partial",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_name",
     "value": null,
     "conf": 0.41,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2000-12-21",
     "conf": 0.953,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "KCM56647663",
     "conf": 0.6,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -1255,31 +1430,36 @@
      "97140"
     ],
     "conf": 0.94,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "approved_units",
     "value": 9,
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "start_date",
     "value": "2027-02-19",
     "conf": 0.953,
-    "auto_verdict": "wrong"
+    "auto_verdict": "wrong",
+    "visible": true
    },
    {
     "field": "end_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": null,
     "conf": 0.384,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": true
    }
   ]
  },
@@ -1294,31 +1474,36 @@
     "field": "auth_number",
     "value": "WSHVMFW4VL",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "decision",
     "value": "approved",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_name",
     "value": "Lucas Brennan",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "1976-09-11",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "SFB51546818",
     "conf": 0.73,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -1326,31 +1511,36 @@
      "97140"
     ],
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "approved_units",
     "value": 34,
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "start_date",
     "value": "2026-11-26",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "end_date",
     "value": "2027-03-26",
     "conf": 0.8,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1205617487",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -1365,31 +1555,36 @@
     "field": "auth_number",
     "value": "HBL-A-588025",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "decision",
     "value": "denied",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_name",
     "value": "Lucas Castillo",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2008-05-10",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "HBL88595657",
     "conf": 0.92,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -1397,31 +1592,36 @@
      "97156"
     ],
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "approved_units",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "start_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "end_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "absent"
+    "auto_verdict": "absent",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1965724929",
     "conf": 0.94,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -1436,19 +1636,22 @@
     "field": "patient_name",
     "value": "Ava Nguyen",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "1980-11-02",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "KCM59081935",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "icd10_codes",
@@ -1456,7 +1659,8 @@
      "M54.50"
     ],
     "conf": 0.92,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -1464,43 +1668,50 @@
      "97530"
     ],
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "requested_units",
     "value": 28,
     "conf": 0.86,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_start",
     "value": "2026-12-08",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_end",
     "value": "2027-03-08",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "signature_present",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "signature_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    }
   ]
  },
@@ -1515,19 +1726,22 @@
     "field": "patient_name",
     "value": "Owen Patel",
     "conf": 0.65,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "1992-08-12",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "HBL34127884",
     "conf": 0.86,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "icd10_codes",
@@ -1536,7 +1750,8 @@
      "M25.561"
     ],
     "conf": 0.845,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -1544,43 +1759,50 @@
      "97140"
     ],
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "requested_units",
     "value": 21,
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_start",
     "value": "2026-11-27",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_end",
     "value": "2027-02-25",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1948757491",
     "conf": 0.93,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "signature_present",
     "value": true,
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "signature_date",
     "value": "2026-11-14",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -1595,19 +1817,22 @@
     "field": "patient_name",
     "value": "Rohan Castillo",
     "conf": 0.955,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2014-07-28",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "KCM32329304",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "icd10_codes",
@@ -1615,7 +1840,8 @@
      "F84.0"
     ],
     "conf": 0.92,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -1623,43 +1849,50 @@
      "97153"
     ],
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "requested_units",
     "value": 157,
     "conf": 0.58,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_start",
     "value": "2026-12-04",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_end",
     "value": "2027-04-03",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "signature_present",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "signature_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    }
   ]
  },
@@ -1674,19 +1907,22 @@
     "field": "patient_name",
     "value": "Zara Nguyen",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "1961-01-19",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "NWH58802897",
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "icd10_codes",
@@ -1694,7 +1930,8 @@
      "F8A.0"
     ],
     "conf": 0.69,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -1703,43 +1940,50 @@
      "90847"
     ],
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "requested_units",
     "value": 15,
     "conf": 0.87,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_start",
     "value": "2026-11-20",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_end",
     "value": "2027-02-18",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1396245957",
     "conf": 0.94,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "signature_present",
     "value": true,
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "signature_date",
     "value": "2026-11-12",
     "conf": 0.94,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -1754,25 +1998,29 @@
     "field": "patient_name",
     "value": "Maya Okafor",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2016-08-12",
     "conf": 0.94,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "KCM47502921",
     "conf": 0.86,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "icd10_codes",
     "value": null,
     "conf": 0.484,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -1780,43 +2028,50 @@
      "97155"
     ],
     "conf": 0.94,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "requested_units",
     "value": 399,
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_start",
     "value": "2026-12-05",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_end",
     "value": "2027-04-04",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "signature_present",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "signature_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    }
   ]
  },
@@ -1831,19 +2086,22 @@
     "field": "patient_name",
     "value": "Noah Haddad",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2008-12-21",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "NWH68224916",
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "icd10_codes",
@@ -1851,7 +2109,8 @@
      "F84.0"
     ],
     "conf": 0.92,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -1860,43 +2119,50 @@
      "97156"
     ],
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "requested_units",
     "value": 336,
     "conf": 0.94,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_start",
     "value": "2026-11-26",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_end",
     "value": "2027-02-24",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1043483951",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "signature_present",
     "value": true,
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "signature_date",
     "value": "2026-10-30",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -1911,19 +2177,22 @@
     "field": "patient_name",
     "value": "Ines Moreau",
     "conf": 0.955,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2015-06-20",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "NWH47203213",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "icd10_codes",
@@ -1931,7 +2200,8 @@
      "F8A.0"
     ],
     "conf": 0.69,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -1940,43 +2210,50 @@
      "97155"
     ],
     "conf": 0.955,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "requested_units",
     "value": 423,
     "conf": 0.85,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_start",
     "value": "2026-12-04",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_end",
     "value": "2027-06-02",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "signature_present",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "signature_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    }
   ]
  },
@@ -1991,67 +2268,78 @@
     "field": "patient_name",
     "value": "Sofia Abernathy",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2000-01-13",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": null,
     "conf": 0.465,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": true
    },
    {
     "field": "icd10_codes",
     "value": null,
     "conf": 0.533,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "cpt_codes",
     "value": null,
     "conf": 0.546,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "requested_units",
     "value": 10,
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_start",
     "value": "2026-11-22",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_end",
     "value": "2027-02-20",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1311440246",
     "conf": 0.94,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "signature_present",
     "value": true,
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "signature_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    }
   ]
  },
@@ -2066,19 +2354,22 @@
     "field": "patient_name",
     "value": "Leah Lindqvist",
     "conf": 0.945,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "1988-04-10",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "SFB46308897",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "icd10_codes",
@@ -2087,7 +2378,8 @@
      "F41.1"
     ],
     "conf": 0.92,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -2096,43 +2388,50 @@
      "90847"
     ],
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "requested_units",
     "value": 22,
     "conf": 0.55,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_start",
     "value": "2026-12-01",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_end",
     "value": "2027-03-01",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "signature_present",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "signature_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    }
   ]
  },
@@ -2147,19 +2446,22 @@
     "field": "patient_name",
     "value": "Lucas Brennan",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "1976-09-11",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "SFB51546818",
     "conf": 0.92,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "icd10_codes",
@@ -2167,7 +2469,8 @@
      "M54.50"
     ],
     "conf": 0.92,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -2175,43 +2478,50 @@
      "97140"
     ],
     "conf": 0.94,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "requested_units",
     "value": 34,
     "conf": 0.81,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_start",
     "value": "2026-11-26",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_end",
     "value": "2027-03-26",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1205617487",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "signature_present",
     "value": true,
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "signature_date",
     "value": "2026-11-12",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -2226,19 +2536,22 @@
     "field": "patient_name",
     "value": "Leah Brennan",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2009-07-27",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "SFB94257475",
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "icd10_codes",
@@ -2246,7 +2559,8 @@
      "F88"
     ],
     "conf": 0.589,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -2254,43 +2568,50 @@
      "90837"
     ],
     "conf": 0.93,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "requested_units",
     "value": 215,
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_start",
     "value": "2026-11-20",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_end",
     "value": "2027-05-19",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "signature_present",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "signature_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    }
   ]
  },
@@ -2305,19 +2626,22 @@
     "field": "patient_name",
     "value": "Maya Abernathy",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "1974-02-16",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "KCM71602021",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "icd10_codes",
@@ -2326,7 +2650,8 @@
      "F41.1"
     ],
     "conf": 0.855,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -2335,43 +2660,50 @@
      "90837"
     ],
     "conf": 0.955,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "requested_units",
     "value": 13,
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_start",
     "value": "2026-11-22",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_end",
     "value": "2027-05-21",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1746331911",
     "conf": 0.94,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "signature_present",
     "value": true,
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "signature_date",
     "value": "2026-11-01",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -2386,19 +2718,22 @@
     "field": "patient_name",
     "value": "Amara Brennan",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "1978-07-25",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "NWH47666555",
     "conf": 0.92,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "icd10_codes",
@@ -2406,7 +2741,8 @@
      "F43.10"
     ],
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -2415,43 +2751,50 @@
      "90847"
     ],
     "conf": 0.955,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "requested_units",
     "value": 8,
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_start",
     "value": "2026-11-23",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_end",
     "value": "2027-02-21",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "signature_present",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "signature_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    }
   ]
  },
@@ -2466,19 +2809,22 @@
     "field": "patient_name",
     "value": "Zara Moreau",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2003-08-14",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "SFB42760619",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "icd10_codes",
@@ -2487,7 +2833,8 @@
      "M25.561"
     ],
     "conf": 0.827,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -2495,43 +2842,50 @@
      "97140"
     ],
     "conf": 0.94,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "requested_units",
     "value": 16,
     "conf": 0.71,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_start",
     "value": "2026-11-22",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_end",
     "value": "2027-02-20",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1581535493",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "signature_present",
     "value": true,
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "signature_date",
     "value": "2026-11-15",
     "conf": 0.93,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -2546,19 +2900,22 @@
     "field": "patient_name",
     "value": "Leah Castillo",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2001-12-21",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "NWH84021199",
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "icd10_codes",
@@ -2566,7 +2923,8 @@
      "F41.1"
     ],
     "conf": 0.88,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -2574,43 +2932,50 @@
      "90834"
     ],
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "requested_units",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": true
    },
    {
     "field": "plan_start",
     "value": "2026-11-21",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_end",
     "value": "2027-02-19",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "signature_present",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "signature_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    }
   ]
  },
@@ -2625,19 +2990,22 @@
     "field": "patient_name",
     "value": "Caleb Fujimoto",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2008-12-11",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "HBL63198298",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "icd10_codes",
@@ -2645,7 +3013,8 @@
      "F84.5"
     ],
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -2654,43 +3023,50 @@
      "97155"
     ],
     "conf": 0.945,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "requested_units",
     "value": 392,
     "conf": 0.84,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_start",
     "value": "2026-11-26",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_end",
     "value": "2027-02-24",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1481373433",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "signature_present",
     "value": true,
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "signature_date",
     "value": "2026-11-09",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -2705,25 +3081,29 @@
     "field": "patient_name",
     "value": "Mateo Varga",
     "conf": 0.955,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2009-05-03",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "NWH26603844",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "icd10_codes",
     "value": null,
     "conf": 0.342,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -2731,43 +3111,50 @@
      "97110"
     ],
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "requested_units",
     "value": 95,
     "conf": 0.76,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_start",
     "value": "2026-12-07",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_end",
     "value": "2027-03-07",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "signature_present",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "signature_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    }
   ]
  },
@@ -2782,19 +3169,22 @@
     "field": "patient_name",
     "value": "Rohan Lindqvist",
     "conf": 0.915,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "1982-08-05",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "SFB11168389",
     "conf": 0.817,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "icd10_codes",
@@ -2802,7 +3192,8 @@
      "M17.11"
     ],
     "conf": 0.88,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -2810,43 +3201,50 @@
      "97110"
     ],
     "conf": 0.94,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "requested_units",
     "value": 21,
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_start",
     "value": "2026-11-29",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_end",
     "value": "2027-05-28",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1293557595",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "signature_present",
     "value": true,
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "signature_date",
     "value": "2026-11-15",
     "conf": 0.95,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  },
@@ -2861,19 +3259,22 @@
     "field": "patient_name",
     "value": "Priya Delgado",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2010-05-19",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "KCM18697858",
     "conf": 0.92,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "icd10_codes",
@@ -2881,7 +3282,8 @@
      "F84.5"
     ],
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -2890,43 +3292,50 @@
      "97155"
     ],
     "conf": 0.945,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "requested_units",
     "value": 199,
     "conf": 0.89,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_start",
     "value": "2026-12-02",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_end",
     "value": "2027-04-01",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "signature_present",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    },
    {
     "field": "signature_date",
     "value": null,
     "conf": 0.0,
-    "auto_verdict": "missing"
+    "auto_verdict": "missing",
+    "visible": false
    }
   ]
  },
@@ -2941,19 +3350,22 @@
     "field": "patient_name",
     "value": "Liam Rahman",
     "conf": 0.955,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "patient_dob",
     "value": "2012-02-07",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "member_id",
     "value": "PRV83557332",
     "conf": 0.84,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "icd10_codes",
@@ -2962,7 +3374,8 @@
      "F88"
     ],
     "conf": 0.645,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "cpt_codes",
@@ -2971,43 +3384,50 @@
      "97155"
     ],
     "conf": 0.81,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "requested_units",
     "value": 461,
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_start",
     "value": "2026-12-05",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "plan_end",
     "value": "2027-03-05",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "provider_npi",
     "value": "1616828129",
     "conf": 0.96,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "signature_present",
     "value": true,
     "conf": 0.9,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    },
    {
     "field": "signature_date",
     "value": "2026-11-05",
     "conf": 0.91,
-    "auto_verdict": "correct"
+    "auto_verdict": "correct",
+    "visible": true
    }
   ]
  }

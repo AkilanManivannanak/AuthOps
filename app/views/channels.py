@@ -33,7 +33,7 @@ chips = " → ".join((pill(names[c], "ok") if c == ch else f"<span class='ao-mut
 st.markdown(f"**Route:** {chips}", unsafe_allow_html=True)
 if ch == "fhir":
     st.markdown("This payor exposes a Prior Authorization API, so no browser is needed. The request goes as a "
-                "Da Vinci PAS-shaped Bundle:")
+                "FHIR R4 Bundle in the Da Vinci PAS shape (valid against base R4; not checked against the PAS profiles):")
     st.json(build_pas_bundle(case), expanded=2)
     if st.button("Submit to the test FHIR endpoint", type="primary"):
         try:
@@ -57,7 +57,11 @@ st.caption("Clearinghouses and many payors still exchange prior authorizations a
            "(005010X217). The request is built, checked the way a clearinghouse checks it, and answered by the test payor.")
 from authops.channels.x12 import build_278_request, build_278_response, parse_278_response, validate_x12  # noqa: E402
 
-x = build_278_request(case, ctrl=101)
+from datetime import datetime  # noqa: E402
+import hashlib  # noqa: E402
+
+FIXED = datetime(2026, 11, 25, 9, 0)   # a fixed clock so the file and its auth number are the same on every run
+x = build_278_request(case, ctrl=101, now=FIXED)
 errs = validate_x12(x)
 c1, c2 = st.columns(2)
 with c1:
@@ -68,8 +72,8 @@ with c2:
     dec = st.radio("Test payor answers", ["approved", "partial", "denied", "pended"], horizontal=True, key="x12_dec")
     units = int(case["requested_units"])
     resp = build_278_response(x, dec, units if dec == "approved" else max(1, units * 2 // 3) if dec == "partial" else None,
-                              auth="" if dec in ("denied", "pended") else f"{pid}-{abs(hash(x)) % 10**7:07d}",
-                              reason={"denied": "NME", "pended": "AN"}.get(dec, ""))
+                              auth="" if dec in ("denied", "pended") else f"{pid}-{int(hashlib.sha256(case['case_id'].encode()).hexdigest()[:7], 16) % 10**7:07d}",
+                              reason={"denied": "NME", "pended": "AN"}.get(dec, ""), now=FIXED)
     r = parse_278_response(resp)
     st.markdown(f"**Read back:** {r['decision']} (HCR {r['action_code']})"
                 + (f" · authorization **{r['auth_number']}**" if r["auth_number"] else "")

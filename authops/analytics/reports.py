@@ -13,7 +13,7 @@ from sqlalchemy import text
 QUERIES = Path(__file__).with_name("queries")
 TITLES = {"funnel": "How far people get", "by_role": "Use by role", "daily": "Activity per day",
           "top_actions": "Most used actions", "returning": "Returning people",
-          "ai_accuracy": "AI answers people rated", "what_went_wrong": "What people said was wrong",
+          "ai_accuracy": "Answers people rated (AI and rule checks)", "what_went_wrong": "What people said was wrong",
           "field_errors": "Review queue: where the extractor was wrong"}
 
 

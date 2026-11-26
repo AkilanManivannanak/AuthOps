@@ -1,3 +1,4 @@
+import hashlib
 import json
 import random
 import tempfile
@@ -8,7 +9,7 @@ import streamlit as st
 
 from app.ui import log, setup, switch
 from app.widgets.assist_view import assist_view
-from authops.assist.reader import check_plan, ocr_text, read_letter, to_pages
+from authops.assist.reader import _default_steps, check_plan, ocr_text, on_disk, png_pages, read_letter
 from authops.llm import llm_available
 
 from app.account import role, save, today, ws  # noqa: E402
@@ -18,44 +19,76 @@ setup("Read a letter" if R == "patient" else "Check a document",
       "Take a photo of an insurance letter and get the decision, the dates and what to do next." if R == "patient" else
       "Upload a treatment plan before it goes out, or a payor's letter when it comes back.")
 
-AI_CAP = 6   # AI reads per visit, to keep the free demo affordable
+AI_DAILY = 6   # AI reads per person per day, counted on the server, to keep the free demo affordable
 MODES = ({"My insurance letter": "letter"} if R == "patient" else
          {"Before we send a prior auth": "plan", "A payor's letter came back": "letter", "Show me what was read": "raw"})
 mode = MODES[switch(MODES, "mode")] if len(MODES) > 1 else "letter"
 
 st.markdown("<div class='ao-muted' style='margin:-.2rem 0 .8rem'>🔒 Cover names and member IDs before you upload. "
-            "Only the result is kept in your account, never the image. The AI reader sends the page to a secure AI service to be read.</div>",
+            "Your account keeps the result (decision, dates and checks), never the image or the letter's wording; "
+            "the page is deleted as soon as it has been read. The AI reader sends the page to a secure AI service to be read.</div>",
             unsafe_allow_html=True)
 
 
 @st.cache_data(show_spinner=False)
-def _sample(kind: str) -> list[str]:
+def _sample(kind: str) -> list[bytes]:
     from authops.synth.generate import PAYOR_BY_ID, generate_cases
-    from authops.synth.render import render_letter, render_treatment_plan, save_doc
+    from authops.synth.render import render_letter, render_member_letter, render_treatment_plan, save_doc
     c = generate_cases(1, seed=7, gap_rate=0.0)[0]
-    rng, d = random.Random(3), Path(tempfile.mkdtemp(prefix="sample_"))
-    if kind == "letter":
-        c.payor = PAYOR_BY_ID["KCM"]
-        w, _, _ = render_letter(c, rng)
-        return save_doc(w, d, "letter", "scan", rng)
-    c.signature_present, c.signature_date = False, None
-    return save_doc(render_treatment_plan(c, rng, False), d, "plan", "scan", rng)
+    rng = random.Random(3)
+    with tempfile.TemporaryDirectory(prefix="sample_") as d:
+        if kind == "member_letter":
+            c.payor = PAYOR_BY_ID["KCM"]
+            paths = save_doc(render_member_letter(c, rng), Path(d), "letter", "scan", rng)
+        elif kind == "letter":
+            c.payor = PAYOR_BY_ID["KCM"]
+            w, _, _ = render_letter(c, rng)
+            paths = save_doc(w, Path(d), "letter", "scan", rng)
+        else:
+            c.signature_present, c.signature_date = False, None
+            paths = save_doc(render_treatment_plan(c, rng, False), Path(d), "plan", "scan", rng)
+        return [Path(p).read_bytes() for p in paths]
+
+
+def _doc(pngs: list[bytes], sample: bool) -> dict:
+    """A document is known by a hash of its pages, so a result always belongs to the image beside it."""
+    return {"png": pngs, "id": hashlib.sha256(b"".join(pngs)).hexdigest()[:16], "sample": sample, "mode": mode}
+
+
+def _who() -> str:
+    """Who the daily AI quota is counted for: the account, or for guests the network address (hashed), so a
+    reload or a new tab does not reset it."""
+    from app.ui import session_id, who_am_i
+    w, _ = who_am_i()
+    if w:
+        return w
+    ip = getattr(st.context, "ip_address", None)
+    return ("ip:" + hashlib.sha256(ip.encode()).hexdigest()[:16]) if ip else ("session:" + session_id())
 
 
 a, b, c = st.columns([2.2, 1, 1])
 up = a.file_uploader("Photo, scan or PDF", type=["png", "jpg", "jpeg", "pdf"], label_visibility="collapsed")
 sample = b.button("Use a sample " + ("letter" if mode == "letter" else "plan"), width="stretch")
-used = st.session_state.setdefault("ai_used", 0)
-ai_on = c.toggle("AI reader", value=llm_available() and used < AI_CAP, disabled=not llm_available() or used >= AI_CAP,
-                 help="the AI reads the page images and answers in a fixed shape; every quote is checked against the "
-                      "page. Off: OCR and rule checks only.")
+from app.ui import store  # noqa: E402
+
+used = store().ai_calls(_who(), f"{date.today():%Y-%m-%d}")
+left_today = max(0, AI_DAILY - used)
+ai_on = c.toggle("AI reader", value=llm_available() and left_today > 0, disabled=not llm_available() or left_today == 0,
+                 help="The AI reads the page images and answers in a fixed shape. An answer only counts when the line "
+                      "it came from is found on the page. Off: OCR and rule checks only.")
 if not llm_available():
-    c.caption("Rules only on this deployment")
+    c.caption("Rule checks on this deployment")
+elif left_today == 0:
+    c.caption("Today's AI reads are used up; rule checks still work")
 
 if sample:
-    st.session_state.doc = {"pages": _sample("letter" if mode == "letter" else "plan"), "name": "sample"}
-elif up is not None and st.session_state.get("doc", {}).get("name") != up.name + str(up.size):
-    st.session_state.doc = {"pages": [str(p) for p in to_pages(up.getvalue(), up.name)], "name": up.name + str(up.size)}
+    kind = ("member_letter" if R == "patient" else "letter") if mode == "letter" else "plan"
+    st.session_state.doc = _doc(_sample(kind), True)
+elif up is not None and st.session_state.get("_up") != up.name + str(up.size):
+    st.session_state._up = up.name + str(up.size)
+    st.session_state.doc = _doc(png_pages(up.getvalue(), up.name), False)
+if st.session_state.get("doc") and st.session_state.doc.get("mode") != mode and mode != "raw":
+    st.session_state.pop("doc")   # a new mode needs its own document: never check a letter as a plan
 
 PARTS = {"letter": ["the decision", "the deadline", "the dates", "the amount approved", "the next steps", "something else"],
          "plan": ["a missing item it flagged", "something it missed", "the codes", "the dates", "something else"]}
@@ -79,14 +112,27 @@ def _feedback(mode: str, res: dict, key) -> None:
     if st.button("Send", key=f"fbs_{k}"):
         from app.ui import store, who_am_i, session_id
         who, role = who_am_i()
+        doc = st.session_state.get("doc") or {}
         try:
             store().feedback(session_id(), who, role, mode, "right" if v == "Yes" else "wrong", what=what,
-                             layer="ai" if res.get("layer") == "AI" else "rules", comment=note)
-        except Exception:
-            pass
+                             layer="ai" if res.get("layer") == "AI" else "rules", comment=note,
+                             doc_id=doc.get("id", ""), is_sample=doc.get("sample", False),
+                             result=json.dumps(_snapshot(res), default=str))
+        except Exception as e:
+            log("feedback_error", {"err": type(e).__name__})
+            st.warning("That didn't save. Please try again in a moment.")
+            return
         log("feedback", {"mode": mode, "verdict": v})
         done.add(k)
         st.rerun()
+
+
+def _snapshot(res: dict) -> dict:
+    """What was shown, without free text that could carry a name: the fields and check results only."""
+    keep = ("kind", "layer", "decision", "approved_amount", "start", "end", "appeal_days", "deadline", "score",
+            "to_fix", "unverified")
+    return {**{k: res.get(k) for k in keep if k in res},
+            "checks": [{"name": c["name"], "status": c["status"], "layer": c.get("layer")} for c in res.get("checks", [])]}
 
 
 doc = st.session_state.get("doc")
@@ -96,16 +142,15 @@ if not doc:
     <div class='ao-muted'>or press "Use a sample" to see it work on a sample one</div></div>""", unsafe_allow_html=True)
     st.stop()
 
-pages = [Path(p) for p in doc["pages"]]
-key = (doc["name"], mode, ai_on)
+key = (doc["id"], mode, ai_on)
 cache = st.session_state.setdefault("assist_cache", {})
 if key not in cache:
     llm = None
-    if ai_on:
+    if ai_on and store().ai_calls(_who(), f"{date.today():%Y-%m-%d}") < AI_DAILY:   # checked again on the server
         from authops.llm import ClaudeLLM
         llm = ClaudeLLM()
-        st.session_state.ai_used += 1
-    with st.spinner("Reading the page"):
+        store().ai_calls(_who(), f"{date.today():%Y-%m-%d}", add=1)
+    with st.spinner("Reading the page"), on_disk(doc["png"]) as pages:   # files exist only while being read
         text = ocr_text(pages)
         if mode == "letter":
             cache[key] = read_letter(pages, llm, text=text)
@@ -113,19 +158,18 @@ if key not in cache:
             cache[key] = check_plan(pages, llm, text=text, today=date.today())
         else:
             cache[key] = {"text": text, "letter": read_letter(pages, None, text=text)["facts"]}
-    log("assist", {"mode": mode, "ai": ai_on, "sample": doc["name"] == "sample"})
+    log("assist", {"mode": mode, "ai": llm is not None, "sample": doc.get("sample", False)})
     r0, w = cache[key], ws()
-    if mode == "letter":
-        w["letters"].insert(0, {"read_on": f"{today():%b %d}", "decision": r0.get("decision"), "summary": r0.get("summary"),
+    if mode == "letter":   # saved without the letter's own wording: no names leave the page
+        w["letters"].insert(0, {"read_on": f"{today():%b %d}", "decision": r0.get("decision"),
                                 "deadline": r0.get("deadline"), "start": r0.get("start"), "end": r0.get("end"),
-                                "service": r0.get("service"), "steps": r0.get("next_steps", [])})
+                                "steps": _default_steps(r0.get("decision"))})
         del w["letters"][12:]
         from authops import workspace as W
         W.activity(w, f"Read a payor letter: {r0.get('decision') or 'decision unclear'}", "try_it")
         save("Saved to " + ("My care." if R == "patient" else "your activity."))
     elif mode == "plan":
-        w["plans"].insert(0, {"read_on": f"{today():%b %d}", "score": r0.get("score"), "to_fix": r0.get("to_fix"),
-                              "summary": r0.get("summary")})
+        w["plans"].insert(0, {"read_on": f"{today():%b %d}", "score": r0.get("score"), "to_fix": r0.get("to_fix")})
         del w["plans"][12:]
         from authops import workspace as W
         what = {"referral": "a referral", "visit_log": "a visit log"}.get(r0.get("kind"), "a treatment plan")
@@ -134,7 +178,7 @@ if key not in cache:
 res = cache[key]
 
 left, right = st.columns([1, 2.2])
-left.image(str(pages[0]), width="stretch")
+left.image(doc["png"][0], width="stretch")
 with right:
     if mode in ("letter", "plan"):
         assist_view(mode, res, key=f"av_{abs(hash(key))}")

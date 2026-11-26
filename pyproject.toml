@@ -9,7 +9,7 @@ dependencies = [
 ]
 [project.optional-dependencies]
 llm = ["anthropic>=0.40"]
-dev = ["pytest", "ruff"]
+dev = ["pytest", "ruff==0.16.9", "fhir.resources>=8"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
@@ -17,3 +17,9 @@ testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 120
+extend-exclude = ["tests_ui/runs"]
+
+[tool.ruff.lint]
+# Explicit, so `ruff check .` gives the same answer on every ruff version (pinned in dev extras and CI).
+select = ["E", "F", "W"]
+ignore = ["E501"]

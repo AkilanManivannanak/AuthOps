@@ -45,14 +45,16 @@ export default function(component){
   const chips=[[D.approved_amount,"approved"],[D.requested_amount,"asked for"],[D.start&&D.end?`${D.start} → ${D.end}`:null,"dates"],[D.deadline,"appeal deadline",1]].filter(c=>c[0]);
   root.innerHTML=`<div class="card hero"><div class="stamp" style="color:${C[1]};border-color:${C[1]}">${C[0]}</div>
    <div><div class="sum">${esc(D.summary||"Here is what the letter says.")}</div>
-   ${D.reason?`<div style="margin-top:8px;color:#6E5C76;font-size:13.5px"><b>Reason given:</b> ${esc(D.reason)}</div>`:""}
+   ${D.reason?`<div style="margin-top:8px;color:#6E5C76;font-size:13.5px"><b>Reason given:</b> ${esc(D.reason)}${D.reason_plain?`<br><b>In plain words:</b> ${esc(D.reason_plain)}`:""}</div>`:""}
    <div class="chips">${chips.map((c,i)=>`<div class="chip ${c[2]?"hot":""}" style="animation-delay:${i*80}ms"><b>${esc(c[0])}</b><span>${c[1]}</span></div>`).join("")}</div></div></div>
    ${D.conflict?`<div class="warn">${esc(D.conflict)}</div>`:""}
+   ${(D.unverified||[]).length?`<div class="warn">Not found on the letter, so not shown as fact: ${D.unverified.map(k=>({approved_amount:"the approved amount",start:"the start date",end:"the end date"})[k]).join(", ")}. Check the letter.</div>`:""}
    <div class="cols"><div class="card box"><h4>What to do next</h4>${(D.next_steps||[]).map((s,i)=>`<div class="step" style="animation-delay:${200+i*120}ms"><i>${i+1}</i><div>${esc(s)}</div></div>`).join("")}</div>
    <div class="card box"><h4>${D.questions&&D.questions.length?"Questions to ask":"Where it says so"}</h4>
    ${(D.questions||[]).map(q=>`<div class="step"><i>?</i><div>${esc(q)}</div></div>`).join("")}
    ${(D.quotes||[]).map(q=>`<div class="q">"${esc(q.text)}"<small class="${q.found?"ok":"no"}">${q.found?"✓ on the page":"✕ not found on the page"}</small></div>`).join("")}
-   ${!(D.questions||[]).length&&!(D.quotes||[]).length?`<div class="d" style="color:#6E5C76;font-size:13px">Turn on the AI reader for plain-English questions and quotes.</div>`:""}</div></div>
+   ${!(D.quotes||[]).length?(D.evidence||[]).map(q=>`<div class="q">"${esc(q.text)}"<small class="ok">✓ on the page · ${esc(q.for)}</small></div>`).join(""):""}
+   ${!(D.questions||[]).length&&!(D.quotes||[]).length&&!(D.evidence||[]).length?`<div class="d" style="color:#6E5C76;font-size:13px">No line on the page states the decision clearly. Check the letter or call the number on it.</div>`:""}</div></div>
    <div class="meta">${meta}</div>`;
  } else {
   const S=D.score||0,R=56,Cc=2*Math.PI*R,col=S>=85?"#5B2A86":S>=60?"#E0855F":"#C0446A";

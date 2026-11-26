@@ -45,21 +45,27 @@ def icd10_valid(code: str) -> bool:
     return code in KNOWN_ICD10
 
 
+MONTHS_SHORT = {m[:3]: i for m, i in MONTHS.items()} | {"sept": 9}
+
+
 def parse_date(s: str | None) -> date | None:
     if not s:
         return None
     s = s.strip().strip(".,")
-    for fmt in ("%m/%d/%Y", "%Y-%m-%d", "%m-%d-%Y"):
+    for fmt in ("%m/%d/%Y", "%Y-%m-%d", "%m-%d-%Y", "%m/%d/%y"):
         try:
             return datetime.strptime(s, fmt).date()
         except ValueError:
             pass
-    m = re.match(r"([A-Za-z]+)\s+(\d{1,2}),?\s+(\d{4})", s)
-    if m and m.group(1).lower() in MONTHS:
-        try:
-            return date(int(m.group(3)), MONTHS[m.group(1).lower()], int(m.group(2)))
-        except ValueError:
-            return None
+    m = re.match(r"([A-Za-z]+)\.?\s+(\d{1,2}),?\s+(\d{4})", s)   # December 1, 2026 / Dec. 1, 2026 / Sept 30 2026
+    if m:
+        mon = m.group(1).lower()
+        num = MONTHS.get(mon) or MONTHS_SHORT.get(mon)
+        if num:
+            try:
+                return date(int(m.group(3)), num, int(m.group(2)))
+            except ValueError:
+                return None
     return None
 
 

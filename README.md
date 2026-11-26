@@ -3,8 +3,8 @@
 **Prior-authorization operations, end to end: read the documents, catch denials before they happen, submit through any channel, and keep rules and playbooks current on their own.**
 
 [![Live app](https://img.shields.io/badge/live%20app-open-28543E?style=for-the-badge)](https://akilan-silna-pa-agent.streamlit.app)
-![tests](https://img.shields.io/badge/tests-115%20passing-28543E?style=for-the-badge)
-![UI checks](https://img.shields.io/badge/UI%20checks-80%2F80-28543E?style=for-the-badge)
+![tests](https://img.shields.io/badge/tests-152%20passing-28543E?style=for-the-badge)
+![UI checks](https://img.shields.io/badge/UI%20checks-90%2F90-28543E?style=for-the-badge)
 ![data](https://img.shields.io/badge/data-synthetic%20only-9A9A9A?style=for-the-badge)
 
 ![AuthOps demo](docs/media/demo.gif)
@@ -15,6 +15,8 @@
 decision, dates, appeal deadline and next steps in plain English; a clinic can upload a treatment plan and see what to fix
 before it goes to the payor. Claude reads the page; deterministic checks (NPI checksum, ICD-10 and CPT shape, dates,
 signature) run alongside it, and every quote the AI returns is checked against the page. Nothing is stored.
+
+**Reviewed by two engineers:** 26 findings across the agents, the X12 and FHIR channels, sessions and the document reader. Each one is fixed with a regression test, or listed as open: [docs/REVIEW_RESPONSE.md](docs/REVIEW_RESPONSE.md).
 
 **Tried on real clinic paperwork:** a Brooklyn physical therapy clinic shared one patient file, de-identified before use. It exposed four real gaps: phone-photo OCR lost the referral reason, history codes were taken as the request's diagnosis, a referral was graded like a plan, and three insurances had no routing. All four are fixed and tested. See [docs/FIELD_FEEDBACK.md](docs/FIELD_FEEDBACK.md).
 
@@ -45,7 +47,7 @@ flowchart LR
 |---|---|
 | 📄 **Reads documents** | OCR + field extraction with confidence; abstains when unsure. Long charts (12-150 pages) checked by a background agent that cites every page |
 | 🛡️ **Prevents denials** | Payor rules block gaps before submission; an approval model recommends how many units to request |
-| 🤖 **Submits anywhere** | Browser agent on four sandbox portals (pop-ups, iframes, MFA, lockouts), FHIR prior-auth API (Da Vinci PAS shape), HIPAA X12 278 request and response with clearinghouse envelope checks, phone IVR |
+| 🤖 **Submits anywhere** | Browser agent on four sandbox portals (pop-ups, iframes, MFA, lockouts), FHIR prior-auth API (R4 bundle validated in tests, Da Vinci PAS shape), HIPAA X12 278 request and response with clearinghouse envelope checks, phone IVR |
 | 📡 **Stays current** | Detects unannounced payor rule changes from the decision stream; heals playbooks when a portal is redesigned |
 | ⚖️ **Handles denials** | Triage: appeal with verified citations, corrective resubmission, or specialist review |
 | 📈 **Earns autonomy** | Human QA share drops only while results hold; prompt changes pass a regression gate |
@@ -74,6 +76,7 @@ flowchart LR
 | **4 → 0** | wrong-data submissions with the turn validator when 25% of typed values are corrupted (0 false blocks in 40 clean runs) |
 | **99.4%** | benefits-call fields correct with read-back (83.2% without) |
 | **17 / 17** | appeal letters with every citation verified against the chart |
+| **105 → 0** | wrong values shown as fact by the letter and plan reader, on 56 documents with real payor wording ("sixty (60) days", partial approvals, ranges next to a birth date), after two outside code reviews; 220 of 222 fields right, 2 left blank rather than guessed |
 
 All numbers come from synthetic data and are reproducible. Methods, every table and the limits: **[docs/RESULTS.md](docs/RESULTS.md)** · design: **[docs/DESIGN.md](docs/DESIGN.md)** · operating it (new payor, new portal, error triage, review ramp, incidents, metric definitions): **[docs/RUNBOOK.md](docs/RUNBOOK.md)**.
 
@@ -85,7 +88,7 @@ python scripts/run_all.py          # full pipeline, writes reports/
 streamlit run streamlit_app.py     # the app
 ```
 
-`pytest -q` runs 115 tests, including real-browser runs on every sandbox portal.
+`pytest -q` runs 152 tests, including real-browser runs on every sandbox portal.
 
 ```bash
 python -m authops.analytics.reports            # the usage and AI-quality reports, from authops/analytics/queries/*.sql
@@ -97,9 +100,9 @@ Tested at three levels, from code up to the full user journey:
 
 | Level | What is checked | Result |
 |---|---|---|
-| Code | `ruff` lint and `pytest`: extraction, payor rules, approval model, workspace actions, document reader, X12 278 build/parse/validate, SQL reports, portal agents in a real browser | 115 / 115 pass |
+| Code | `ruff` lint and `pytest`: extraction, payor rules, approval model, workspace actions, document reader, sessions and accounts, agent guard rails, X12 278 against a hand-written outside file, FHIR R4 schema, SQL reports, portal agents in a real browser | 152 / 152 pass |
 | Pages | Every page and every tool on it, for each role (patient, clinic, operations): loads without errors, plain professional wording, load time | 35 / 35 views clean, slowest 4.1 s |
-| Journeys | Recorded browser runs of real use, with each check shown on screen as it runs | 80 / 80 checks pass |
+| Journeys | Recorded browser runs of real use, with each check shown on screen as it runs | 90 / 90 checks pass |
 
 The recorded journeys:
 
@@ -110,6 +113,7 @@ The recorded journeys:
 5. **Phone (390 px):** sign-in, the dashboard and the menu, with no sideways scrolling.
 6. **Standards and quality:** a request goes out as an X12 278 that passes the envelope check; approvals and denials come back and are read correctly; a person marks a letter reading wrong, and the rating appears in the SQL reports on the AI Ops desk.
 7. **Real clinic paperwork (de-identified, not in the repo):** a doctor's referral is recognised as a referral, the reason is found among the history codes, the request is routed to the primary plan for a dual-eligible patient, and a visit log's columns map to billing codes.
+8. **Review fixes:** switching modes starts empty instead of reusing the last document; the unsigned sample plan is flagged; letter answers show the line they came from, with insurance terms in plain words; an account and all its data can be deleted.
 
 ![Recorded UI test run, 8x speed](docs/media/ui_test_run.gif)
 

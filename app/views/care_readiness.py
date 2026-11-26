@@ -29,7 +29,7 @@ if role() == "patient":
         col, word = tone.get((L.get("decision") or "").lower(), ("#6E5C76", (L.get("decision") or "LETTER").upper()))
         st.markdown(f"<div class='ao-card'><span style='border:3px solid {col};color:{col};border-radius:10px;padding:2px 10px;"
                     f"font-weight:800;letter-spacing:.1em;font-size:.8rem'>{word}</span> &nbsp; <b>{L.get('service') or ''}</b>"
-                    f"<div style='margin-top:8px'>{L.get('summary') or ''}</div><div class='ao-muted' style='margin-top:6px'>"
+                    f"<div style='margin-top:8px'>{('Next: ' + L['steps'][0]) if L.get('steps') else (L.get('summary') or '')}</div><div class='ao-muted' style='margin-top:6px'>"
                     f"{'Appeal deadline: ' + L['deadline'] if L.get('deadline') else ''} {('· ' + L['start'] + ' to ' + L['end']) if L.get('start') else ''}"
                     f" · read {L.get('read_on', '')}</div></div>", unsafe_allow_html=True)
     if w.get("costs"):

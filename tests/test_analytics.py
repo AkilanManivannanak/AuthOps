@@ -28,8 +28,10 @@ def test_reports_count_what_happened(tmp_path):
     roles = {r["role"]: r["sessions"] for r in run("by_role", s)}
     assert roles["patient"] == 1 and roles["clinic"] == 1 and roles["not chosen yet"] == 2
     acc = {(r["kind"], r["layer"]): r["pct_right"] for r in run("ai_accuracy", s)}
+    assert {r["document"] for r in run("ai_accuracy", s)} == {"real upload"}
     assert acc[("letter", "ai")] == 50.0 and acc[("plan", "rules")] == 100.0
-    assert run("what_went_wrong", s)[0] == {"kind": "letter", "what": "deadline", "times": 1}
+    ww = run("what_went_wrong", s)[0]
+    assert (ww["kind"], ww["what"], ww["times"]) == ("letter", "deadline", 1)
     assert run("field_errors", s)[0]["caught_by_reviewer"] == 1
 
 

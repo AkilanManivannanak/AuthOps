@@ -85,4 +85,8 @@ The floor never reaches 0: one submission in ten is always checked.
 - Only field labels go to the model when playbooks are drafted. Patient documents go to the model only when the person checks a document with AI turned on.
 - The API key lives in `.env` locally or Streamlit Secrets in production. It is never shown in the app.
 - Usage rows record an account id or a session id, the role, the page and the action. They do not record document contents.
+- Uploaded pages are kept in memory and written to disk only while OCR and the model read them; the folder is then deleted. Saved results keep the decision, dates and checks, never the image or the letter's wording.
+- Saved sign-ins are signed with `AUTHOPS_SECRET` (or a random key kept in the database), expire after 30 days, and end on every device when the person signs out everywhere or deletes the account. Sign-in locks for a minute after 5 failures.
+- "Delete my account" removes the account, its saved work, its usage and ratings, its AI quota and its sessions.
+- The browser agent can load only the portal's own host; any other address is refused before it is opened.
 - Set `DATABASE_URL` (Postgres) in production so usage and ratings survive redeploys. Without it the store is a local SQLite file.

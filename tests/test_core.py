@@ -118,3 +118,76 @@ def test_fhir_pas_bundle_shape():
     claim = b["entry"][0]["resource"]
     assert claim["resourceType"] == "Claim" and claim["use"] == "preauthorization"
     assert [i["productOrService"]["coding"][0]["code"] for i in claim["item"]] == c["cpt_codes"]
+
+
+# ---- review fixes (Chrisen 5, 6): a valid R4 bundle, and routing/submission that never crash
+def test_fhir_bundle_validates_against_r4():
+    from fhir.resources.R4B.bundle import Bundle
+    c = generate_cases(1, seed=3)[0].model_dump(mode="json")
+    b = build_pas_bundle(c, now="2026-11-25T12:00:00Z")
+    Bundle.model_validate(b)                      # raises if not valid R4
+    claim = b["entry"][0]["resource"]
+    urls = {e["fullUrl"] for e in b["entry"]}
+    assert claim["patient"]["reference"] in urls and claim["insurance"][0]["coverage"]["reference"] in urls
+    assert claim["insurer"]["reference"] in urls and claim["provider"]["reference"] in urls
+    assert build_pas_bundle(c, now="2026-11-25T12:00:00Z") == b      # stable for the same request
+
+
+def test_unknown_payor_falls_back_to_the_browser_agent():
+    from authops.channels.router import choose_channel
+    assert choose_channel({"payor": {"payor_id": "NEW"}}, {"payors": {}}) == "portal"
+
+
+def test_fhir_submit_handles_gateway_errors_and_retries():
+    import httpx
+
+    from authops.channels.router import submit_fhir
+    calls = []
+
+    def handler(request):
+        calls.append(1)
+        if len(calls) < 3:
+            return httpx.Response(502, text="<html>Bad gateway</html>")
+        return httpx.Response(200, json={"resourceType": "ClaimResponse", "preAuthRef": "X-1"})
+    c = generate_cases(1, seed=3)[0].model_dump(mode="json")
+    client = httpx.Client(transport=httpx.MockTransport(handler))
+    r = submit_fhir("http://payor.test", c, client=client)
+    assert r["status"] == "submitted" and r["ref"] == "X-1" and len(calls) == 3
+    calls.clear()
+    bad = httpx.Client(transport=httpx.MockTransport(lambda q: httpx.Response(502, text="<html/>")))
+    r2 = submit_fhir("http://payor.test", c, retries=1, client=bad)
+    assert r2["status"] == "needs_human" and r2["error_class"] == "fhir_502"
+
+
+def test_credential_pool_never_leases_one_login_twice_at_once():
+    import threading
+    pool = CredentialPool({"p": [{"username": f"u{i}", "password": "x"} for i in range(3)]})
+    got, barrier = [], threading.Barrier(8)
+
+    def grab():
+        barrier.wait()
+        c = pool.lease("p")
+        if c:
+            got.append(c.username)
+    ts = [threading.Thread(target=grab) for _ in range(8)]
+    [t.start() for t in ts]
+    [t.join() for t in ts]
+    assert len(got) == 3 and len(set(got)) == 3          # three logins, three runs, no sharing
+    assert pool.lease("p") is None
+
+
+def test_a_crashed_run_gives_its_login_back():
+    import inspect
+
+    from authops.agent import runtime
+    src = inspect.getsource(runtime)
+    assert "finally:" in src and "self.pool.release(cred)" in src.split("finally:")[-1][:200]
+    pool = CredentialPool({"p": [{"username": "a", "password": "x"}]})
+    c = pool.lease("p")
+    try:
+        raise RuntimeError("browser crashed")
+    except RuntimeError:
+        pass
+    finally:
+        pool.release(c)
+    assert pool.lease("p").username == "a"

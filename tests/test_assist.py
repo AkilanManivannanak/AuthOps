@@ -35,7 +35,7 @@ def test_rules_read_a_denial():
     r = read_letter([], text=TEXT)
     assert r["decision"] == "denied" and r["appeal_days"] == 30
     assert r["reason"].startswith("Requested units exceed")
-    assert r["deadline"] == "within 30 days of the letter's date" and len(r["next_steps"]) == 3
+    assert r["deadline"] == "30 days from the date printed on the letter" and len(r["next_steps"]) == 3
 
 
 def test_ai_quotes_are_checked_against_the_page_and_conflicts_flagged():

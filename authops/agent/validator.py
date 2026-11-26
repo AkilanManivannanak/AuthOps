@@ -7,7 +7,8 @@ the action. This is that check, done deterministically so it is cheap enough for
 * phantom_target   the action names an element that is not in the current observation
 * reason_mismatch  the stated reason names a different field than the one being acted on
 * unsourced_value  a value being typed is not in the case, the documents, or a document answer
-* off_domain       the page left the portal's host (an agent must never follow a link out)
+* off_domain       the page left the portal's host, or a goto would leave it (checked before it runs)
+* wrong_field_value a real case value typed into the wrong field (a member ID in the NPI box)
 
 Blocking flags stop the action and go back to the model as a failed step; warnings are persisted
 and lower the session's smoothness so QA sees them first.
@@ -18,7 +19,16 @@ import re
 from dataclasses import dataclass
 from urllib.parse import urlparse
 
-BLOCKING = {"phantom_target", "unsourced_value", "off_domain"}
+BLOCKING = {"phantom_target", "unsourced_value", "off_domain", "wrong_field_value"}
+# Fields whose value must be one specific thing from the case. Pattern on the field's label -> where it lives.
+FIELD_SOURCES = [
+    (re.compile(r"\bnpi\b", re.I), ("provider", "npi")),
+    (re.compile(r"member\s*(?:id|number|no|#)|subscriber\s*(?:id|number)|policy\s*(?:id|number)", re.I), ("patient", "member_id")),
+    (re.compile(r"date\s*of\s*birth|\bdob\b|birth\s*date", re.I), ("patient", "dob")),
+    (re.compile(r"\bcpt\b|procedure\s*code|service\s*code", re.I), ("cpt_codes",)),
+    (re.compile(r"\bicd\b|diagnos", re.I), ("icd10_codes",)),
+    (re.compile(r"\bunits\b|quantity|number\s*of\s*(?:visits|sessions)", re.I), ("requested_units",)),
+]
 SAFE_VALUES = {"yes", "no", "true", "false", "on", "off", "initial", "continuation", "concurrent", "urgent",
                "standard", "routine", "other", "n/a", "na"}
 FIELD_WORDS = re.compile(r"(?i)\b(?:click|press|fill|enter|type|select|choose|set|upload)\s+(?:the\s+)?['\"]?([a-z][a-z0-9 _\-/]{2,40}?)['\"]?(?:\s+(?:field|button|box|dropdown|link|with|to|as)\b|[.,]|$)")
@@ -80,6 +90,39 @@ def _sources(case: dict, values: dict, history: list[dict]) -> set[str]:
     return out
 
 
+def _get(case: dict, path: tuple):
+    v = case
+    for k in path:
+        v = v.get(k) if isinstance(v, dict) else None
+    return v
+
+
+def _variants(v) -> set[str]:
+    out: set[str] = set()
+    for x in (v if isinstance(v, (list, tuple)) else [v]):
+        s = str(x)
+        out.add(_norm(s))
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}", s):
+            y, m, d = s.split("-")
+            out.update({_norm(f"{m}/{d}/{y}"), _norm(f"{m}{d}{y}"), _norm(f"{int(m)}/{int(d)}/{y}")})
+    return out
+
+
+def wrong_field(target: str, value: str, case: dict) -> Flag | None:
+    """A value that is real but belongs to another field: the most likely slip on a form."""
+    for pat, path in FIELD_SOURCES:
+        if pat.search(target or ""):
+            want = _get(case, path)
+            if want in (None, "", []):
+                return None
+            ok = _variants(want)
+            parts = [p for p in re.split(r"[,;\s]+", value) if p] if path[0] in ("cpt_codes", "icd10_codes") else [value]
+            if not all(_norm(p) in ok for p in parts):
+                return Flag("wrong_field_value", f"'{target}' expects the case's {path[-1]}, not '{value[:20]}'")
+            return None
+    return None
+
+
 def check(obs, act: dict, case: dict, values: dict, history: list[dict], base_url: str,
           playbook: object = None) -> list[Flag]:
     tool, args = act.get("tool"), act.get("args", {}) or {}
@@ -87,11 +130,20 @@ def check(obs, act: dict, case: dict, values: dict, history: list[dict], base_ur
     host = urlparse(base_url).netloc
     if obs.url and host and urlparse(obs.url).netloc not in ("", host):
         flags.append(Flag("off_domain", f"page is on {urlparse(obs.url).netloc}, portal is {host}"))
+    if tool == "goto":   # judge where the action would go, before it goes there
+        from urllib.parse import urljoin
+        dest = urlparse(urljoin(base_url.rstrip("/") + "/", str(args.get("path", ""))))
+        if host and dest.netloc not in ("", host):
+            flags.append(Flag("off_domain", f"goto to {dest.netloc}, portal is {host}"))
     target = args.get("target")
     els = _elements(obs)
     if tool in ("click", "fill", "select", "check", "upload", "pick_date") and target:
         if not any(_matches(target, e) for e in els):
             flags.append(Flag("phantom_target", f"'{target}' is not on the page"))
+    if tool == "fill" and "value" in args and target:
+        wf = wrong_field(target, str(args["value"]), case)
+        if wf:
+            flags.append(wf)
     if tool in ("fill", "select") and "value" in args:
         v = str(args["value"])
         srcs = _sources(case, values, history) | _sources(playbook or {}, {}, [])

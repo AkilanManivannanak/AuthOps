@@ -13,6 +13,8 @@ Controls modeled on what Silna published for production browser agents:
 """
 from __future__ import annotations
 
+from urllib.parse import urlparse
+
 import json
 import time
 import uuid
@@ -92,6 +94,14 @@ class AgentRuntime:
         if cred is None:
             return self._end(res, "needs_human", "no_credential", "all credentials disabled or leased", 0, policy)
         context = self.browser.new_context(viewport={"width": 1280, "height": 900})
+        portal_host = urlparse(self.base_url).netloc
+
+        def _only_portal(route):   # network allow-list: the browser can load nothing but the portal itself
+            u = urlparse(route.request.url)
+            if u.scheme in ("data", "blob", "about") or u.netloc == portal_host:
+                return route.continue_()
+            return route.abort("blockedbyclient")
+        context.route("**/*", _only_portal)
         page = context.new_page()
         ctx = {"case": case, "files": files, "credential": cred}
         tools = Tools(page, ctx, self.base_url)
