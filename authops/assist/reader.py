@@ -290,8 +290,21 @@ def modality_codes(text: str) -> list[dict]:
 
 # ------------------------------------------------------------------ rules layer
 
+def unit_word(text: str) -> str:
+    """The word the document itself uses for the amount: visits, hours, sessions or units."""
+    near = re.findall(r"(?:approved|authorized|requested|remaining)[^.\n]{0,40}?\b(visits?|hours?|sessions?|units?)\b|"
+                      r"\b(visits?|hours?|sessions?|units?)\s+(?:approved|authorized|requested)", text, re.I)
+    words = [(a or b).lower().rstrip("s") + "s" for a, b in near]
+    return max(set(words), key=words.count) if words else "units"
+
+
+def _join_codes(text: str) -> str:
+    """OCR often adds a space after the dot in an ICD-10 code ('M54. 50'); put the code back together."""
+    return re.sub(r"\b([A-TV-Z][0-9][0-9AB])\.\s{1,2}([0-9A-TV-Z]{1,4})\b", r"\1.\2", text)
+
+
 def facts(text: str) -> dict:
-    icd = sorted(set(ICD.findall(text)))
+    icd = sorted(set(ICD.findall(_join_codes(text))))
     cpt = cpts(text)
     dates = []
     for s_ in DATE.findall(text):
@@ -307,7 +320,7 @@ def facts(text: str) -> dict:
             "icd10": icd, "icd10_known": [c for c in icd if c in KNOWN_ICD10], "cpt": cpt,
             "npis": [{"npi": n, "valid": npi_valid(n)} for n in npis(text)], "dates": sorted(set(dates)),
             "decision": decision(text), "units": int(of.group(1)) if of else int(um.group(1)) if um else None,
-            "requested": int(of.group(2)) if of else None,
+            "requested": int(of.group(2)) if of else None, "unit_word": unit_word(text),
             "signed": bool(SIGNED.search(text)),
             "has_goals": bool(re.search(r"\bgoal", low)), "has_baseline": "baseline" in low,
             "has_necessity": "necess" in low}
@@ -395,7 +408,8 @@ def read_letter(pages: list[Path], llm=None, text: str | None = None) -> dict:
     text = text if text is not None else ocr_text(pages)
     f = facts(text)
     res = {"layer": "rules", "text_chars": len(text), "facts": f, "decision": f["decision"],
-           "approved_amount": f"{f['units']} units" if f["units"] else None,
+           "approved_amount": f"{f['units']} {f['unit_word']}" if f["units"] else None,
+           "requested_amount": f"{f['requested']} {f['unit_word']}" if f.get("requested") else None,
            "start": f["start"].isoformat() if f["start"] else None,
            "end": f["end"].isoformat() if f["end"] else None,
            "reason": f["reason"], "appeal_days": f["appeal_days"], "letter_date": letter_date(text), "summary": None, "next_steps": [], "questions": [], "quotes": []}
@@ -414,7 +428,7 @@ def read_letter(pages: list[Path], llm=None, text: str | None = None) -> dict:
             # evidence or abstain: amounts and dates must be on the page, or they are shown as unverified
             res["unverified"] = [k for k in ("approved_amount", "start", "end") if res.get(k) and not _on_page(res[k], text)]
             for k in res["unverified"]:
-                res[k + "_ai"], res[k] = res[k], {"approved_amount": f"{f['units']} units" if f["units"] else None,
+                res[k + "_ai"], res[k] = res[k], {"approved_amount": f"{f['units']} {f['unit_word']}" if f["units"] else None,
                                                   "start": f["start"].isoformat() if f["start"] else None,
                                                   "end": f["end"].isoformat() if f["end"] else None}[k]
             if res["decision"] in ("approved", "partially approved", "denied") and not f["decision"] and \

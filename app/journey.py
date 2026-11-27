@@ -174,10 +174,16 @@ def journey() -> None:
                     save(W.fix(w, pid, it["code"], t, value=lim))
                     st.rerun()
             rep = validate_case(W.case_for(p), t, include_custom=False)
-            checklist([("ok" if r.passed else "bad", rule_label(r.rule), r.message or "passes") for r in rep.results if r.passed]
-                      + [("warn" if short else "ok", "Amount this payor approves in full",
-                          f"{o['p_full']:.0%} chance at {p['units']}; {o['recommended']} gives {o['p_rec']:.0%}" if short
-                          else f"{o['p_full']:.0%} chance at {p['units']} {p['unit']}")])
+            pct = lambda x: "under 1%" if x < 0.01 else f"{x:.0%}"  # noqa: E731
+            cap = W.payor_limit(p)
+            at_cap = p["units"] == cap
+            odds = (f"{pct(o['p_full'])} chance the payor approves all {p['units']} {p['unit']}"
+                    + (f"; asking for {o['recommended']} gives {pct(o['p_rec'])}" if short else "") + "."
+                    + (f" {cap} is {p['payor_name'].split()[0]}'s limit per request: the most you may ask for, "
+                       "not what is usually approved in full." if at_cap and short else ""))
+            checklist([("ok" if r.passed else "bad", rule_label(r.rule),
+                        (r.message or "passes").replace("units", p["unit"])) for r in rep.results if r.passed]
+                      + [("warn" if short else "ok", "Chance of full approval", odds)])
         with right:
             m, rq = W.model(), W._request(p, p["units"])
             hi = max(p["units"], o["recommended"]) + 5
@@ -185,7 +191,10 @@ def journey() -> None:
                      for c in m.curve(Request(rq.week, rq.payor, rq.specialty, rq.severity, rq.utilization, rq.first_auth,
                                               rq.doc_score, hi, 1.0), points=40)]
             approval_outlook(curve, [], p["units"], o["recommended"], 0.8, key=f"jr_ol_{pid}_{p['units']}")
-            if short and st.button(f"Ask for {o['recommended']} {p['unit']} instead ({o['p_rec']:.0%} chance)", type="primary"):
+            if short:
+                st.caption(f"Your choice: send {p['units']} as written, or ask for {o['recommended']} now with a better "
+                           "chance of full approval and request more later with progress notes.")
+            if short and st.button(f"Ask for {o['recommended']} {p['unit']} instead ({pct(o['p_rec'])} chance)", type="primary"):
                 W.set_units(w, pid, o["recommended"], t)
                 save("Amount updated.")
                 st.rerun()

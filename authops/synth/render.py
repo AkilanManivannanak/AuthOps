@@ -312,7 +312,7 @@ def render_corpus(cases: list[Case], out_dir: Path, seed: int = 11,
     return manifest
 
 
-def render_member_letter(case: Case, rng: random.Random, notice: date | None = None) -> DocWriter:
+def render_member_letter(case: Case, rng: random.Random, notice: date | None = None, decision: str = "partial") -> DocWriter:
     """A notice addressed to the member (patient or family), worded the way Medicaid and Medicare plan notices
     are: a notice date, a partial approval with numbers, a reason in plain words, and 'sixty (60) days' to appeal.
     Used for the patient view's sample; the evaluation letters above are unchanged."""
@@ -330,13 +330,24 @@ def render_member_letter(case: Case, rng: random.Random, notice: date | None = N
     w.space()
     w.line(f"Dear {case.patient.first_name} {case.patient.last_name},", w.body)
     w.space(6)
-    w.para(f"We reviewed the request from your provider for physical therapy. We approved {got} of the {asked} "
-           f"visits requested (CPT {case.cpt_codes[0]}).")
-    w.para(f"Approved from {case.start_date:%m/%d/%Y} through {case.end_date:%m/%d/%Y}.")
-    w.para(f"The other {asked - got} visits are denied.")
-    w.line("Reason for denial:", w.bold)
-    w.para("Your plan covers this number of visits before your therapist sends an updated progress report. "
-           "Your therapist can ask for more visits with that report.")
+    if decision == "approved":
+        w.para(f"We reviewed the request from your provider for physical therapy. Your request is approved. "
+               f"Approved visits: {asked} (CPT {case.cpt_codes[0]}).")
+        w.para(f"Approved from {case.start_date:%m/%d/%Y} through {case.end_date:%m/%d/%Y}.")
+    elif decision == "denied":
+        w.para(f"We reviewed the request from your provider for {asked} physical therapy visits "
+               f"(CPT {case.cpt_codes[0]}). Your request is denied.")
+        w.line("Reason for denial:", w.bold)
+        w.para("The records sent do not show how therapy has helped so far. Your therapist can send a progress "
+               "report and ask again.")
+    else:
+        w.para(f"We reviewed the request from your provider for physical therapy. We approved {got} of the {asked} "
+               f"visits requested (CPT {case.cpt_codes[0]}).")
+        w.para(f"Approved from {case.start_date:%m/%d/%Y} through {case.end_date:%m/%d/%Y}.")
+        w.para(f"The other {asked - got} visits are denied.")
+        w.line("Reason for denial:", w.bold)
+        w.para("Your plan covers this number of visits before your therapist sends an updated progress report. "
+               "Your therapist can ask for more visits with that report.")
     w.para("You have the right to appeal within sixty (60) days of the date of this notice. "
            "Call Member Services at the number on your ID card for help.")
     return w

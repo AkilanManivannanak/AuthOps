@@ -26,7 +26,8 @@ def test_reports_count_what_happened(tmp_path):
     funnel = {r["stage"]: r["sessions"] for r in run("funnel", s)}
     assert funnel == {"Opened the app": 3, "Picked a role": 2, "Used a tool": 2, "Rated an AI answer": 2}
     roles = {r["role"]: r["sessions"] for r in run("by_role", s)}
-    assert roles["patient"] == 1 and roles["clinic"] == 1 and roles["not chosen yet"] == 2
+    assert roles == {"patient": 1, "clinic": 1, "left before choosing": 1}
+    assert sum(roles.values()) == funnel["Opened the app"]      # each session counted once
     acc = {(r["kind"], r["layer"]): r["pct_right"] for r in run("ai_accuracy", s)}
     assert {r["document"] for r in run("ai_accuracy", s)} == {"real upload"}
     assert acc[("letter", "ai")] == 50.0 and acc[("plan", "rules")] == 100.0

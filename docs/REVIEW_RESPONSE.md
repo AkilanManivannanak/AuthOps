@@ -82,3 +82,15 @@ Not changed: "An account with this email already exists" still says so. It's a c
 | "Reviewer disagreed" was unclear | Renamed "differs from answer key" |
 
 Still open: toasts can cover the account chip; the usage page has no date filter.
+
+## Walkthroughs, round 2 (Nov 26, on `4fbf999`)
+
+| Observation | Fix | Test |
+|---|---|---|
+| The plan's diagnosis showed as "M54." when the page says M54.50 (OCR wrote "M54. 50") | Codes split by OCR after the dot are put back together before reading | `test_icd_code_split_by_ocr_is_rejoined` |
+| "14 units approved" when the letter says visits | The amount uses the word on the letter (visits, hours, sessions or units), and the requested amount is shown next to it | `test_amount_uses_the_letters_own_word` |
+| A patient stayed in "Ready to send / Passed every check" while the readiness check said it was over the payor's limit | A ready request is re-checked every time the board, counts or suggestions are drawn. Sending refuses a request with an open issue, on the server, not only in the UI | `test_board_rechecks_ready_requests_and_send_refuses_open_issues` |
+| After splitting to the payor's limit (400), the outlook said 0% and recommended 268 with no explanation | Explains that the limit is the most you may ask for, not what is usually approved in full; shows "under 1%" instead of 0%; says both choices are allowed | Visible on Prior authorizations |
+| "Hours", "visits" and "units" mixed on one screen | Rule messages use the patient's own unit; "Above the payor's unit limit" now reads "More than the payor allows in one request" | |
+| "Use by role" summed to 42 against 29 sessions ("not chosen yet: 13") | Each session counts once, under the last role it picked; "left before choosing" means exactly that, and the table sums to the funnel | `test_reports_count_what_happened` |
+| The tester steps asked for a third rating that wasn't possible (one fixed sample, already rated) | "Try another sample" rotates through three samples per mode: letters approved, partial and denied; plans unsigned, signed and expired. Each is its own document and can be rated | Recorded journey 9: three letters, three ratings, three document ids |

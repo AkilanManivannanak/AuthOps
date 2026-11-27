@@ -14,6 +14,12 @@ import time
 from playwright.sync_api import sync_playwright
 
 URL = sys.argv[1] if len(sys.argv) > 1 else "https://akilan-silna-pa-agent.streamlit.app"
+# Text that is on the sign-in page whatever its headline says (the headline changed once and broke this check).
+MARKERS = ("Continue without an account", "Create account")
+
+
+def rendered(html: str) -> bool:
+    return any(m in html for m in MARKERS)
 
 
 def main() -> int:
@@ -27,13 +33,13 @@ def main() -> int:
             print("app was asleep: waking it")
             wake.first.click()
         for _ in range(36):   # up to 6 minutes for a cold start
-            if "Prior auths, cleared before care starts" in page.content():
+            if rendered(page.content()):
                 print("app is up")
                 b.close()
                 return 0
             for fr in page.frames:   # the app renders inside an iframe on streamlit.app
                 try:
-                    if "Prior auths, cleared before care starts" in fr.content():
+                    if fr != page.main_frame and rendered(fr.content()):
                         print("app is up")
                         b.close()
                         return 0

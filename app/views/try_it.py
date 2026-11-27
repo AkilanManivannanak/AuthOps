@@ -31,21 +31,29 @@ st.markdown("<div class='ao-muted' style='margin:-.2rem 0 .8rem'>🔒 Cover name
 
 
 @st.cache_data(show_spinner=False)
-def _sample(kind: str) -> list[bytes]:
+def _sample(kind: str, n: int = 0) -> list[bytes]:
+    """Three different samples per kind, so each person can rate several answers:
+    member notice approved / partial / denied; clinic letters from three cases; plans unsigned / signed / expired."""
+    from datetime import timedelta
+
     from authops.synth.generate import PAYOR_BY_ID, generate_cases
     from authops.synth.render import render_letter, render_member_letter, render_treatment_plan, save_doc
-    c = generate_cases(1, seed=7, gap_rate=0.0)[0]
-    rng = random.Random(3)
+    c = generate_cases(1, seed=[7, 8, 9][n % 3], gap_rate=0.0)[0]
+    rng = random.Random(3 + n)
     with tempfile.TemporaryDirectory(prefix="sample_") as d:
         if kind == "member_letter":
             c.payor = PAYOR_BY_ID["KCM"]
-            paths = save_doc(render_member_letter(c, rng), Path(d), "letter", "scan", rng)
+            w = render_member_letter(c, rng, decision=["partial", "denied", "approved"][n % 3])
+            paths = save_doc(w, Path(d), "letter", "scan", rng)
         elif kind == "letter":
             c.payor = PAYOR_BY_ID["KCM"]
             w, _, _ = render_letter(c, rng)
             paths = save_doc(w, Path(d), "letter", "scan", rng)
         else:
-            c.signature_present, c.signature_date = False, None
+            if n % 3 == 0:
+                c.signature_present, c.signature_date = False, None
+            elif n % 3 == 2:
+                c.start_date, c.end_date = c.start_date - timedelta(days=400), c.end_date - timedelta(days=400)
             paths = save_doc(render_treatment_plan(c, rng, False), Path(d), "plan", "scan", rng)
         return [Path(p).read_bytes() for p in paths]
 
@@ -68,7 +76,9 @@ def _who() -> str:
 
 a, b, c = st.columns([2.2, 1, 1])
 up = a.file_uploader("Photo, scan or PDF", type=["png", "jpg", "jpeg", "pdf"], label_visibility="collapsed")
-sample = b.button("Use a sample " + ("letter" if mode == "letter" else "plan"), width="stretch")
+seen = st.session_state.setdefault("samples_seen", {})
+sample = b.button(("Try another sample" if seen.get(mode) else "Use a sample ") +
+                  ("" if seen.get(mode) else ("letter" if mode == "letter" else "plan")), width="stretch")
 from app.ui import store  # noqa: E402
 
 used = store().ai_calls(_who(), f"{date.today():%Y-%m-%d}")
@@ -83,7 +93,9 @@ elif left_today == 0:
 
 if sample:
     kind = ("member_letter" if R == "patient" else "letter") if mode == "letter" else "plan"
-    st.session_state.doc = _doc(_sample(kind), True)
+    n = seen.get(mode, 0)
+    seen[mode] = n + 1
+    st.session_state.doc = _doc(_sample(kind, n), True)
 elif up is not None and st.session_state.get("_up") != up.name + str(up.size):
     st.session_state._up = up.name + str(up.size)
     st.session_state.doc = _doc(png_pages(up.getvalue(), up.name), False)

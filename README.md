@@ -3,8 +3,8 @@
 **Prior-authorization operations, end to end: read the documents, catch denials before they happen, submit through any channel, and keep rules and playbooks current on their own.**
 
 [![Live app](https://img.shields.io/badge/live%20app-open-28543E?style=for-the-badge)](https://akilan-silna-pa-agent.streamlit.app)
-![tests](https://img.shields.io/badge/tests-152%20passing-28543E?style=for-the-badge)
-![UI checks](https://img.shields.io/badge/UI%20checks-90%2F90-28543E?style=for-the-badge)
+![tests](https://img.shields.io/badge/tests-155%20passing-28543E?style=for-the-badge)
+![UI checks](https://img.shields.io/badge/UI%20checks-96%2F96-28543E?style=for-the-badge)
 ![data](https://img.shields.io/badge/data-synthetic%20only-9A9A9A?style=for-the-badge)
 
 ![AuthOps demo](docs/media/demo.gif)
@@ -88,7 +88,7 @@ python scripts/run_all.py          # full pipeline, writes reports/
 streamlit run streamlit_app.py     # the app
 ```
 
-`pytest -q` runs 152 tests, including real-browser runs on every sandbox portal.
+`pytest -q` runs 155 tests, including real-browser runs on every sandbox portal.
 
 ```bash
 python -m authops.analytics.reports            # the usage and AI-quality reports, from authops/analytics/queries/*.sql
@@ -100,9 +100,9 @@ Tested at three levels, from code up to the full user journey:
 
 | Level | What is checked | Result |
 |---|---|---|
-| Code | `ruff` lint and `pytest`: extraction, payor rules, approval model, workspace actions, document reader, sessions and accounts, agent guard rails, X12 278 against a hand-written outside file, FHIR R4 schema, SQL reports, portal agents in a real browser | 152 / 152 pass |
+| Code | `ruff` lint and `pytest`: extraction, payor rules, approval model, workspace actions, document reader, sessions and accounts, agent guard rails, X12 278 against a hand-written outside file, FHIR R4 schema, SQL reports, portal agents in a real browser | 155 / 155 pass |
 | Pages | Every page and every tool on it, for each role (patient, clinic, operations): loads without errors, plain professional wording, load time | 35 / 35 views clean, slowest 4.1 s |
-| Journeys | Recorded browser runs of real use, with each check shown on screen as it runs | 90 / 90 checks pass |
+| Journeys | Recorded browser runs of real use, with each check shown on screen as it runs | 96 / 96 checks pass |
 
 The recorded journeys:
 
@@ -114,6 +114,7 @@ The recorded journeys:
 6. **Standards and quality:** a request goes out as an X12 278 that passes the envelope check; approvals and denials come back and are read correctly; a person marks a letter reading wrong, and the rating appears in the SQL reports on the AI Ops desk.
 7. **Real clinic paperwork (de-identified, not in the repo):** a doctor's referral is recognised as a referral, the reason is found among the history codes, the request is routed to the primary plan for a dual-eligible patient, and a visit log's columns map to billing codes.
 8. **Review fixes:** switching modes starts empty instead of reusing the last document; the unsigned sample plan is flagged; letter answers show the line they came from, with insurance terms in plain words; an account and all its data can be deleted.
+9. **Tester steps:** the exact steps sent to testers, run first: three different sample letters, three ratings, each stored against its own document.
 
 ![Recorded UI test run, 8x speed](docs/media/ui_test_run.gif)
 

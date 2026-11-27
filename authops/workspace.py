@@ -22,7 +22,7 @@ PLAN = {"KCM": "medicaid_mco"}
 FIX = {"signature_present": ("Get the provider's signature", "Unsigned treatment plan"),
        "school_schedule": ("Attach the school schedule", "School schedule missing"),
        "plan_not_expired": ("Update the plan dates", "Plan dates have passed"),
-       "units_within_payor_limit": ("Lower to the payor's limit", "Above the payor's unit limit"),
+       "units_within_payor_limit": ("Lower to the payor's limit", "More than the payor allows in one request"),
        "rule": ("Lower to the new limit", "Above a new payor limit")}
 STAGE_LABEL = {"intake": "New document", "check": "Action required", "ready": "Ready to send",
                "submitted": "Waiting on payor", "approved": "Clear for care", "partial": "Clear for care",
@@ -122,9 +122,11 @@ def runway(p: dict, today: date) -> dict | None:
 
 def status(p: dict, ws: dict, today: date) -> dict:
     """What a person should see for this patient right now."""
-    if p["stage"] == "check":
+    if p["stage"] in ("check", "ready"):
+        # re-checked every time: a payor rule approved since the last check can make a ready request fail
         iss = issues(p, ws, today)
-        return {"label": "Action required", "tone": "warn", "detail": iss[0]["text"] if iss else "Check the request"}
+        if iss or p["stage"] == "check":
+            return {"label": "Action required", "tone": "warn", "detail": iss[0]["text"] if iss else "Check the request"}
     if p["stage"] in ("approved", "partial"):
         r = runway(p, today)
         if p.get("reauth_started"):
@@ -255,6 +257,10 @@ def set_units(ws: dict, pid: str, units: int, today: date) -> None:
 
 def submit(ws: dict, pid: str, today: date) -> str:
     p = find(ws, pid)
+    open_ = issues(p, ws, today)
+    if open_:   # never send a request the payor's own rules would deny
+        p["stage"] = "check"
+        return f"Not sent: {open_[0]['text']}"
     p.update({"stage": "submitted", "submitted_on": today.isoformat()})
     _decide(p)
     activity(ws, f"Sent {p['name']}'s request to {p['payor_name']}", "prior_authorizations")

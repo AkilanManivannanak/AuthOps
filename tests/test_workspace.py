@@ -82,3 +82,29 @@ def test_payor_limit_fix_uses_the_payors_limit_and_keeps_the_rest():
     W.split(ws, over["id"], t)
     assert over["units"] == cap and over["remainder"] == 57
     assert not any(i["code"] == "units_within_payor_limit" for i in W.issues(over, ws, t))
+
+
+def test_board_rechecks_ready_requests_and_send_refuses_open_issues():
+    """Walkthrough: a patient sat in Ready to send while the readiness check said it was over the limit."""
+    from datetime import date
+
+    from authops import workspace as W
+    t = date(2026, 11, 26)
+    ws = W.new_workspace("clinic", "T", seed=1, today=t)
+    p = next(p for p in ws["patients"] if W.status(p, ws, t)["label"] == "Ready to send")
+    p["units"] = W.payor_limit(p) + 10            # a payor rule tightened after it was checked
+    assert W.status(p, ws, t)["label"] == "Action required"
+    assert W.metrics(ws, t)["ready"] == sum(W.status(x, ws, t)["label"] == "Ready to send" for x in ws["patients"])
+    msg = W.submit(ws, p["id"], t)
+    assert msg.startswith("Not sent") and p["stage"] == "check"
+
+
+def test_icd_code_split_by_ocr_is_rejoined():
+    from authops.assist.reader import facts
+    assert facts("Diagnosis (ICD-10): M54. 50")["icd10"] == ["M54.50"]
+
+
+def test_amount_uses_the_letters_own_word():
+    from authops.assist.reader import read_letter
+    r = read_letter([], None, text="We approved 14 of the 28 visits requested.\nThe other 14 visits are denied.")
+    assert (r["approved_amount"], r["requested_amount"]) == ("14 visits", "28 visits")

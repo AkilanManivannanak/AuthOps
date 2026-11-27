@@ -34,7 +34,7 @@ with Journey("8_review_fixes") as j:
     pg.mouse.wheel(0, -400)
     pg.get_by_role("radio", name="A payor's letter came back").click()
     j.wait_idle(2)
-    j.btn("Use a sample letter").click()
+    j.btn("Try another sample").click()     # the first letter sample was used above
     j.wait_idle(8)
     j.check("evidence from the page is shown", has(pg, "on the page"))
     j.check("no dead-end 'turn on the AI reader' hint", not has(pg, "Turn on the AI reader"))
